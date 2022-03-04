@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Mouvementstock extends Model
 {
     use HasFactory;
+
+    public function marchandise(){
+        return $this->hasOne(Marchandise::class);
+    }
 }
