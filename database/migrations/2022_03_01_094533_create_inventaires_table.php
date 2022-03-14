@@ -17,11 +17,10 @@ class CreateInventairesTable extends Migration
             $table->increments('id');
             $table->integer('stockdepot_id')->unsigned();
             $table->integer('marchandise_id')->unsigned();
-            $table->string('reference');
-            $table->integer('quantite_relle');
+            $table->integer('ancienne_quantite');
             $table->integer('quantite_reajuste');
             $table->integer('difference');
-            $table->date('date_inventaire');
+            $table->date('date_reajustement');
             $table->timestamps();
             $table->foreign('stockdepot_id')->references('id')->on('stockdepots');
             $table->foreign('marchandise_id')->references('id')->on('marchandises');

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Depot extends Model
 {
     use HasFactory;
+    protected $fillable=['nom_depot','telephone','delai_reglement'];
 
     public function stock(){
         return $this->hasOne(Stockdepot::class);

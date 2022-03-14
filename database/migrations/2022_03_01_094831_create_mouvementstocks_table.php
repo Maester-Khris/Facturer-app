@@ -17,7 +17,9 @@ class CreateMouvementstocksTable extends Migration
             $table->increments('id');
             $table->integer('marchandise_id')->unsigned();
             $table->integer('stockdepot_id')->unsigned();
+            $table->string('reference_mouvement');
             $table->string('type_mouvement');
+            $table->string('destination')->nullable();
             $table->integer('quantite_mouvement');
             $table->date('date_operation');
             $table->timestamps();
