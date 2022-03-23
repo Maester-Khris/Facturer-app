@@ -53,7 +53,7 @@
 
 					</div>
 
-					<div  style="position:absolute; right: 20px;transform: translateY(-10px);z-index: 9;">
+					{{-- <div  style="position:absolute; right: 20px;transform: translateY(-10px);z-index: 9;">
 						<form>
 							<div class="row">
 								<div class="offset-md-2 col-md-5">
@@ -61,14 +61,9 @@
 										<input class="form-control month-picker" placeholder="Select Month" type="text">
 									</div>
 								</div>
-								<div class="col-md-5">
-									<div class="form-group">
-										<input class="form-control" type="text" placeholder="rechercher le fournisseur">
-									</div>
-								</div>
 							</div>
 						</form>
-					</div>
+					</div> --}}
 
 					<table class="data-table table stripe hover nowrap">
 						<thead>

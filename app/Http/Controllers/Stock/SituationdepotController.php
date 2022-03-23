@@ -12,12 +12,11 @@ class SituationdepotController extends Controller
     //
     private $stock;
     public function __construct(StockService $stock){
-        $this->stock = $stock;
+      $this->stock = $stock;
     }
 
     public function index(){
       $articles = $this->stock->situationDepot(1);
-      // dd($situation);
       return view('stock.situiationDepots')->with(compact('articles'));
    }
 
@@ -29,9 +28,9 @@ class SituationdepotController extends Controller
         ]);
         // $nbrows = Mouvementstock::all()->count();
         // dd($nbrows);
-      $this->stock->newTransfer($request->produit, $request->demo3, $request->destination);
+      $today = date("Y-m-d");
+      $this->stock->newTransfer($request->produit, $request->demo3, $request->destination, $today);
       return redirect('/situiationDepots');
-      // return response()->json(['success'=> $request]);
    }
 
    public function reajustMarchStock(Request $request){
@@ -39,7 +38,9 @@ class SituationdepotController extends Controller
             'produit' => 'required',
             'demo3' => 'required',
         ]);
-      $this->stock->reajustMarch($request->produit, $request->demo3);
+
+      $today = date("Y-m-d");
+      $this->stock->reajustMarch($request->produit, $request->demo3, $today);
       return redirect('/situiationDepots');
    }
 }

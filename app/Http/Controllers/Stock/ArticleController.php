@@ -21,7 +21,6 @@ class ArticleController extends Controller
 
    public function voirmarchandise(Request $request){
       $marchandise = $this->stock->marchandiseDetails($request->reference);
-      // dd($marchandise);
       return response()->json(['success'=> $marchandise]);
    }
 }

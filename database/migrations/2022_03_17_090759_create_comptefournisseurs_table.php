@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFacturesTable extends Migration
+class CreateComptefournisseursTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateFacturesTable extends Migration
      */
     public function up()
     {
-        Schema::create('factures', function (Blueprint $table) {
+        Schema::create('comptefournisseurs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('fournisseur_id')->unsigned();
-            $table->string('code_facture');
-            $table->integer('montant_remise');
-            $table->integer('montant_total');
-            $table->integer('montant_net');
-            $table->dateTime('date_facturation'); 
-            $table->boolean('statut')->default(false);
+            $table->integer('credit')->default(0);;
+            $table->integer('debit')->default(0);;
+            $table->dateTime('date_credit')->nullable();
+            $table->dateTime('date_debit')->nullable();
             $table->timestamps();
             $table->foreign('fournisseur_id')->references('id')->on('fournisseurs');
         });
@@ -34,6 +32,6 @@ class CreateFacturesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('factures');
+        Schema::dropIfExists('comptefournisseurs');
     }
 }

@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('test', 'App\Http\Controllers\Stock\ArticleController@voirmarchandise');
+// =============== ************** ================================
+//                     NOTES
+// =============== ************** ================================
+/*
+*   Se rappeler de refactorer les routes et leur appels a la fin
+    pour integrer les middleware, name et prefix
+*/
 
 // =============== ************** ================================
 //                  ADMINISTRATION
@@ -54,19 +61,15 @@ Route::post('/ligne-inv', 'App\Http\Controllers\Stock\InventaireController@newLi
 // =============== ************** ================================
 //                    ACHTAT
 // =============== ************** ================================
-Route::get('/nouvelleFacture', function () {
-    return view('achat.nouvelleFacture');
-});
+Route::get('/nouvelleFacture', 'App\Http\Controllers\Achat\NouvellefactureController@index');
+Route::get('/facturesFournisseur', 'App\Http\Controllers\Achat\ListefactureController@index');
+Route::get('/compteFournisseur', 'App\Http\Controllers\Achat\ComptefournisseurController@index');
+Route::get('/reglementFacture', 'App\Http\Controllers\Achat\ReglementFactureController@index');
 
-Route::get('/compteFournisseur', function () {
-    return view('achat.interrogerCompteFournisseur');
-});
-
-Route::get('/facturesFournisseur', function () {
-    return view('achat.facturesFournisseur');
-});
-
-
+Route::post('/ligne-facture', 'App\Http\Controllers\Achat\NouvellefactureController@addmarchandise');
+Route::post('/enregistrer-factureachat', 'App\Http\Controllers\Achat\NouvellefactureController@savefacture');
+Route::post('/fourni-activities', 'App\Http\Controllers\Achat\ComptefournisseurController@activities');
+Route::post('/regler-facture', 'App\Http\Controllers\Achat\ReglementFactureController@soldbills');
 // =============== ************** ================================
 //                  VENTE & VENTE EN LIGNE
 // =============== ************** ================================
@@ -86,7 +89,11 @@ Route::get('/ventesComptoir', function () {
     return view('ventesComptoir');
 });
 
-
+// =============== ************** ================================
+//                  REDIRECT HOME
+// =============== ************** ================================
 Route::get('/', function () {
     return redirect('/interrogerArticles');
 });
+
+

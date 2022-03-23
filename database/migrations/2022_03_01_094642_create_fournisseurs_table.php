@@ -20,8 +20,7 @@ class CreateFournisseursTable extends Migration
             $table->string('prenom');
             $table->string('telephone');
             $table->integer('solde');
-            $table->string('derniere_modif_solde');
-            $table->date('date_derniere_modif_solde');
+            $table->dateTime('date_dernier_calcul_solde')->nullable();
             $table->string('numero_fournisseur');
             $table->string('type_fournisseur');
             $table->timestamps();

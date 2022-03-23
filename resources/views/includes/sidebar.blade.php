@@ -40,8 +40,9 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="{{ url('nouvelleFacture') }}" id="linkNFA">Nouvelle Facture</a></li>
-                        <li><a href="{{ url('compteFournisseur') }}" id="linkICF">Interroger Compte Fourni.</a></li>
                         <li><a href="{{ url('facturesFournisseur') }}" id="linkFF">Liste Facture Fourni.</a></li>
+                        <li><a href="{{ url('reglementFacture') }}" id="linkLFC">Reglement Facture</a></li>
+                        <li><a href="{{ url('compteFournisseur') }}" id="linkICF">Suivi Compte Fourni.</a></li>
                     </ul>
                 </li>
 
@@ -50,9 +51,10 @@
                         <span class="micon dw dw-deal"></span><span class="mtext">Section Vente</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{{ url('nouvelleFactureVente') }}" id="linkNewFactureClient">Nouvelle Facture</a></li>
-                        <li><a href="{{ url('interrogerCompteClient') }}" id="linkICC">Interroger Compte Client</a></li>
-                        <li><a href="{{ url('listeFacturesClient') }}" id="linkLFC">Liste Facture Client</a></li>
+                        <li><a href="{{ url('nouvelleFactureVente') }}" id="linkNewFactureClient">Nouveau Ticket</a></li>
+                        <li><a href="{{ url('listeFacturesClient') }}" id="linkLFC">Liste Tickets Client</a></li>
+                        <li><a href="{{ url('reglementTicket') }}" id="linkLFC">Reglement Ticket</a></li>
+                        <li><a href="{{ url('interrogerCompteClient') }}" id="linkICC">Suivi Compte Client</a></li>
                     </ul>
                 </li>
 

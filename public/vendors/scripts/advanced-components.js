@@ -10,7 +10,9 @@
 			// verticalupclass: 'fa fa-plus',
 			// verticaldownclass: 'fa fa-minus'
 		});
-		$("input[name='demo3']").TouchSpin();
+		$("input[name='demo3']").TouchSpin({
+			max: 10000000,
+		});
 		$("input[name='demo1']").TouchSpin({
 			min: 0,
 			max: 100,

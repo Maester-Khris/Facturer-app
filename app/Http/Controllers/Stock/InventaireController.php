@@ -25,7 +25,8 @@ class InventaireController extends Controller
         'produit' => 'required',
         'newqte' => 'required',
     ]);
-    $this->stock->newLigneInventaire($request->produit, $request->newqte);
+    $today = date("Y-m-d");
+    $this->stock->newLigneInventaire($request->produit, $request->newqte, $today);
     return redirect('/inventaire');
    }
 }

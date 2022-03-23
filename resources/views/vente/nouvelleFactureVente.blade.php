@@ -30,7 +30,7 @@
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="index.html">Ventes</a></li>
-									<li class="breadcrumb-item active" aria-current="page">Nouvelle Factures</li>
+									<li class="breadcrumb-item active" aria-current="page">Nouveau Ticket</li>
 								</ol>
 							</nav>
 						</div>
@@ -44,7 +44,7 @@
 
 				<div class="card-box mb-30">
 					<div class="pd-20">
-						<h4 class="text-blue h4">Nouvelle Facture vente</h4>
+						<h4 class="text-blue h4">Nouveau Ticket vente</h4>
 					</div>
 
 					<div class="pd-20">

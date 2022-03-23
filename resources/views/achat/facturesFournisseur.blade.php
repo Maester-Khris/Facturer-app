@@ -57,54 +57,28 @@
 							<thead>
 								<tr>
 									<th class="table-plus datatable-nosort">Reference Fac.</th>
-									<th>Libellé Fac.</th>
 									<th>Fournisseur</th>
 									<th>Date Ach.</th>
-									<th>Total Fac.</th>
 									<th>Total Fac. <code>net</code></th>
+									<th>Statut <code>regelement</code></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td class="table-plus">Gloria F. Mead</td>
-									<td>Sagittarius</td>
-									<td>Frank Gather</td>
-									<td>12/09/2019</td>
-									<td>292000</td>
-									<td>292000</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>Gemini</td>
-									<td>S. Mayflower</td>
-									<td>02/02/2021 </td>
-									<td>20800</td>
-									<td>29200</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>Gemini</td>
-									<td>X. Katherina</td>
-									<td>13/02/2021 </td>
-									<td>1800</td>
-									<td>1800</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>Sagittarius</td>
-									<td>Khris Enter.</td>
-									<td>29/09/2021</td>
-									<td>300000</td>
-									<td>298000</td>
-								</tr>
-								<tr>
-									<td class="table-plus">Andrea J. Cagle</td>
-									<td>Gemini</td>
-									<td>Frankline R.</td>
-									<td>20/12/2021</td>
-									<td>298000</td>
-									<td>250000</td>
-								</tr>
+								@foreach ($factures as $fac)
+									<tr>
+										<td class="table-plus">{{$fac->code_facture}}</td>
+										<td>{{$fac->fournisseur->nom}}</td>
+										<td>{{  date('Y/m/d h:m:s',strtotime($fac->date_facturation)) }}</td>
+										<td>{{$fac->montant_net}}</td>
+										<td>
+											@if($fac->statut == true)
+												<code style="font-size: 15px; color:rgb(100, 214, 119);">terminé</code>
+											@else
+												<code style="font-size: 15px; color:brown;">non termine</code>
+											@endif
+										</td>
+									</tr>
+								@endforeach
 							</tbody>
 						</table>
 					</div>
