@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\MarchandiseTrait;
 
 class Marchandise extends Model
 {
     use HasFactory;
+    use MarchandiseTrait;
 
     protected $fillable=[
         'reference','designation','prix_achat','dernier_prix_achat',
@@ -22,4 +24,5 @@ class Marchandise extends Model
     public function inventoriers(){
         return $this->hasMany(Inventaire::class);
     }
+
 }

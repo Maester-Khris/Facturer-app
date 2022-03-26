@@ -57,23 +57,30 @@
 							<thead>
 								<tr>
 									<th class="table-plus datatable-nosort">Reference Fac.</th>
-									<th>Libellé Fac.</th>
-									<th>Clients</th>
+									<th>Client </th>
 									<th>Date Ach.</th>
-									<th>Total Fac.</th>
 									<th>Total Fac. <code>net</code></th>
+									<th>Statut <code>encaissement</code></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td class="table-plus">Gloria F. Mead</td>
-									<td>Sagittarius</td>
-									<td>Frank Gather</td>
-									<td>12/09/2019</td>
-									<td>292000</td>
-									<td>292000</td>
-								</tr>
-								<tr>
+								@foreach ($ventes as $vente)
+									<tr>
+										<td class="table-plus">{{$vente->code_vente}}</td>
+										<td>{{$vente->client->nom}}</td>
+										<td>{{  date('Y/m/d h:m:s',strtotime($vente->date_operation)) }}</td>
+										<td>{{$vente->montant_net}}</td>
+										<td>
+											@if($vente->statut == true)
+												<code style="font-size: 15px; color:rgb(100, 214, 119);">encaissé</code>
+											@else
+												<code style="font-size: 15px; color:brown;">non terminé</code>
+											@endif
+										</td>
+									</tr>
+								@endforeach
+								
+								{{-- <tr>
 									<td class="table-plus">Andrea J. Cagle</td>
 									<td>Gemini</td>
 									<td>S. Mayflower</td>
@@ -104,68 +111,13 @@
 									<td>20/12/2021</td>
 									<td>298000</td>
 									<td>250000</td>
-								</tr>
+								</tr> --}}
 							</tbody>
 						</table>
 					</div>
 				</div>
 
-				<div class="modal fade" id="Medium-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content" style="transform:translateX(20%);">
-							<div class="modal-header">
-								<h4 class="modal-title" id="myLargeModalLabel">Fiche du produit</h4>
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							</div>
-							<div class="modal-body">
-								<table class="table table-bordered table-striped">
-									<tbody>
-										<tr>
-											<th scope="row">Désignation</th>
-											<td>Honor Y L23</td>
-										</tr>
-										<tr>
-											<th scope="row">Unité achat</th>
-											<td>Carton</td>
-										</tr>
-										<tr>
-											<th scope="row" style="width: 35%;">Prix de vente</th>
-											<td  style="width: 45%;">125000</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix d'achat</th>
-											<td>5670</td>
-										</tr>
-										<tr>
-											<th scope="row">Dernier prix d'achat</th>
-											<td>6600</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix de gros</th>
-											<td>7200</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix au détail</th>
-											<td>4500</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix moyen pondéré</th>
-											<td>35000</td>
-										</tr>
-										<tr>
-											<th scope="row">Conditionnement</th>
-											<td>boite</td>
-										</tr>
-
-									</tbody>
-								</table>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -178,9 +130,9 @@
 
     <script type="text/javascript">
         $( document ).ready(function() {
-            $("#linkLFC").addClass("active");
-            $("#linkLFC").closest(".dropdown").addClass("show");
-            $("#linkLFC").closest(".submenu").css("display", 'block');
+            $("#linkLFFC").addClass("active");
+            $("#linkLFFC").closest(".dropdown").addClass("show");
+            $("#linkLFFC").closest(".submenu").css("display", 'block');
         });
     </script>
 

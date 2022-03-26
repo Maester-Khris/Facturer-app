@@ -15,7 +15,7 @@ class CreateCaissesTable extends Migration
     {
         Schema::create('caisses', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('libellé');
+            $table->string('libelle');
             $table->string('numero_caisse');
             $table->timestamps();
         });

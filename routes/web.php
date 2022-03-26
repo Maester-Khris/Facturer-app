@@ -70,20 +70,20 @@ Route::post('/ligne-facture', 'App\Http\Controllers\Achat\NouvellefactureControl
 Route::post('/enregistrer-factureachat', 'App\Http\Controllers\Achat\NouvellefactureController@savefacture');
 Route::post('/fourni-activities', 'App\Http\Controllers\Achat\ComptefournisseurController@activities');
 Route::post('/regler-facture', 'App\Http\Controllers\Achat\ReglementFactureController@soldbills');
+
+
 // =============== ************** ================================
 //                  VENTE & VENTE EN LIGNE
 // =============== ************** ================================
-Route::get('/nouvelleFactureVente', function () {
-    return view('vente.nouvelleFactureVente');
-});
+Route::get('/nouvelleFactureVente', 'App\Http\Controllers\Vente\NouvellefactureController@index');
+Route::get('/listeFacturesClient','App\Http\Controllers\Vente\ListefactureController@index');
+Route::get('/interrogerCompteClient', 'App\Http\Controllers\Vente\CompteclientController@index');
+Route::get('/reglementFactureVente', 'App\Http\Controllers\Vente\ReglementfactureController@index');
 
-Route::get('/interrogerCompteClient', function () {
-    return view('vente.interrogerCompteClient');
-});
-
-Route::get('/listeFacturesClient', function () {
-    return view('vente.listeFacturesClient');
-});
+Route::post('/ligne-facture-vente', 'App\Http\Controllers\Vente\NouvellefactureController@addmarchandise');
+Route::post('/enregistrer-facturevente', 'App\Http\Controllers\Vente\NouvellefactureController@savefacture');
+Route::post('/client-activities', 'App\Http\Controllers\Vente\CompteclientController@activities');
+Route::post('/regler-facture-vente', 'App\Http\Controllers\Vente\ReglementfactureController@soldvente');
 
 Route::get('/ventesComptoir', function () {
     return view('ventesComptoir');

@@ -19,7 +19,6 @@ class CreateComptoirsTable extends Migration
             $table->integer('personnel_id')->unsigned();
             $table->integer('caisse_id')->unsigned();
             $table->string('libelle');
-            $table->integer('comptabiliser');
             $table->timestamps();
             $table->foreign('depot_id')->references('id')->on('depots');
             $table->foreign('personnel_id')->references('id')->on('personnels');

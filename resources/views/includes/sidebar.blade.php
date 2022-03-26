@@ -51,9 +51,9 @@
                         <span class="micon dw dw-deal"></span><span class="mtext">Section Vente</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{{ url('nouvelleFactureVente') }}" id="linkNewFactureClient">Nouveau Ticket</a></li>
-                        <li><a href="{{ url('listeFacturesClient') }}" id="linkLFC">Liste Tickets Client</a></li>
-                        <li><a href="{{ url('reglementTicket') }}" id="linkLFC">Reglement Ticket</a></li>
+                        <li><a href="{{ url('nouvelleFactureVente') }}" id="linkNewFactureClient">Nouvelle Facture Client</a></li>
+                        <li><a href="{{ url('listeFacturesClient') }}" id="linkLFFC">Liste Factures Client</a></li>
+                        <li><a href="{{ url('reglementFactureVente') }}" id="linkLFCC">Reglement Facture Client</a></li>
                         <li><a href="{{ url('interrogerCompteClient') }}" id="linkICC">Suivi Compte Client</a></li>
                     </ul>
                 </li>

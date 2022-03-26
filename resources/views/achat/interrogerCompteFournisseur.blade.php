@@ -4,8 +4,8 @@
 		<!-- Basic Page Info -->
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
-        @include('includes/css_assets')
-	  <meta name="csrf-token" content="{{ csrf_token() }}" />
+		@include('includes/css_assets')
+		<meta name="csrf-token" content="{{ csrf_token() }}" />
 	</head>
 <body>
 
@@ -50,23 +50,24 @@
 	    
 					<div class="pd-20" style="padding-top: 0;">
 						{{-- {{url('fourni-activities')}} --}}
-					    <div>
-						  	<div class="row">
-								<div class="col-md-3 col-sm-12">
-									<div class="form-group">
-										<label>Fournisseur</label>
-										<input id="fourni" type="text" name="fournisseur" class="form-control" placeholder="rechercher le fournisseur">
-									</div>
-								</div>
-								<div class="col-md-3 col-sm-12" style="padding-top:35px;">
-									<a  href="#" class="activities btn btn-primary">
-										Consulter transactions
-									</a>
-								</div>
-						  	</div>
-						</div>
+					     <div>
+					         <div class="row">
+					             <div class="col-md-3 col-sm-12">
+					                 <div class="form-group">
+					                     <label>Fournisseur</label>
+					                     <input id="fourni" type="text" name="fournisseur" class="form-control"
+					                         placeholder="rechercher le fournisseur">
+					                 </div>
+					             </div>
+					             <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+					                 <a href="#" class="activities btn btn-primary">
+					                     Consulter transactions
+					                 </a>
+					             </div>
+					         </div>
+					     </div>
 					</div>
-				  </div>
+				</div>
 
 				<!-- basic table  Start -->
 				<div class="pd-20 card-box mb-30" style="position: relative;">
@@ -84,13 +85,13 @@
 						</thead>
 						<tbody>
 							
-								{{-- <tr>
-									<td>{{$act->comptefournisseur->fournisseur->nom}}</td>
-									<td>{{$act->facture->code_facture}}</td>
-									<td>{{$act->facture->montant_total}}</td>
-									<td>{{  date('Y/m/d h:m:s',strtotime($act->date_facturation)) }}</td>
-									<td><code>-</code>{{$act->montant}}</td>
-								</tr> --}}
+							{{-- <tr>
+								<td>{{$act->comptefournisseur->fournisseur->nom}}</td>
+								<td>{{$act->facture->code_facture}}</td>
+								<td>{{$act->facture->montant_total}}</td>
+								<td>{{  date('Y/m/d h:m:s',strtotime($act->date_facturation)) }}</td>
+								<td><code>-</code>{{$act->montant}}</td>
+							</tr> --}}
 							
 						</tbody>
 					</table>

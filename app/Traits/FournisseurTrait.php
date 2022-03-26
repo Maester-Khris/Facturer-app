@@ -32,7 +32,7 @@ trait FournisseurTrait {
                         'debit'  => 0
                   ];
                   $activities->push($ligne);
-                  $pattern = 
+                  
                   $caisses = Comptecaisse::where('libele_operation','like','%'. $fac->code_facture)->get();
                   if($caisses != null){
                         foreach($caisses as $caisse){
@@ -51,22 +51,3 @@ trait FournisseurTrait {
             return $activities;
       }
 }
-
-// $factures = Facture::join("fournisseurs","fournisseurs.id","=","factures.fournisseur_id")
-//       ->where('fournisseurs.nom',$nom_fourni)      
-//       ->where('fournisseurs.depot_id',$id_depot)
-//       ->orderBy('fournisseurs.nom','asc')
-//       ->orderBy('factures.date_facturation','asc')
-//       ->select('factures.code_facture','factures.montant_total',
-//             'fournisseurs.nom','fournisseurs.prenom',
-//             'fournisseurs.solde', 
-//             'fournisseurs.date_dernier_calcul_solde', 
-//             'fournisseurs.solde')
-//       ->get();
-
-// $activites = Journalachat::with('facture')
-//       ->with(['comptefournisseur.fournisseur' => function($query) use ($id_fourni) {
-//             $query->where('id', $id_fourni);
-//       }])
-//       ->get();
-// return $activites;

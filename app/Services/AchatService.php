@@ -21,6 +21,9 @@ class AchatService{
       - tableau à affichr order by date desc
       - fonction generer code new facture et l'envoyer a chaque fois qu'on ouvre index new facture
       - quand est ce que on appelle updateprovider account
+      - liste des non paye ne prenne pas encore en compte le depot
+      - reglement vente et acht mettre les date en datetime
+      - liste marchandise coleur sur article en dessous du seuil
       -  admin gestion du journal comptable
       */
 
@@ -53,14 +56,6 @@ class AchatService{
        * controle du solde de caisse en fin de journéé: 
        *    solde a l'ouverture + somme encaisse - somme decaissement
        *    compare avec solde compté physiquement
-      */
-
-      /**
-       * pour vendre: 
-       * on enregistrer ticket
-       * on ecrit dans le journal de ventes
-       * credite le compte caisse (libele des operations)
-       * si client on debite compte client
       */
 
       /**
@@ -169,7 +164,6 @@ class AchatService{
       /**
        * Suivi des compte Fournisseur: 
        * affiche: founisseur, nom du compte ligne du journal des achat: debit et credit, 
-       * solde total du fournisseur
        */
       public function ProviderActivities($id_depot, $founi){
             $id = $this->getFourniId($founi);

@@ -26,11 +26,11 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>Relation Fournisseur</h4>
+								<h4>Relation Client</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><a href="index.html">Achat</a></li>
+									<li class="breadcrumb-item"><a href="index.html">Vente</a></li>
 									<li class="breadcrumb-item active" aria-current="page">Reglement Factures</li>
 								</ol>
 							</nav>
@@ -57,21 +57,21 @@
                             <table class="table hover multiple-select-row data-table-export nowrap">
                                 <thead>
                                     <tr>
-                                          <th>Nom Fourni.</th>
-                                          <th>Reference Fac.</th>
+                                          <th>Nom Client</th>
+                                          <th>Reference Vente</th>
                                           <th>Date facturation</th>
                                           <th>Total <code>.net</code></th>
                                           <th>Reste <code>à payer</code></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($impayes as $fac)
+                                    @foreach($impayes as $vente)
                                         <tr>
-                                            <td class="table-plus">{{$fac->fournisseur->nom}}</td>
-                                            <td>{{$fac->code_facture}}</td>
-                                            <td>{{$fac->date_facturation}}</td>
-                                            <td>{{$fac->montant_net}}</td>
-                                            <td>{{$fac->reste_facture}}</td>
+                                            <td class="table-plus">{{$vente->client->nom}}</td>
+                                            <td>{{$vente->code_vente}}</td>
+                                            <td>{{$vente->date_operation}}</td>
+                                            <td>{{$vente->montant_net}}</td>
+                                            <td>{{$vente->reste_vente}}</td>
                                         </tr>
                                    @endforeach
                                 </tbody>
@@ -83,20 +83,20 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content" style="transform:translateX(20%);">
                                 <div class="modal-header">
-                                    <h4 class="modal-title" id="myLargeModalLabel">Regler facture</h4>
+                                    <h4 class="modal-title" id="myLargeModalLabel">Regler facture vente</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="form-regler" action="{{url('regler-facture')}}" method="POST">
+                                    <form id="form-regler" action="{{url('regler-facture-vente')}}" method="POST">
                                           @csrf
                                           <div class="form-group ">
-                                            <label>Fournisseur</label>
-                                            <input id="fourni" class="form-control" type="text" name="fournisseur">
+                                            <label>Client</label>
+                                            <input id="client" class="form-control" type="text" name="client">
                                           </div>
                                           <div class="row">
                                                 <div class="col-md-6 col-6">
                                                       <div class="form-group">
-                                                            <input id="codefac" class="form-control" type="text" name="codefacture">
+                                                            <input id="codevente" class="form-control" type="text" name="codevente">
                                                       </div>
                                                 </div>
                                                 <div class="col-md-6 col-6">
@@ -132,9 +132,9 @@
 
     <script type="text/javascript">
         $( document ).ready(function() {
-            $("#linkLFC").addClass("active");
-            $("#linkLFC").closest(".dropdown").addClass("show");
-            $("#linkLFC").closest(".submenu").css("display", 'block');
+            $("#linkLFCC").addClass("active");
+            $("#linkLFCC").closest(".dropdown").addClass("show");
+            $("#linkLFCC").closest(".submenu").css("display", 'block');
         });
     </script>
 
@@ -146,11 +146,11 @@
     </script>
     <script type="text/javascript">
       $("button#voir").click(function(event){
-            var table = $('table.multiple-select-row').DataTable();
+            var table = $('table.multiple-select-row').DataTable(); 
             let row = table.row('.selected').data();
             console.log(row);
-            $('input#fourni').val(row[0]);
-            $('input#codefac').val(row[1]);
+            $('input#client').val(row[0]);
+            $('input#codevente').val(row[1]);
             $('ins#net').text(row[3]);
       });
     </script>

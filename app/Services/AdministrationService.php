@@ -14,6 +14,11 @@ use DateTime;
 class AchatService{
 
       /**
+       * Condition actuel
+       * on a un seul personnel, une caisse et un comptoir, un seul depot
+      */
+
+      /**
        * Plan des compte: 
        *    Classification des comtes géré et fonctions de ceux-ci : 
        *    Clients, fournisseurs, charge personnel

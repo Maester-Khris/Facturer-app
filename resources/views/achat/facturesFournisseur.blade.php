@@ -84,63 +84,7 @@
 					</div>
 				</div>
 
-				<div class="modal fade" id="Medium-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content" style="transform:translateX(20%);">
-							<div class="modal-header">
-								<h4 class="modal-title" id="myLargeModalLabel">Fiche du produit</h4>
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							</div>
-							<div class="modal-body">
-								<table class="table table-bordered table-striped">
-									<tbody>
-										<tr>
-											<th scope="row">Désignation</th>
-											<td>Honor Y L23</td>
-										</tr>
-										<tr>
-											<th scope="row">Unité achat</th>
-											<td>Carton</td>
-										</tr>
-										<tr>
-											<th scope="row" style="width: 35%;">Prix de vente</th>
-											<td  style="width: 45%;">125000</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix d'achat</th>
-											<td>5670</td>
-										</tr>
-										<tr>
-											<th scope="row">Dernier prix d'achat</th>
-											<td>6600</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix de gros</th>
-											<td>7200</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix au détail</th>
-											<td>4500</td>
-										</tr>
-										<tr>
-											<th scope="row">Prix moyen pondéré</th>
-											<td>35000</td>
-										</tr>
-										<tr>
-											<th scope="row">Conditionnement</th>
-											<td>boite</td>
-										</tr>
-
-									</tbody>
-								</table>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
+				
 			</div>
 		</div>
 	</div>
