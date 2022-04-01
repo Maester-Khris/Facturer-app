@@ -6,6 +6,20 @@
 		<title>Facturer-App</title>
 		@include('includes/css_assets')
 		<meta name="csrf-token" content="{{ csrf_token() }}" />
+		<style>
+			.center-foot{
+			    display:flex; 
+			     flex-direction:row;
+			     justify-content:center;
+			     align-items:center;
+			}
+			tr td:nth-child(5){
+				text-align: right;
+			}
+			tr td:nth-child(6){
+				text-align: right;
+			}
+		</style>
 	</head>
 <body>
 
@@ -52,13 +66,23 @@
 						{{-- {{url('client-activities')}} --}}
 					     <div>
 					         <div class="row">
-					             <div class="col-md-3 col-sm-12">
+					             {{-- <div class="col-md-3 col-sm-12">
 					                 <div class="form-group">
 					                     <label>Client</label>
 					                     <input id="client" type="text" name="client" class="form-control"
 					                         placeholder="rechercher le client">
 					                 </div>
-					             </div>
+					             </div> --}}
+							 <div class="col-md-3">
+								<div class="form-group">
+									<label>Selectionner le Client</label>
+									<select id="client" class="selectpicker form-control" data-style="btn-outline-primary" name="client" data-size="5">
+										@foreach ($clients as $client)
+										<option value="{{$client->nom}}">{{$client->nom}}</option>
+										@endforeach
+									</select>
+								</div>
+							</div>
 					             <div class="col-md-3 col-sm-12" style="padding-top:35px;">
 					                 <a href="#" class="activities btn btn-primary">
 					                     Consulter transactions
@@ -96,7 +120,7 @@
 										<div class="form-group d-flex flex-column" >
 											<label class="align-self-end">Total solde Compte</label>
 											<input id="soldeclient" type="number" class="form-control"
-											placeholder="0000" readonly style="font-size:15px;font-weight:bold;">
+											placeholder="0000" readonly style="font-size:15px;font-weight:bold;text-align:right;">
 										</div>
 									</div>
 								</div>
@@ -109,7 +133,7 @@
 		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot center-foot">
         @include('includes/footer')
     </div>
 
@@ -131,7 +155,8 @@
 	</script>
 	<script type="text/javascript">
 		$('.activities').click(function(e){
-			let client = $('input#client').val();
+			// let client = $('input#client').val();
+			let client = $('select#client').children("option:selected").val();
 			let _token = $('meta[name="csrf-token"]').attr('content');
 			
 			$.ajax({
@@ -148,13 +173,15 @@
 						console.log(response.success);
 
 						var table = $('table.data-table').DataTable();
+						table.rows().remove();
 						for( var i=0; i<activities.length; i++){
 							let date_vente = mydate(activities[i].date_operation);
 							table.row.add([
 								'' + activities[i].client ,
 								activities[i].codevente,
 								activities[i].total,
-								date_vente,
+								// date_vente,
+								activities[i].date_operation,
 								activities[i].credit,
 								activities[i].debit
 							]).draw();

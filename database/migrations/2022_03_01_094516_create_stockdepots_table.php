@@ -20,7 +20,7 @@ class CreateStockdepotsTable extends Migration
             $table->integer('limite');
             $table->integer('quantite_optimal');
             $table->integer('quantite_stock');
-            $table->date('date_derniere_modif_qté')->nullable();
+            $table->dateTime('date_derniere_modif_qté')->nullable();
             $table->timestamps();
             $table->foreign('marchandise_id')->references('id')->on('marchandises');
             $table->foreign('depot_id')->references('id')->on('depots');

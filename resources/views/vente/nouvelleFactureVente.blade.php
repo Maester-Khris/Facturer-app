@@ -6,6 +6,14 @@
 		<title>Facturer-App</title>
         @include('includes/css_assets')
 	  <meta name="csrf-token" content="{{ csrf_token() }}" />
+	  <style>
+		.center-foot{
+		    display:flex; 
+		     flex-direction:row;
+		     justify-content:center;
+		     align-items:center;
+		 }
+	   </style>
 	</head>
 <body>
 
@@ -19,7 +27,7 @@
         @include('includes/sidebar')
     </div>
 
-    <div class="main-container">
+    <div class="main-container" style="position: relative;">
 		<div class="pd-ltr-20 xs-pd-20-10">
 			<div class="min-height-200px">
 				<div class="page-header">
@@ -51,10 +59,20 @@
 					<div class="pd-20">
 						<form action="">
 							<div class="row">
-								<div class="col-md-3 col-sm-12">
+								{{-- <div class="col-md-3 col-sm-12">
 									<div class="form-group">
 										<label>Client</label>
 										<input id="client" type="text" class="form-control" placeholder="nom du client">
+									</div>
+								</div> --}}
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>Selectionner le Client</label>
+										<select id="client" class="selectpicker form-control" data-style="btn-outline-primary" name="client" data-size="5">
+											@foreach ($clients as $client)
+											<option value="{{$client->nom}}">{{$client->nom}}</option>
+											@endforeach
+										</select>
 									</div>
 								</div>
 								<div class="col-md-3 col-sm-12">
@@ -66,7 +84,7 @@
 								<div class="col-md-3 col-sm-12">
 									<div class="form-group">
 										<label>Code Vente</label>
-										<input id="codevente" type="text" class="form-control" value="VN0023" readonly>
+										<input id="codevente" type="text" class="form-control" value="{{$code}}" readonly>
 									</div>
 								</div>
 								<div class="col-md-3 col-sm-12">
@@ -80,7 +98,7 @@
 								<div class="col-md-3 col-sm-12">
 									<div class="form-group ">
 										<label>nombre d'articles</label>
-										<input id="demo3" type="text" value="" name="demo3">
+										<input id="demo3" type="number" value="" name="demo3">
 									</div>
 								</div>
 								<div class="col-md-3">
@@ -161,9 +179,17 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="alert alert-warning alert-dismissible fade show" role="alert" style="position:absolute;top:260px;left:41%;z-index:900;display:none;">
+			<strong>Alerte !</strong> 
+			<span id="notif_body">You should check in on some of those fields below.</span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 
@@ -174,6 +200,7 @@
             $("#linkNewFactureClient").addClass("active");
             $("#linkNewFactureClient").closest(".dropdown").addClass("show");
             $("#linkNewFactureClient").closest(".submenu").css("display", 'block');
+		$('.alert-warning').hide();
         });
     </script>
 
@@ -196,6 +223,7 @@
 			type:"POST",
 			data:{
 				'designation':produit,
+				'quantite':quantite,
 				'_token': _token
 			},
 			success:function(response){
@@ -225,6 +253,8 @@
 				}
 			},
 			error: function(error) {
+				$('.alert-warning span#notif_body').text(error.responseJSON.error)
+				$('.alert-warning').show();
 				console.log(error);
 			}
 		});
@@ -237,7 +267,8 @@
 		let _token = $('meta[name="csrf-token"]').attr('content');
 
 		var table = $('table.checkbox-datatable').DataTable();
-		let client = $('#client').val();
+		// let client = $('#client').val();
+		let client = $('select#client').children("option:selected").val()
 		let comptoir = $('#comptoir').val();
 		let codevente = $('#codevente').val();
 		let total = $('#totalfacture').val();

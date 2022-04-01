@@ -6,6 +6,14 @@
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
+    <style>
+        .center-foot{
+            display:flex; 
+             flex-direction:row;
+             justify-content:center;
+             align-items:center;
+         }
+     </style>
 </head>
 
 <body>
@@ -61,12 +69,12 @@
                                         <input type="text" name="produit" class="form-control">
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-sm-12">
+                                {{-- <div class="col-md-3 col-sm-12">
                                     <div class="form-group">
                                         <label>Quantite machine</label>
                                         <input type="text" class="form-control" readonly>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-3 col-sm-12">
                                     <div class="form-group">
                                         <label>Quantité réelle</label>
@@ -84,7 +92,7 @@
                     </div>
                 </div>
 		    
-                <div class="card-box mb-30" style="padding-top: 20px;">
+                <div class="card-box mb-30" style="padding: 20px 0;">
                     <table class="data-table table stripe hover nowrap">
                         <thead>
                             <tr>
@@ -105,7 +113,8 @@
                                 <td>{{$ligne->quantite_reajuste}}</td>
                                 <td>{{$ligne->difference}}</td>
                                 <td>
-                                    {{ date('Y/m/d',strtotime($ligne->date_reajustement))}}
+                                    {{$ligne->date_reajustement}}
+                                    {{-- {{ date('Y/m/d h:m:s',strtotime($ligne->date_reajustement))}} --}}
                                 </td>
 
                             </tr>
@@ -118,7 +127,7 @@
         </div>
     </div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

@@ -1,3 +1,6 @@
+@php
+	date_default_timezone_set("Africa/Douala");
+@endphp
 <!DOCTYPE html>
 <html>
 	<head>
@@ -5,6 +8,14 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
         @include('includes/css_assets')
+	  <style>
+		.center-foot{
+		    display:flex; 
+		     flex-direction:row;
+		     justify-content:center;
+		     align-items:center;
+		 }
+	   </style>
 	</head>
 <body>
 
@@ -74,7 +85,8 @@
 											<td><span class="badge badge-dark">{{$mvt->type_mouvement}}</span></td>
 										@endif
 
-										<td>{{ date('Y/m/d',strtotime($mvt->date_operation))}}</td>
+										{{-- <td>{{ date('Y/m/d h:m:s', strtotime($mvt->date_operation))}}</td> --}}
+										<td>{{ $mvt->date_operation }}</td>
 
 										<td>{{ is_null($mvt->destination) ? '/' : $mvt->destination }}</td>
 
@@ -91,7 +103,7 @@
 		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

@@ -20,7 +20,7 @@ class CreateInventairesTable extends Migration
             $table->integer('ancienne_quantite');
             $table->integer('quantite_reajuste');
             $table->integer('difference');
-            $table->date('date_reajustement');
+            $table->dateTime('date_reajustement');
             $table->timestamps();
             $table->foreign('stockdepot_id')->references('id')->on('stockdepots');
             $table->foreign('marchandise_id')->references('id')->on('marchandises');

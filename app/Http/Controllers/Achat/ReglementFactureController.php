@@ -17,13 +17,12 @@ class ReglementFactureController extends Controller
     }
 
     public function index(){
-        $impayes = Facture::getByStatus();
+        $impayes =  $this->achat->ListUnSoldedFactures(1);  
         // dd($impayes);
         return view('achat.reglement')->with(compact('impayes'));
     }
 
     public function soldbills(Request $request){
- 
         $this->achat->soldBill($request->fournisseur, $request->codefacture, $request->demo3);
         return redirect('/reglementFacture');
     }

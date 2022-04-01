@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\StockService;
+use DateTime;
 
 class InventaireController extends Controller
 {
@@ -25,8 +26,8 @@ class InventaireController extends Controller
         'produit' => 'required',
         'newqte' => 'required',
     ]);
-    $today = date("Y-m-d");
-    $this->stock->newLigneInventaire($request->produit, $request->newqte, $today);
+    $today = new DateTime();
+    $this->stock->newLigneInventaire($request->produit, $request->newqte, $today, false);
     return redirect('/inventaire');
    }
 }

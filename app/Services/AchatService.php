@@ -14,74 +14,25 @@ use DateTime;
 
 class AchatService{
 
-      /* Notes:
-      - combien de personne peuvent faire les ticket et les facture. connaitre le nom de l'employé
-      - pensez a mettre les date de stock en datetime, fournisseur et client + mouvement sotck, inventaire
-      - Quand est ce que on a besoin pour une facture de connaitre la liste des marchandises et les quantite
-      - tableau à affichr order by date desc
-      - fonction generer code new facture et l'envoyer a chaque fois qu'on ouvre index new facture
-      - quand est ce que on appelle updateprovider account
-      - liste des non paye ne prenne pas encore en compte le depot
-      - reglement vente et acht mettre les date en datetime
-      - liste marchandise coleur sur article en dessous du seuil
-      -  admin gestion du journal comptable
-      */
-
-      /* Notes fonctionement des compte: fournisseur et client
-       fournisseur: 
-       - credité: apres approvisioneme -> reception facture a payer
-       - debité: apres reglement de la facture
-
-       client:
-       - debite: apres vente -> ticket caisse
-       - credite: lorsque client paye ticket
-
-       solde compte = diff(total(debit) - total(credit))
-      */
-
-      /** Notes: Journal comptable
-       * journal des achat et ventes
-       * contient: facture, compte concerne, montant, date
-       * a chaque fois qu'on cree fourinsseur/client on cree aussi leur compte
-      */
-
-      /** Gestion compte caisse
-       * solde doit etre debiteur ou null
-       * total des ventes journalieres
-       * detail: date, designation, prix, libele des operations
-       * operation compta
-       *    montant augmente pour les ventes (debité)
-       *     montant diminué pour les achat (credité)
-       * 
-       * controle du solde de caisse en fin de journéé: 
-       *    solde a l'ouverture + somme encaisse - somme decaissement
-       *    compare avec solde compté physiquement
-      */
-
-      /**
-       * Fonctions utilitaires
-      */
       public function getFourni($founi){
-            $fourni = Fournisseur::where('nom', $founi)->first();
-            return $fourni;
+           return Fournisseur::getFournisseur($founi);
       }
-
       public function getFourniId($founi){
-            $fourni = Fournisseur::where('nom', $founi)->first();
-            return $fourni->id;
+            return Fournisseur::getFournisseurId($founi);
       }
-
       public function getFourniSolde($founi){
-            $fourni = Fournisseur::where('nom', $founi)->first();
-            return $fourni->solde;
+            return Fournisseur::getFournisseurSolde($founi);
       }
-
-      /**
-       * Liste des factures d'achat d'un depot
-      */
       public function listFacture($id_depot){
             return Facture::getFacList($id_depot);
       }
+      public function allDepotFactureCount($id_depot){
+            return Facture::countFactures($id_depot);
+      }
+      public function ListUnSoldedFactures($id_depot){
+            return Facture::unSoldedFactures($id_depot);
+      }
+
 
       /**
        * Enregistrement facture et operations comptables
@@ -108,11 +59,11 @@ class AchatService{
             $journal->save();
       }
 
-      public function UpdateSoldeFourni($fournisseur, $date){
+      public function UpdateSoldeFourni($fournisseur){
             $total_debit = Comptefournisseur::getTotalDebit($fournisseur->id);
             $total_credit = Comptefournisseur::getTotalCredit($fournisseur->id);
             $fournisseur->solde = $total_debit - $total_credit;
-            $fournisseur->date_dernier_calcul_solde = $date;
+            $fournisseur->date_dernier_calcul_solde = new DateTime();
             $fournisseur->save();
       }
 
@@ -128,7 +79,7 @@ class AchatService{
            
             // $fournisseur->compte->save($compte);
             // calcul du new solde fournisseur 
-            $this->UpdateSoldeFourni($fournisseur, $today);
+            $this->UpdateSoldeFourni($fournisseur);
             return $compte->id;
       }
 
@@ -139,7 +90,7 @@ class AchatService{
        *    on credite compte caisse: date op, montant, libelle, 
       */
       public function soldBill($founi, $codefac, $montant){
-            $today= date("Y-m-d");
+            $today= new DateTime();
             $idcompte = $this->updateComptaFournisseurs($founi,$montant,$today,"Débit");
             $compte_caisse = new Comptecaisse;
             $compte_caisse->libele_operation = "Reglement facture ". $codefac;

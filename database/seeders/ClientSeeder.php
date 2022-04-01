@@ -19,7 +19,7 @@ class ClientSeeder extends Seeder
             [
                 'id' => 1,
                 'depot_id' => 1,
-                'nom' => 'NGANE EBOUTOU',
+                'nom' => 'Ngane Eboutou',
                 'prenom' => 'Elizé',
                 'telephone' => '+237 98764356',
                 'solde' => 0,
@@ -31,7 +31,7 @@ class ClientSeeder extends Seeder
             [
                 'id' => 2,
                 'depot_id' => 1,
-                'nom' => 'TAROVSKY',
+                'nom' => 'Tarovsky Tall',
                 'prenom' => 'Igo',
                 'telephone' => '+237 90776353',
                 'solde' => 0,

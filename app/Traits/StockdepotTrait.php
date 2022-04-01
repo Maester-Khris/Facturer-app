@@ -2,12 +2,29 @@
 
 namespace App\Traits;
 use App\Models\Stockdepot;
+use App\Models\Marchandise;
+use Illuminate\Support\Facades\DB;
 
 trait StockdepotTrait {
 
       public function marchandiseQuantityStock($marchandise){
          $stock_march = Stockdepot::where("marchandise_id",$marchandise)->select('quantite_stock')->first();
          return $stock_march->quantite_stock;
+      }
+
+      public static function checkStockMarchDispoByDesign($designation, $quantite){
+            $idmarch = Marchandise::getMarchId($designation);
+            $march = Stockdepot::where('marchandise_id', $idmarch)
+                  ->where('quantite_stock','>',$quantite)
+                  ->first();
+            return  $march;
+      }
+      public static function checkStockMarchFullByDesign($designation){
+            $idmarch = Marchandise::getMarchId($designation);
+            $march = Stockdepot::where('marchandise_id', $idmarch)
+                  ->first();
+            
+            return  $march->quantite_stock == $march->quantite_optimal ? true : false;
       }
 
       public static function getAllStockArticles($id_depot){
@@ -24,34 +41,40 @@ trait StockdepotTrait {
             // pour chaque article: on affiche la reference, la designation,
             // la qté en stock, la der qte deplace, date der maj, der type operation
 
-            $articles = Stockdepot::with('marchandises')->where('depot_id',$id_depot)->get();
-            foreach($articles as $article){
-                  
+            $articles = DB::table("stockdepots")
+                  ->get();
+
+            $result = DB::select("
+                  SELECT stockdepots.marchandise_id, stockdepots.quantite_stock, stockdepots.date_derniere_modif_qté, Last_update.quantite_mouvement, Last_update.type_mouvement
+                  FROM stockdepots
+                  LEFT JOIN 
+                  (SELECT * FROM facturer.mouvementstocks
+                  INNER JOIN (
+                        SELECT marchandise_id as marchandise, MAX(date_operation) as date_mouv FROM facturer.mouvementstocks
+                  GROUP BY marchandise_id
+                  )Latestmarchandise
+                  ON Latestmarchandise.marchandise = mouvementstocks.marchandise_id
+                  AND Latestmarchandise.date_mouv = mouvementstocks.date_operation
+                  ORDER BY mouvementstocks.marchandise_id) as Last_update
+                  ON stockdepots.marchandise_id = Last_update.marchandise_id;
+            ");
+            // dd($result);
+
+            $articles = collect();
+            foreach($result as $article){
+                  $march = Marchandise::getMarchById($article->marchandise_id);
+                  $ligne = [
+                        'reference'  =>  $march->reference,            
+                        'designation'  => $march->designation,
+                        'quantite_stock'  => $article->quantite_stock,
+                        'der_qte_mouvement'  => $article->quantite_mouvement,
+                        'date_der_mouvement'  => $article->date_derniere_modif_qté,
+                        'type_mouvement'  => $article->type_mouvement,
+                  ];
+                  if(!is_null($article->date_derniere_modif_qté)){
+                        $articles->push($ligne);
+                  }
             }
+           return $articles;
       }
 }
-
-
-
-
-
-
-
-// ->join(\DB::raw('
-// SELECT * FROM mouvementstocks mv1 WHERE id = ( SELECT id FROM mouvementstocks mv2 WHERE date_operation = MAX(mv2.date_operation) )
-// '), function($join){
-// $join->on('stockdepots.marchandise_id','=','mouvementstocks.marchandise_id');
-// })
-
-// ->join("mouvementstocks","mouvementstocks.marchandise_id","=","stockdepots.marchandise_id")
-// ->orderBy("mouvementstocks.date_operation","desc")
-// ->limit(1)
-// ->where("stockdepots.date_derniere_modif_qté","=","mouvementstocks.date_operation")
-
-// ->join("mouvementstocks", function($join){
-//       $join->on("mouvementstocks.marchandise_id","=","stockdepots.marchandise_id")
-//       ->on("mouvementstocks.date_operation",\DB::raw(
-//             'SELECT MAX(mouvementstocks.date_operation) FROM mouvementstocks'
-//       ));
-// })
-// ->select("stockdepots.quantite_stock","stockdepots.date_derniere_modif_qté","mouvementstocks.type_mouvement","mouvementstocks.quantite_mouvement","marchandises.reference","marchandises.designation")

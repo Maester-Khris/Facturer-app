@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Achat;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Marchandise;
+use App\Models\Fournisseur;
 use App\Services\AchatService;
 use App\Services\StockService;
-use Date;
+use App\Services\DataService;
+use DateTime;
 
 class NouvellefactureController extends Controller
 {
@@ -19,12 +21,20 @@ class NouvellefactureController extends Controller
     }
 
     public function index(){
-        return view('achat.nouvelleFacture');
+        $fournisseurs = Fournisseur::getByDepot(1); ## ajouter juste pour faciliter les test
+        $nbrows = $this->achat->allDepotFactureCount(1);
+        $code =  DataService::genCode("Facture", $nbrows + 1);
+        return view('achat.nouvelleFacture')->with('code',$code)->with(compact('fournisseurs'));
     }
 
     public function addmarchandise(Request $request){
-        $produit = Marchandise::where('designation',$request->designation)->select('reference','designation','prix_achat','dernier_prix_achat')->first();
-        return response()->json(['success'=> $produit]);
+        $is_full = $this->stock->stockMarchFull($request->designation);
+        if($is_full){
+            return response()->json(['error'=> 'La quantité en stock de ce produit est déja optimal.'],400);
+        }else{
+            $produit = Marchandise::where('designation',$request->designation)->select('reference','designation','prix_achat','dernier_prix_achat')->first();
+            return response()->json(['success'=> $produit]);
+        }
     }
     
     /**
@@ -38,7 +48,7 @@ class NouvellefactureController extends Controller
     */
     public function savefacture(Request $request){
         
-        $today= date("Y-m-d");
+        $today= new DateTime();
         $fourni = $this->achat->getFourni($request->facture['fournisseur']);
 
         $fac =  $this->achat->newFacture(

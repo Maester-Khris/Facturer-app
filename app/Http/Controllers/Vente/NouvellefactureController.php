@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Comptoir;
 use App\Services\VenteService;
 use App\Services\StockService;
+use App\Services\DataService;
 use Date;
 use DateTime;
 
@@ -22,12 +23,20 @@ class NouvellefactureController extends Controller
     }
 
     public function index(){
-        return view('vente.nouvelleFactureVente');
+        $clients = Client::allDepotClient(1); ## ajouter juste pour faciliter les test
+        $nbrows = $this->vente->allDepotVenteCount(1);
+        $code =  DataService::genCode("Vente", $nbrows + 1);
+        return view('vente.nouvelleFactureVente')->with('code',$code)->with(compact('clients'));
     }
 
     public function addmarchandise(Request $request){
-        $produit = Marchandise::where('designation',$request->designation)->select('reference','designation','prix_vente_detail','prix_vente_gros')->first();
-        return response()->json(['success'=> $produit]);
+        $verif = $this->stock->stockMarchDisponibility($request->designation,$request->quantite);
+        if (is_null($verif)) {
+            return response()->json(['error'=> 'Produit introuvable ou quantité en stock insuffisante.'],400);
+        } else {
+            $produit = Marchandise::where('designation',$request->designation)->select('reference','designation','prix_vente_detail','prix_vente_gros')->first();
+            return response()->json(['success'=> $produit]);
+        }
     }
 
     public function savefacture(Request $request){

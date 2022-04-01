@@ -36,17 +36,6 @@ class VenteService{
        * si client on debite compte client
       */
 
-      /* Notes fonctionement des compte: fournisseur et client
-       fournisseur: 
-       - credité: apres approvisioneme -> reception facture a payer
-       - debité: apres reglement de la facture
-
-       client:
-       - debite: apres vente -> ticket caisse
-       - credite: lorsque client paye ticket
-
-       solde compte = diff(total(debit) - total(credit))
-      */
 
       public function ListVente($id_depot){
            return Vente::allVente($id_depot);
@@ -54,11 +43,14 @@ class VenteService{
       public static function getVenteByCode($codevente){
            return Vente::getByCode($codevente);
       }
-      public function ListNonPaidVentes(){
-           return Vente::unpaidVente();
+      public function ListNonPaidVentes($id_depot){
+           return Vente::unpaidVente($id_depot);
       }
       public function getClientSolde($client){
            return Client::retrieveSold($client);
+      }
+      public function allDepotVenteCount($id_depot){
+            return Vente::countVentes($id_depot);
       }
 
 
@@ -102,7 +94,7 @@ class VenteService{
             ]);
            
             // calcul du new solde fournisseur 
-            $this->updateSoldeClient($client, $today);
+            $this->updateSoldeClient($client);
             return $compte->id;
       }
 
@@ -129,7 +121,7 @@ class VenteService{
       }
 
       public function soldVente($client, $codevente, $montant){
-            $today= date("Y-m-d");
+            $today= new DateTime();
             $idcompte = $this->updateComptaClient($client,$montant,$today,"Crédit");
             $compte_caisse = new Comptecaisse;
             $compte_caisse->libele_operation = "Reglement vente ". $codevente;

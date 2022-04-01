@@ -29,7 +29,7 @@ class FournisseurSeeder extends Seeder
             [
                 'id' => 2,
                 'depot_id' => 1,
-                'nom' => 'NDENG',
+                'nom' => 'Ndengue',
                 'prenom' => 'Rodrigue',
                 'telephone' => '+237 56982345',
                 'solde' => 0,

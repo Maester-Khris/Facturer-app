@@ -5,6 +5,14 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
         @include('includes/css_assets')
+        <style>
+            .center-foot{
+                display:flex; 
+                 flex-direction:row;
+                 justify-content:center;
+                 align-items:center;
+             }
+         </style>
 	</head>
 <body>
 
@@ -22,7 +30,7 @@
         balance compte
     </div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

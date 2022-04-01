@@ -22,7 +22,7 @@ class CreateVentesTable extends Migration
             $table->integer('montant_total');
             $table->integer('montant_net');
             $table->integer('indicatif');
-            $table->date('date_operation');
+            $table->dateTime('date_operation');
             $table->boolean('statut')->default(false);
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients');

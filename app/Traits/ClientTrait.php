@@ -21,6 +21,11 @@ trait ClientTrait {
             return  $client;
       }
 
+      public static function allDepotClient($depotid){
+            $clients = Client::where('depot_id',$depotid)->orderBy('nom','asc')->get();
+            return  $clients;
+      }
+
       public static function ClientTransactions($id_depot, $id_client){
              /**
              * get la liste des vente where if client with client

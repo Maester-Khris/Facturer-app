@@ -23,4 +23,9 @@ trait MarchandiseTrait {
             $march = Marchandise::where('designation',$designation)->first();
             return  $march;
       }
+
+      public static function getMarchById($march_id){
+            $march = Marchandise::where('id',$march_id)->first();
+            return  $march;
+      }
 }

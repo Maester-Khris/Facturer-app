@@ -5,12 +5,14 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
       @include('includes/css_assets')
-		<style>
-			/* #DataTables_Table_0_filter{
-				display: none;
-				z-index: 1;
-			} */
-		</style>
+	<style>
+		.center-foot{
+		    display:flex; 
+		     flex-direction:row;
+		     justify-content:center;
+		     align-items:center;
+		 }
+	   </style>
 	</head>
 <body>
 
@@ -24,7 +26,7 @@
         @include('includes/sidebar')
     </div>
 
-    <div class="main-container">
+    <div class="main-container" style="position: relative;">
 		<div class="pd-ltr-20 xs-pd-20-10">
 			<div class="min-height-200px">
 				<div class="page-header">
@@ -138,7 +140,7 @@
 
 										<div class="form-group ">
 											<label>Quantité à transferer</label>
-											<input id="demo3" type="text" name="demo3">
+											<input id="demo3" type="number" name="demo3">
 										</div>
 									</form>
 								</div>
@@ -167,15 +169,15 @@
 														placeholder="rechercher le produit">
 												</div>
 											</div>
-											<div class="col-md-6 col-6">
+											{{-- <div class="col-md-6 col-6">
 												<div class="price" style="padding-top:10px;">
 													<span><em>Quantité en machine:</em></span><ins>49</ins>
 												</div>
-											</div>
+											</div> --}}
 										</div>
 										<div class="form-group ">
 											<label>Quantité réllé en stock <code>à reajuster</code></label>
-											<input id="demo3" type="text" name="demo3">
+											<input id="demo3" type="number" name="demo3">
 										</div>
 									</form>
 								</div>
@@ -192,8 +194,8 @@
 				<div class="pd-20 card-box mb-30" style="position: relative;">
 					<div class="clearfix mb-20">
 						<div class="pull-left">
-							<h4 class="text-blue h4">Quelques données</h4>
-							<p>Récentes <code>transactions</code></p>
+							<h4 class="text-blue h4">Etats actuel des stocks</h4>
+							<p>Plus reference au derniers <code>mouvements</code></p>
 						</div>
 
 					</div>
@@ -219,29 +221,35 @@
 						<tbody>
 							@foreach($articles as $article)
 							<tr>
-								<td class="table-plus">{{$article->reference}}</td>
-								<td>{{$article->designation}}</td>
-								<td>{{$article->quantite_stock}}</td>
+								<td class="table-plus">{{$article['reference']}}</td>
+								<td>{{$article['designation']}}</td>
+								<td>{{$article['quantite_stock']}}</td>
 								<td>
-									<code>{{ $article->type_mouvement == "Entrée" ? '+' : '-' }}</code>
-									{{$article->quantite_mouvement}}
+									<code>{{ $article['type_mouvement'] == "Entrée" ? '+' : '-' }}</code>
+									@if (is_null($article['der_qte_mouvement']))
+										0
+									@else
+										{{$article['der_qte_mouvement']}}
+									@endif
+									
 								</td>
 
-									@if(is_null($article->date_derniere_modif_qté))
+									@if(is_null($article['date_der_mouvement']))
 										<td>/</td>
 									@else
 										<td>
-											{{ date('Y/m/d',strtotime($article->date_derniere_modif_qté))}}
+											{{-- {{ date('Y/m/d h:m:s',strtotime($article['date_der_mouvement']))}} --}}
+											{{$article['date_der_mouvement']}}
 										</td>
 									@endif
 
 
-								@if($article->type_mouvement == "Entrée")
-									<td><span class="badge badge-success">{{$article->type_mouvement}}</span></td>
-								@elseif($article->type_mouvement == "Sortie")
-									<td><span class="badge badge-danger">{{$article->type_mouvement}}</span></td>
+								@if($article['type_mouvement'] == "Entrée")
+									<td><span class="badge badge-success">{{$article['type_mouvement']}}</span></td>
+								@elseif($article['type_mouvement'] == "Sortie")
+									<td><span class="badge badge-danger">{{$article['type_mouvement']}}</span></td>
 								@else
-									<td><span class="badge badge-dark">{{$article->type_mouvement}}</span></td>
+									<td><span class="badge badge-dark">{{$article['type_mouvement']}}</span></td>
 								@endif
 
 							</tr>
@@ -252,9 +260,20 @@
 
 			</div>
 		</div>
+
+		@if(Session::has('error'))
+			<div class="alert alert-warning alert-dismissible fade show" role="alert" style="position:absolute;top:160px;left:39%;z-index:900;">
+				<strong>Alerte !</strong> 
+				<span id="notif_body">{{Session::get('error') }}</span>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		@endif
+	
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

@@ -12,6 +12,14 @@ trait FactureTrait {
             return $facs;
       }
 
+      public static function countFactures($id_depot){
+            $count = Facture::with(['fournisseur' => function($query) use ($id_depot){
+                        $query->where('depot_id', $id_depot);
+                  }])->count();
+
+            return $count;
+      }
+
       public static function getFacFourniList($id_depot, $id_fourni){
             $facs = Facture::with(['fournisseur' => function($query) use ($id_depot){
                         $query->where('depot_id', $id_depot);
@@ -27,10 +35,11 @@ trait FactureTrait {
             return $fac;
       }
 
-      public static function getByStatus(){
-            $fac = Facture::with('fournisseur')
+      public static function unSoldedFactures($id_depot){
+            $fac = Facture::with(['fournisseur' => function($query) use ($id_depot){
+                        $query->where('depot_id', $id_depot);
+                  }])
                   ->where('statut',false)->get();
-                  
             return $fac;
       }
 }

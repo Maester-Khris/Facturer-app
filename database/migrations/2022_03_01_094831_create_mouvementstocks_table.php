@@ -21,7 +21,7 @@ class CreateMouvementstocksTable extends Migration
             $table->string('type_mouvement');
             $table->string('destination')->nullable();
             $table->integer('quantite_mouvement');
-            $table->date('date_operation');
+            $table->dateTime('date_operation');
             $table->timestamps();
             $table->foreign('marchandise_id')->references('id')->on('marchandises');
             $table->foreign('stockdepot_id')->references('id')->on('stockdepots');

@@ -6,6 +6,14 @@
 		<title>Facturer-App</title>
         @include('includes/css_assets')
 	  <meta name="csrf-token" content="{{ csrf_token() }}" />
+      <style>
+        .center-foot{
+            display:flex; 
+             flex-direction:row;
+             justify-content:center;
+             align-items:center;
+         }
+     </style>
 	</head>
 <body>
 
@@ -69,6 +77,7 @@
                                         <tr>
                                             <td class="table-plus">{{$vente->client->nom}}</td>
                                             <td>{{$vente->code_vente}}</td>
+                                            {{-- <td>{{  date('Y/m/d h:m:s', strtotime($vente->date_facturation) ) }}</td> --}}
                                             <td>{{$vente->date_operation}}</td>
                                             <td>{{$vente->montant_net}}</td>
                                             <td>{{$vente->reste_vente}}</td>
@@ -91,12 +100,12 @@
                                           @csrf
                                           <div class="form-group ">
                                             <label>Client</label>
-                                            <input id="client" class="form-control" type="text" name="client">
+                                            <input id="client" class="form-control" type="text" name="client" readonly>
                                           </div>
                                           <div class="row">
                                                 <div class="col-md-6 col-6">
                                                       <div class="form-group">
-                                                            <input id="codevente" class="form-control" type="text" name="codevente">
+                                                            <input id="codevente" class="form-control" type="text" name="codevente" readonly>
                                                       </div>
                                                 </div>
                                                 <div class="col-md-6 col-6">
@@ -108,7 +117,7 @@
                                           
                                           <div class="form-group ">
                                                 <label>Somme <code>à regler</code></label>
-                                                <input id="" type="text" name="demo3" max="1000000">
+                                                <input id="" type="number" name="demo3" max="1000000">
                                           </div>
                                     </form>
                                 </div>
@@ -124,7 +133,7 @@
 		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

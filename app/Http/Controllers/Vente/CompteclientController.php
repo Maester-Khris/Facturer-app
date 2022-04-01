@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Vente;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\VenteService;
+use App\Models\Client;
 
 class CompteclientController extends Controller
 {
@@ -15,7 +16,8 @@ class CompteclientController extends Controller
     }
 
     public function index(){
-        return view('vente.interrogerCompteClient');
+        $clients = Client::allDepotClient(1); ## ajouter juste pour faciliter les test
+        return view('vente.interrogerCompteClient')->with(compact('clients'));
     }
 
     public function activities(Request $request){

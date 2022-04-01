@@ -3,9 +3,20 @@
 	<head>
 		<!-- Basic Page Info -->
 		<meta charset="utf-8">
-		<title></title>
+		<title>Facturer-App</title>
         @include('includes/css_assets')
 		<meta name="csrf-token" content="{{ csrf_token() }}" />
+        <style>
+           .center-foot{
+               display:flex; 
+                flex-direction:row;
+                justify-content:center;
+                align-items:center;
+            }
+            .linewarning{
+                color: #ffcc00;
+            }
+        </style>
 	</head>
 <body>
 
@@ -65,7 +76,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-											  @foreach($articles as $article)
+								   @foreach($articles as $article)
                                     <tr>
                                         <td class="table-plus">{{$article->reference}}</td>
                                         <td>{{$article->designation}}</td>
@@ -136,11 +147,12 @@
             </div>
         </div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot center-foot">
         @include('includes/footer')
     </div>
 
 	@include('includes/js_assets')
+
 	<script type="text/javascript">
 		$("button#voir").click(function(event){
 
@@ -174,7 +186,20 @@
 			});
 		});
 	</script>
-
+    <script>
+        $(document).ready( function () {
+            var table = $('.multiple-select-row').DataTable();
+            console.log(table.rows().data());
+            let rows = table.rows().data();
+            for(var i=0; i<rows.length; i++){
+                console.log(rows[i][4]);
+                if(parseInt(rows[i][4]) <= parseInt(rows[i][2]) ){
+                    console.log("inferieur au seuil");
+                    $('.multiple-select-row tbody tr:nth-child('+(i+1)+')').addClass('linewarning');
+                }
+            }
+        });
+    </script>
     <script type="text/javascript">
         $( document ).ready(function() {
             $("#linkIA").addClass("active");

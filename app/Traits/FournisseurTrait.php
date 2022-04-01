@@ -8,6 +8,22 @@ use App\Models\Journalachat;
 use App\Models\Comptecaisse;
 
 trait FournisseurTrait {
+
+      public static function getFournisseur($founi){
+            $fourni = Fournisseur::where('nom', $founi)->first();
+            return $fourni;
+      }
+      
+      public static function getFournisseurId($founi){
+            $fourni = Fournisseur::where('nom', $founi)->first();
+            return $fourni->id;
+      }
+
+      public static function getFournisseurSolde($founi){
+            $fourni = Fournisseur::where('nom', $founi)->first();
+            return $fourni->solde;
+      }
+
       public static function getByDepot($id_depot){
             $fournisseurs = Fournisseur::where('depot_id',$id_depot)->orderBy('nom','asc')->get();
             return $fournisseurs;

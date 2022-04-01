@@ -6,6 +6,20 @@
 		<title>Facturer-App</title>
 		@include('includes/css_assets')
 		<meta name="csrf-token" content="{{ csrf_token() }}" />
+		<style>
+			.center-foot{
+			    display:flex; 
+			     flex-direction:row;
+			     justify-content:center;
+			     align-items:center;
+			}
+			tr td:nth-child(5){
+				text-align: right;
+			}
+			tr td:nth-child(6){
+				text-align: right;
+			}
+		</style>
 	</head>
 <body>
 
@@ -52,13 +66,23 @@
 						{{-- {{url('fourni-activities')}} --}}
 					     <div>
 					         <div class="row">
-					             <div class="col-md-3 col-sm-12">
+					             {{-- <div class="col-md-3 col-sm-12">
 					                 <div class="form-group">
 					                     <label>Fournisseur</label>
 					                     <input id="fourni" type="text" name="fournisseur" class="form-control"
 					                         placeholder="rechercher le fournisseur">
 					                 </div>
-					             </div>
+					             </div> --}}
+							 <div class="col-md-3">
+								<div class="form-group">
+									<label>Selectionner le Fournisseur</label>
+									<select id="fourni" class="selectpicker form-control" data-style="btn-outline-primary" name="fournisseur" data-size="5">
+										@foreach ($fournisseurs as $fourni)
+										<option value="{{$fourni->nom}}">{{$fourni->nom}}</option>
+										@endforeach
+									</select>
+								</div>
+							</div>
 					             <div class="col-md-3 col-sm-12" style="padding-top:35px;">
 					                 <a href="#" class="activities btn btn-primary">
 					                     Consulter transactions
@@ -104,7 +128,7 @@
 										<div class="form-group d-flex flex-column" >
 											<label class="align-self-end">Total solde Compte</label>
 											<input id="solde_fourni" type="number" class="form-control"
-											 placeholder="0000" readonly style="font-size:15px;font-weight:bold;">
+											 placeholder="0000" readonly style="font-size:15px;font-weight:bold;text-align:right;">
 										</div>
 									</div>
 								</div>
@@ -117,7 +141,7 @@
 		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 
@@ -138,7 +162,8 @@
 	</script>
 	<script type="text/javascript">
 		$('.activities').click(function(e){
-		let fourni = $('input#fourni').val();
+		// let fourni = $('input#fourni').val();
+		let fourni = $('select#fourni').children("option:selected").val();
 		let _token = $('meta[name="csrf-token"]').attr('content');
 		$.ajax({
 			url: "/fourni-activities",
@@ -154,6 +179,7 @@
 					console.log(response.success);
 
 					var table = $('table.data-table').DataTable();
+					table.rows().remove();
 					for( var i=0; i<activities.length; i++){
 						// let date_fac = $.format.date(activities[i].date_derniere_modif_solde, 'yyyy/MM/dd HH:mm:ss');
 						let date_fac = mydate(activities[i].date_operation);
@@ -161,7 +187,8 @@
 							'' + activities[i].fournisseur ,
 							activities[i].codefac,
 							activities[i].total,
-							date_fac,
+							// date_fac,
+							activities[i].date_operation,
 							activities[i].credit,
 							activities[i].debit
 						]).draw();

@@ -68,7 +68,8 @@
 									<tr>
 										<td class="table-plus">{{$vente->code_vente}}</td>
 										<td>{{$vente->client->nom}}</td>
-										<td>{{  date('Y/m/d h:m:s',strtotime($vente->date_operation)) }}</td>
+										{{-- <td>{{  date('Y/m/d h:m:s',strtotime($vente->date_operation)) }}</td> --}}
+										<td>{{$vente->date_operation}}</td>
 										<td>{{$vente->montant_net}}</td>
 										<td>
 											@if($vente->statut == true)

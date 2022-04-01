@@ -5,6 +5,14 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
         @include('includes/css_assets')
+	  <style>
+		.center-foot{
+		    display:flex; 
+		     flex-direction:row;
+		     justify-content:center;
+		     align-items:center;
+		 }
+	   </style>
 	</head>
 <body>
 
@@ -68,7 +76,8 @@
 									<tr>
 										<td class="table-plus">{{$fac->code_facture}}</td>
 										<td>{{$fac->fournisseur->nom}}</td>
-										<td>{{  date('Y/m/d h:m:s',strtotime($fac->date_facturation)) }}</td>
+										{{-- <td>{{  date('Y/m/d h:m:s',strtotime($fac->date_facturation)) }}</td> --}}
+										<td>{{$fac->date_facturation}}</td>
 										<td>{{$fac->montant_net}}</td>
 										<td>
 											@if($fac->statut == true)
@@ -89,7 +98,7 @@
 		</div>
 	</div>
 
-    <div class="footer-wrap pd-20 mb-20 card-box">
+    <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 

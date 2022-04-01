@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Achat;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AchatService;
+use App\Models\Fournisseur;
 
 class ComptefournisseurController extends Controller
 {
@@ -15,7 +16,8 @@ class ComptefournisseurController extends Controller
     }
 
     public function index(){
-        return view('achat.interrogerCompteFournisseur');
+        $fournisseurs = Fournisseur::getByDepot(1); ## ajouter juste pour faciliter les test
+        return view('achat.interrogerCompteFournisseur')->with(compact('fournisseurs'));
     }
 
     public function activities(Request $request){

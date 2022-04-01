@@ -52,6 +52,7 @@ Route::get('/interrogerArticles', 'App\Http\Controllers\Stock\ArticleController@
 Route::get('/mouvementsStock', 'App\Http\Controllers\Stock\MouvementController@index');
 Route::get('/situiationDepots', 'App\Http\Controllers\Stock\SituationdepotController@index');
 Route::get('/inventaire','App\Http\Controllers\Stock\InventaireController@index');
+Route::get('/transfer-error', 'App\Http\Controllers\Stock\SituationdepotController@indexwitherror');
 
 Route::post('/fiche-marchandise', 'App\Http\Controllers\Stock\ArticleController@voirmarchandise');
 Route::post('/reajuster-march', 'App\Http\Controllers\Stock\SituationdepotController@reajustMarchStock');

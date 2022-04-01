@@ -16,7 +16,7 @@ class ReglementfactureController extends Controller
     }
 
     public function index(){
-        $impayes = $this->vente->ListNonPaidVentes();
+        $impayes = $this->vente->ListNonPaidVentes(1);
         // dd($impayes);
         // return response()->json(['success'=> $impayes]);
         return view('vente.reglement')->with(compact('impayes'));
