@@ -48,9 +48,9 @@ trait StockdepotTrait {
                   SELECT stockdepots.marchandise_id, stockdepots.quantite_stock, stockdepots.date_derniere_modif_qté, Last_update.quantite_mouvement, Last_update.type_mouvement
                   FROM stockdepots
                   LEFT JOIN 
-                  (SELECT * FROM facturer.mouvementstocks
+                  (SELECT * FROM mouvementstocks
                   INNER JOIN (
-                        SELECT marchandise_id as marchandise, MAX(date_operation) as date_mouv FROM facturer.mouvementstocks
+                        SELECT marchandise_id as marchandise, MAX(date_operation) as date_mouv FROM mouvementstocks
                   GROUP BY marchandise_id
                   )Latestmarchandise
                   ON Latestmarchandise.marchandise = mouvementstocks.marchandise_id
