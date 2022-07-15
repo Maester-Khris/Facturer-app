@@ -17,6 +17,7 @@ class CreateInventairesTable extends Migration
             $table->increments('id');
             $table->integer('stockdepot_id')->unsigned();
             $table->integer('marchandise_id')->unsigned();
+            $table->string('reference_inventaire');
             $table->integer('ancienne_quantite');
             $table->integer('quantite_reajuste');
             $table->integer('difference');

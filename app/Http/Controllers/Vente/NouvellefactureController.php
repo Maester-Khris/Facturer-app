@@ -51,16 +51,13 @@ class NouvellefactureController extends Controller
 
         $vente =  $this->vente->newVente(
             $client->id, 
-            Comptoir::getComptoirId($request->facture['comptoir'], 1),
             $request->facture['codevente'],
             $montant,
-            $marchandises,
             $today
         );
         
-        foreach($marchandises as $march){
-            $this->stock->newSortie($march['name'], $march['quantite']);
-        }
+        $res = DataService::newTransaction($vente->code_vente, $marchandises);        
+        $mvts = $this->stock->newMvtEntreeSortie($marchandises, "Sortie");
         
         $id_compteclient = $this->vente->updateComptaClient($client, $request->facture['net'], $today, "Débit");
         $this->vente->updateJournalVente($id_compteclient, $vente, $request->facture['net']);

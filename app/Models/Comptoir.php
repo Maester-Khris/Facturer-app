@@ -10,6 +10,6 @@ class Comptoir extends Model
 {
     use HasFactory;
     use ComptoirTrait;
-
+    protected $fillable=['depot_id','personnel_id','caisse_id','libelle'];
 
 }

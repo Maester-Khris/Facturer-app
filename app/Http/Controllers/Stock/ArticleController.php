@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\StockService;
+// use App\Models\Ticket;
+// use App\Models\Vente;
 
 class ArticleController extends Controller
 {
     //
-    private $stock;
-    public function __construct(StockService $stock){
-        $this->stock = $stock;
-    }
+   private $stock;
+   public function __construct(StockService $stock){
+      $this->stock = $stock;
+   }
 
    public function index(){
       $articles = $this->stock->stockArticlesList(1);

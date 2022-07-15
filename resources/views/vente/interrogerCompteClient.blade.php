@@ -78,7 +78,7 @@
 									<label>Selectionner le Client</label>
 									<select id="client" class="selectpicker form-control" data-style="btn-outline-primary" name="client" data-size="5">
 										@foreach ($clients as $client)
-										<option value="{{$client->nom}}">{{$client->nom}}</option>
+										<option value="{{$client->nom_complet}}">{{$client->nom_complet}}</option>
 										@endforeach
 									</select>
 								</div>

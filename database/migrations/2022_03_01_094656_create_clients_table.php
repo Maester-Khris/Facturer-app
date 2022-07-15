@@ -16,8 +16,7 @@ class CreateClientsTable extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('depot_id')->unsigned();
-            $table->string('nom');
-            $table->string('prenom');
+            $table->string('nom_complet');
             $table->string('telephone');
             $table->integer('solde');
             $table->dateTime('date_dernier_calcul_solde')->nullable();

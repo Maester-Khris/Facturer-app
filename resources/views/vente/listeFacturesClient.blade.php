@@ -67,7 +67,7 @@
 								@foreach ($ventes as $vente)
 									<tr>
 										<td class="table-plus">{{$vente->code_vente}}</td>
-										<td>{{$vente->client->nom}}</td>
+										<td>{{$vente->client->nom_complet}}</td>
 										{{-- <td>{{  date('Y/m/d h:m:s',strtotime($vente->date_operation)) }}</td> --}}
 										<td>{{$vente->date_operation}}</td>
 										<td>{{$vente->montant_net}}</td>

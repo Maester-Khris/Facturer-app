@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Caisse extends Model
 {
     use HasFactory;
+    protected $fillable=['libelle','numero_caisse'];
 }

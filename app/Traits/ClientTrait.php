@@ -6,23 +6,23 @@ use App\Models\Vente;
 use App\Models\Comptecaisse;
 
 trait ClientTrait {
-      public static function getClientId($nom, $depotid){
-            $client = Client::where('nom',$nom)->where('depot_id',$depotid)->first();
+      public static function getClientId($nom_complet, $depotid){
+            $client = Client::where('nom_complet',$nom_complet)->where('depot_id',$depotid)->first();
             return  $client->id;
       }
 
       public static function retrieveSold($client){
-            $client = Client::where('nom', $client)->first();
+            $client = Client::where('nom_complet', $client)->first();
             return $client->solde;
       }
 
-      public static function getClient($nom, $depotid){
-            $client = Client::where('nom',$nom)->where('depot_id',$depotid)->first();
+      public static function getClient($nom_complet, $depotid){
+            $client = Client::where('nom_complet',$nom_complet)->where('depot_id',$depotid)->first();
             return  $client;
       }
 
       public static function allDepotClient($depotid){
-            $clients = Client::where('depot_id',$depotid)->orderBy('nom','asc')->get();
+            $clients = Client::where('depot_id',$depotid)->orderBy('nom_complet','asc')->get();
             return  $clients;
       }
 
@@ -38,7 +38,7 @@ trait ClientTrait {
 
             foreach($ventes as $vente){
                   $ligne = [
-                        'client'  => $vente->client->nom,
+                        'client'  => $vente->client->nom_complet,
                         'codevente'  => $vente->code_vente,
                         'total'  => $vente->montant_net,
                         'date_operation'  => $vente->date_operation,
@@ -51,7 +51,7 @@ trait ClientTrait {
                   if($caisses != null){
                         foreach($caisses as $caisse){
                               $ligne1 = [
-                                    'client'  => $vente->client->nom,
+                                    'client'  => $vente->client->nom_complet,
                                     'codevente'  => $vente->code_vente,
                                     'total'  => $vente->montant_net,
                                     'date_operation'  => $caisse->date_operation,

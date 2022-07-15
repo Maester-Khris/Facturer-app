@@ -54,10 +54,9 @@ class VenteService{
       }
 
 
-      public function newVente($client_id,$comptoir_id,$codevente,$montants,$marchs,$date){
+      public function newVente($client_id,$codevente,$montants,$date){
             $vente = Vente::create([
-                  'client_id' => $client_id, 
-                  'comptoir_id' => $comptoir_id, 
+                  'client_id' => $client_id,  
                   'code_vente' => $codevente, 
                   'montant_remise' => $montants[0], 
                   'montant_total' => $montants[1], 
@@ -65,18 +64,6 @@ class VenteService{
                   'indicatif' => 0,
                   'date_operation' => $date
             ]);
-
-            foreach($marchs as $march){
-                  $march_id =  Marchandise::getMarchId($march['name']);
-                  $prix = $march['type_vente'] == "Detail" ? Marchandise::getMarchPrixDet($march_id) : Marchandise::getMarchPrixGro($march_id);
-                  $ticket = Ticket::create([
-                        'vente_id' => $vente->id, 
-                        'marchandise_id' => $march_id, 
-                        'quantite' => $march['quantite'], 
-                        'type_vente' => $march['type_vente'],
-                        'prix_vente' => $prix
-                  ]);
-            }
             return  $vente; 
       }
 
@@ -152,5 +139,15 @@ class VenteService{
             return Client::ClientTransactions($id_depot,$id);
       }
 
-      
+      // foreach($marchs as $march){
+      //       $march_id =  Marchandise::getMarchId($march['name']);
+      //       $prix = $march['type_vente'] == "Detail" ? Marchandise::getMarchPrixDet($march_id) : Marchandise::getMarchPrixGro($march_id);
+      //       $ticket = Ticket::create([
+      //             'vente_id' => $vente->id, 
+      //             'marchandise_id' => $march_id, 
+      //             'quantite' => $march['quantite'], 
+      //             'type_vente' => $march['type_vente'],
+      //             'prix_vente' => $prix
+      //       ]);
+      // }
 }

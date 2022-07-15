@@ -75,7 +75,7 @@
                                 <tbody>
                                     @foreach($impayes as $vente)
                                         <tr>
-                                            <td class="table-plus">{{$vente->client->nom}}</td>
+                                            <td class="table-plus">{{$vente->client->nom_complet}}</td>
                                             <td>{{$vente->code_vente}}</td>
                                             {{-- <td>{{  date('Y/m/d h:m:s', strtotime($vente->date_facturation) ) }}</td> --}}
                                             <td>{{$vente->date_operation}}</td>

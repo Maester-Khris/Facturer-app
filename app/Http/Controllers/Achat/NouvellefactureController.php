@@ -47,10 +47,8 @@ class NouvellefactureController extends Controller
      *    update journal achat
     */
     public function savefacture(Request $request){
-        
         $today= new DateTime();
         $fourni = $this->achat->getFourni($request->facture['fournisseur']);
-
         $fac =  $this->achat->newFacture(
             $fourni->id, 
             $request->facture['codefac'],
@@ -59,11 +57,12 @@ class NouvellefactureController extends Controller
             $request->facture['net'],
             $today
         );
-        
+
         $marchandises = $request->facture['marchandises'];
-        foreach($marchandises as $march){
-            $this->stock->newEntree($march['name'], $march['quantite']);
-        }
+        $res = DataService::newTransaction($fac->code_facture, $marchandises);
+        
+        $this->stock->updateCmupDernierPrixAchat($marchandises);
+        $mvts = $this->stock->newMvtEntreeSortie($marchandises, "Entrée");
 
         $id_comptefourni = $this->achat->updateComptaFournisseurs($fourni->nom, $fac->montant_net, $today, 'Crédit');
         $this->achat->updateJournalAchat($fac, $id_comptefourni);

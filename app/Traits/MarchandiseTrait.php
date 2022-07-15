@@ -9,6 +9,11 @@ trait MarchandiseTrait {
             return  $march->id;
       }
 
+      public static function getMarchRef($designation){
+            $march = Marchandise::where('designation',$designation)->first();
+            return  $march->reference;
+      }
+
       public static function getMarchPrixDet($march_id){
             $march = Marchandise::where('id',$march_id)->first();
             return  $march->prix_vente_detail;

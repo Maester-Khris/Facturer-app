@@ -22,6 +22,6 @@ class DepotSeeder extends Seeder
              'telephone' => '(+237) 98643595',
              'delai_reglement' => 4,
             ],
-         ]);
+        ]); 
     }
 }

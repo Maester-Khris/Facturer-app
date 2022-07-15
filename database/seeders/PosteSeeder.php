@@ -18,8 +18,7 @@ class PosteSeeder extends Seeder
         DB::table('personnels')->insert([
             'id' => 1,
             'depot_id' => 1,
-            'nom' => 'Mojalez',
-            'prenom' => 'Marius Baldwin',
+            'nom_complet' => 'Mojalez Marius Baldwin',
             'sexe' => 'F',
             'telephone' => '(+237) 98643595',
             'email' => 'Marius@gmail.com',
@@ -45,5 +44,48 @@ class PosteSeeder extends Seeder
             'caisse_id' => 1,
             'libelle' => 'Comptoir principal',
         ]);
+        // DB::table('ventes')->insert([
+        //     [
+        //      'id' => 1,
+        //      'client_id' => 1,
+        //      'code_vente' => 'VN0001',
+        //      'montant_remise' => 1000,
+        //      'montant_total' => 10000,
+        //      'montant_net' => 11000,
+        //      'indicatif' => 1,
+        //      'date_operation' =>  "2020/12/09 12:03:00"
+        //     ],
+        // ]);
+        // DB::table('detailtransactions')->insert([
+        //     [
+        //      'id' => 1,
+        //      'reference_transaction' =>"VN0001",
+        //      'reference_marchandise' => "REF0003",
+        //      'quantite' => 12
+        //     ],
+        //     [
+        //         'id' => 2,
+        //         'reference_transaction' =>"VN0001",
+        //         'reference_marchandise' => "REF0004",
+        //         'quantite' => 10
+        //     ],
+        //     [
+        //         'id' => 3,
+        //         'reference_transaction' =>"VN0001",
+        //         'reference_marchandise' => "REF0005",
+        //         'quantite' => 31
+        //     ],
+        // ]);
+        // DB::table('tickets')->insert([
+        //     [
+        //      'id' => 1,
+        //      'code_ticket' =>"TC0001",
+        //      'comptoir_id' => 1,
+        //      'reference_marchandise' => 'REF0004',
+        //      'quantite' => 12,
+        //      'type_vente' => 'gros',
+        //      'prix_vente' => 12000,
+        //     ],
+        // ]);
     }
 }

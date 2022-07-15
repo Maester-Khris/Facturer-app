@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 use App\Models\Mouvementstock;
+use Illuminate\Support\Facades\DB;
 
 trait MouvementstockTrait {
       public static function getMouvementOperations($id_stockdepot){
@@ -11,7 +12,12 @@ trait MouvementstockTrait {
             //       ->get();
 
             $mvts= Mouvementstock::with('marchandise')->get();
-            
-            return $mvts;
+            $final = collect($mvts)->unique('reference_mouvement')->all();
+            return $final;
+      }
+
+      public static function getMarchandiseMvt($id_stockdepot, $code_mouvement){
+            $details = Mouvementstock::with('marchandise')->where('reference_mouvement',$code_mouvement)->get();
+            return $details;
       }
 }

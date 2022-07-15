@@ -33,6 +33,17 @@
  * FACTURE: total  = total des ligne selectionné
 */
 
+/** Notes Fonctionement : Etat d'inventaire
+ * stock peut etre valorise soit au cmup soit au cout d'entree (peix achat ???)
+ * CUMP : à l’occasion de chaque entrée en stock; = Total des coûts d’acquisition / Total des quantités
+ * calcul du cmup a chaque entree stock = (Valeur du stock précédent à l’ancien CUMP + Coût d’acquisition de la nouvelle entrée) / Total des quantités en stock
+ * valeur du stock a lancien cmup = nb articles * cout acquisition unitaire
+ * valeur de la nouvelle entree = nb articles * cout acquisition
+ * 
+ * Chiffrez votre inventaire:
+ * pour chaque référence stockée, nb article en stock * la valeur monétaire de chaque unité.
+*/
+
 /**
  * Note Fonctionement : fournisseur et client
  * credité: apres approvisioneme -> reception facture a payer
@@ -77,10 +88,32 @@
  * cour sur le college de france
  */
 
+/**
+ * modifier facture et mouvement 
+ * prendre en compte une facture concerne les produit d'un depot precis
+ */
+
  /**
   * podcast list : 
   * https://open.spotify.com/show/7nda7u8PGTU2AfpLZ9ZR9Z
   * https://open.spotify.com/show/7vjdsslSmuMnDlqMFofict
   * https://open.spotify.com/show/2AOoWEcm5DwgA6rZylnzID
   * https://techbeacon.com/app-dev-testing/12-must-listen-software-engineering-podcast-episodes
+*/
+
+/**
+ * Note de service: factur client
+ * ajout de l'attribut de categorisation du client
+ * dans facture client charger le prix en fonctoin de la categorisation du iencli
+*/
+
+/**
+ * Note de service vente au comptoir: 
+ * difference entre type paiment et type client
+ * quel attribut pour enregistrer la categorisation du client
+ * ajouter un attriut cloturé a ticket (1/0)
+ * pour un ticket certain auront la possibilité de changer la tarification de vente
+ * chaque vente au comptoir est enregistrer dans un ticket
+ * en fin de journé on cree un vente, pour un client (par defaut) qui va contenir tout les ventes fait en journé
+ * 
 */

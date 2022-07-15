@@ -29,8 +29,9 @@
                     <ul class="submenu">
                         <li><a href="{{  url('interrogerArticles')  }}" id="linkIA">Interroger Articles</a></li>
                         <li><a href="{{ url('mouvementsStock') }}" id="linkMS">Mouvements de Stocks</a></li>
-                        <li><a href="{{ url('situiationDepots') }}"  id="linkSD">Situation dépot</a></li>
-                        <li><a href="{{ url('inventaire') }}" id="linkI">Inventaire</a></li>
+                        <li><a href="{{ url('inventaire') }}" id="linkI">Saisie Inventaire</a></li>
+                        <li><a href="{{ url('listeinventaire') }}"  id="linkLI">Liste Inventaires</a></li>
+                        <li><a href="{{ url('etatinventaire') }}"  id="linkEI">Etat Inventaire</a></li>
                     </ul>
                 </li>
 
@@ -61,6 +62,11 @@
                 <li>
                     <a href="{{ url('ventesComptoir') }}" class="dropdown-toggle no-arrow" id="linkVenteComptoir">
                         <span class="micon dw dw-shopping-cart"></span><span class="mtext">Ventes au comptoir</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url('statArticle') }}" class="dropdown-toggle no-arrow" id="linkStatistique">
+                        <span class="micon dw dw-analytics-21"></span><span class="mtext">Statistiques</span>
                     </a>
                 </li>
             </ul>

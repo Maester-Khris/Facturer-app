@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 use App\Models\Inventaire;
+use Illuminate\Support\Facades\DB;
 
 trait InventaireTrait {
       public static function getInventory($id_stockdepot){
@@ -14,7 +15,14 @@ trait InventaireTrait {
             //       ->join("stockdepots","stockdepots.marchandise_id","=","inventaires.marchandise_id")
             //       ->select("inventaires.*","stockdepots.quantite_stock")
             //       ->get();
+            
             $invs = Inventaire::with('marchandise')->get();
-            return $invs;
+            $final = collect($invs)->unique('reference_inventaire')->all();
+            return $final;
+      }
+
+      public static function getMarchandiseIvt($id_stockdepot, $code_inventaire){
+            $details = Inventaire::with('marchandise')->where('reference_inventaire',$code_inventaire)->get();
+            return $details;
       }
 }

@@ -18,7 +18,7 @@ class SituationdepotController extends Controller
 
    public function index(){
       $articles = $this->stock->situationDepot(1);
-      return view('stock.situiationDepots')->with(compact('articles'));
+      return view('stock.listeinventaire')->with(compact('articles'));
    }
 
    public function indexwitherror(){

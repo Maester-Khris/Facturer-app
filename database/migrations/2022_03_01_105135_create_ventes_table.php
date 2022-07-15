@@ -16,7 +16,7 @@ class CreateVentesTable extends Migration
         Schema::create('ventes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_id')->nullable()->unsigned();
-            $table->integer('comptoir_id')->unsigned();
+            
             $table->string('code_vente');
             $table->integer('montant_remise');
             $table->integer('montant_total');
@@ -26,7 +26,7 @@ class CreateVentesTable extends Migration
             $table->boolean('statut')->default(false);
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients');
-            $table->foreign('comptoir_id')->references('id')->on('comptoirs');
+            
         });
     }
 

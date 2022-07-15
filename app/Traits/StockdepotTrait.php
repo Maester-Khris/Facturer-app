@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 trait StockdepotTrait {
 
+      public function marchandiseStockInfo($marchandiseid){
+            $stock_march = Stockdepot::where("marchandise_id",$marchandiseid)->first();
+            return $stock_march;
+         }
+      
       public function marchandiseQuantityStock($marchandise){
          $stock_march = Stockdepot::where("marchandise_id",$marchandise)->select('quantite_stock')->first();
          return $stock_march->quantite_stock;

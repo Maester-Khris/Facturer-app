@@ -13,6 +13,22 @@
 		     justify-content:center;
 		     align-items:center;
 		 }
+		 #march_suggest {
+		z-index: 10;
+		position: absolute;
+		width: 100%;
+		display: none;
+		}
+
+		#march_suggest li {
+		background: #E9ECEF;
+		padding: 10px;
+		cursor: pointer;
+		}
+
+		#march_suggest li:hover {
+		background: #CCE4F7;
+		}
 	   </style>
 	</head>
 <body>
@@ -70,7 +86,7 @@
 										<label>Selectionner le Client</label>
 										<select id="client" class="selectpicker form-control" data-style="btn-outline-primary" name="client" data-size="5">
 											@foreach ($clients as $client)
-											<option value="{{$client->nom}}">{{$client->nom}}</option>
+											<option value="{{$client->nom_complet}}">{{$client->nom_complet}}</option>
 											@endforeach
 										</select>
 									</div>
@@ -93,6 +109,8 @@
 									<div class="form-group">
 										<label>Le produit</label>
 										<input id="march" class="form-control" type="text" placeholder="rechercher le produit">
+										<ul id="march_suggest">
+										</ul>
 									</div>
 								</div>
 								<div class="col-md-3 col-sm-12">
@@ -315,5 +333,44 @@
 		});
 	});
     </script>
+
+	<script type="text/javascript">
+		$('ul#march_suggest').on( "click", "li",function () {
+		$('#march').val($(this).text());
+		let ul_sugestion = $('#march_suggest');
+		ul_sugestion.hide();
+		});
+	</script>
+
+	<script type="text/javascript">
+		$('#march').keyup(_.debounce(function () {
+			var march_name = $(this).val();
+			console.log
+			let _token = $('meta[name="csrf-token"]').attr('content');
+			$.ajax({
+				url: "/autocomplete",
+				type: "POST",
+				data: {
+				'produit': march_name,
+				'_token': _token
+				},
+				success: function (response) {
+				console.log(response);
+				let ul_sugestion = $('#march_suggest');
+				ul_sugestion.empty();
+				if (response.length == 0) {
+					ul_sugestion.append("<li>Aucune correspondance</li>");
+				} else {
+					for (let i = 0; i < response.length; i++) {
+						ul_sugestion.append("<li>" + response[i].designation + "</li>");
+					}
+				}
+				ul_sugestion.show();
+				},
+				error: function (error) {}
+			});
+		}, 500));
+	</script>
+
 </body>
 </html>

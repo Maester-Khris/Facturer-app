@@ -14,7 +14,6 @@ class Vente extends Model
     protected $appends = ['reste_vente',];
     protected $fillable = [
         'client_id',
-        'comptoir_id',
         'code_vente',
         'montant_remise',
         'montant_total',

@@ -16,18 +16,21 @@ class InventaireController extends Controller
     }
 
     public function index(){
-       $lignes = $this->stock->listInventory(1);
-       //dd($lignes);
-       return view('stock.inventaire')->with(compact('lignes'));
+       return view('stock.saisieinventaire');
    }
 
-   public function newLigne(Request $request){
-    $request->validate([
-        'produit' => 'required',
-        'newqte' => 'required',
-    ]);
-    $today = new DateTime();
-    $this->stock->newLigneInventaire($request->produit, $request->newqte, $today, false);
-    return redirect('/inventaire');
+   public function listinventaire(){
+        $lignes = $this->stock->listInventory(1);
+        return view('stock.listeinventaire')->with(compact('lignes'));
+   }
+
+   public function newSaisie(Request $request){
+        $this->stock->newSaisieInventaire($request["marchs"]) ;
+        return redirect('/inventaire');
+   }
+
+   public function getDetailsIvts(Request $request){
+        $articles = $this->stock->detailsInventaire(1,$request["code"]);
+        return response()->json($articles);
    }
 }

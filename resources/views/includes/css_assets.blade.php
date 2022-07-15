@@ -15,3 +15,4 @@
 <link rel="stylesheet" type="text/css" href="{{ URL::to('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ URL::to('vendors/styles/style.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ URL::to('src/styles/custom.css')}} ">
+<meta name="csrf-token" content="{{ csrf_token() }}" />

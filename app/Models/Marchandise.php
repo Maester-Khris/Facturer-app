@@ -12,9 +12,9 @@ class Marchandise extends Model
     use MarchandiseTrait;
 
     protected $fillable=[
-        'reference','designation','prix_achat','dernier_prix_achat',
-        'prix_vente_detail','prix_vente_gros', 'unite_achat',
-        'cmup', 'conditionement', 'quantité_conditionement'
+        'reference','designation','prix_achat',
+        'prix_vente_detail','prix_vente_gros', 'prix_vente_super_gros', 'unite_achat',
+        'conditionement', 'quantité_conditionement'
     ];
 
     public function mouvements(){

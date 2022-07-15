@@ -11,6 +11,7 @@
 <script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
 <!-- Datatable Setting js -->
 <script src="vendors/scripts/datatable-setting.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.13.4/underscore-umd-min.js"></script>
 </body>
 <!-- bootstrap touchspin for input form -->
 <script src="src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>

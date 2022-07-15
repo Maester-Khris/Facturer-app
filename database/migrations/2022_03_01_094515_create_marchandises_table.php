@@ -18,11 +18,12 @@ class CreateMarchandisesTable extends Migration
             $table->string('reference', 25);
             $table->string('designation', 100);
             $table->integer('prix_achat');
-            $table->integer('dernier_prix_achat');
+            $table->integer('dernier_prix_achat')->default(0);
             $table->integer('prix_vente_detail');
             $table->integer('prix_vente_gros');
+            $table->integer('prix_vente_super_gros');
             $table->string('unite_achat', 25);
-            $table->double('cmup');
+            $table->double('cmup')->default(0);
             $table->string('conditionement', 100);
             $table->integer('quantité_conditionement');
             $table->timestamps();

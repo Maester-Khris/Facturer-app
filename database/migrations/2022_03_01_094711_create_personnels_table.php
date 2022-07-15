@@ -16,8 +16,7 @@ class CreatePersonnelsTable extends Migration
         Schema::create('personnels', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('depot_id')->unsigned();
-            $table->string('nom');
-            $table->string('prenom');
+            $table->string('nom_complet');
             $table->string('sexe');
             $table->string('telephone');
             $table->string('email');
@@ -25,7 +24,7 @@ class CreatePersonnelsTable extends Migration
             $table->date('date_embauche');
             $table->string('type_contrat');
             $table->string('poste');
-            $table->string('statut');
+            $table->string('statut')->default('actif');
             $table->string('matricule');
             $table->string('matricule_cnps');
             $table->timestamps();
