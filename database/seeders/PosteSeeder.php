@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class PosteSeeder extends Seeder
 {
@@ -15,34 +16,51 @@ class PosteSeeder extends Seeder
     public function run()
     {
         //
+        DB::table('users')->insert([
+            'name' => 'Niklaus',
+            'email' => 'monemail@gmail.com',
+            'password' => Hash::make('MAT0001'),
+        ]);
+
         DB::table('personnels')->insert([
             'id' => 1,
-            'depot_id' => 1,
-            'nom_complet' => 'Mojalez Marius Baldwin',
+            'depot_id' => 2,
+            'user_id' => 1,
+            'nom_complet' => 'Niklaus',
             'sexe' => 'F',
             'telephone' => '(+237) 98643595',
-            'email' => 'Marius@gmail.com',
+            'email' => 'monemail@gmail.com',
             'cni' => '23436576787889',
             'date_embauche' => '2021-12-26',
             'type_contrat' => 'CDD',
             'poste' => 'Caissier',
             'statut' => 'Actif',
-            'matricule' => 'PNL001',
+            'matricule' => 'MAT0001',
             'matricule_cnps' => 'PNLCNP001',
         ]);
 
         DB::table('caisses')->insert([
             'id' => 1,
             'numero_caisse' => 'CAI001',
-            'libelle' => 'Comptoir principal',
+            'libelle' => 'Caisse principal',
         ]);
-
         DB::table('comptoirs')->insert([
             'id' => 1,
-            'depot_id' => 1,
+            'depot_id' => 2,
             'personnel_id' => 1,
             'caisse_id' => 1,
-            'libelle' => 'Comptoir principal',
+            'libelle' => 'Comptoir 1',
+        ]);
+        DB::table('clients')->insert([
+            [
+                'id' => 1,
+                'depot_id' => 2,
+                'nom_complet' => 'Clt Comptoir 1',
+                'telephone' => '+237 98764356',
+                'solde' => 0,
+                'tarification_client' => 'detail',
+                'multi_depot_caisses' => false
+            ]
         ]);
         // DB::table('ventes')->insert([
         //     [

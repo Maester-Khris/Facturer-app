@@ -17,8 +17,8 @@ class CreateStockdepotsTable extends Migration
             $table->increments('id');
             $table->integer('depot_id')->unsigned();
             $table->integer('marchandise_id')->unsigned();
-            $table->integer('limite');
-            $table->integer('quantite_optimal');
+            $table->integer('limite')->default(10);
+            $table->integer('quantite_optimal')->default(100);
             $table->integer('quantite_stock');
             $table->dateTime('date_derniere_modif_qté')->nullable();
             $table->timestamps();

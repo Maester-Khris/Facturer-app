@@ -23,5 +23,13 @@ class DepotSeeder extends Seeder
              'delai_reglement' => 4,
             ],
         ]); 
+        DB::table('depots')->insert([
+            [
+             'id' => 2,
+             'nom_depot' => "Sainta Maria",
+             'telephone' => '(+237) 98643595',
+             'delai_reglement' => 10,
+            ],
+        ]);
     }
 }

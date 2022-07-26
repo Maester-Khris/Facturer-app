@@ -163,9 +163,9 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#linkSD").addClass("active");
-            $("#linkSD").closest(".dropdown").addClass("show");
-            $("#linkSD").closest(".submenu").css("display", 'block');
+            $("#linkEI").addClass("active");
+            $("#linkEI").closest(".dropdown").addClass("show");
+            $("#linkEI").closest(".submenu").css("display", 'block');
         });
     </script>
 

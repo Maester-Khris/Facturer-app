@@ -9,4 +9,9 @@ class Caisse extends Model
 {
     use HasFactory;
     protected $fillable=['libelle','numero_caisse'];
+
+    public function comptoirs()
+   {
+      return $this->hasMany(Comptoir::class);
+   }
 }

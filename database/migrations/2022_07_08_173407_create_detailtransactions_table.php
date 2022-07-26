@@ -18,6 +18,7 @@ class CreateDetailtransactionsTable extends Migration
             $table->string('reference_transaction');
             $table->string('reference_marchandise');
             $table->integer('quantite');
+            $table->integer('prix');
             $table->timestamps();
         });
     }

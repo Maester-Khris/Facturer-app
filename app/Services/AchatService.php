@@ -24,7 +24,7 @@ class AchatService{
             return Fournisseur::getFournisseurSolde($founi);
       }
       public function listFacture($id_depot){
-            return Facture::getFacList($id_depot);
+            return Facture::getAllFacturesByDepot($id_depot);
       }
       public function allDepotFactureCount($id_depot){
             return Facture::countFactures($id_depot);
@@ -68,7 +68,7 @@ class AchatService{
       }
 
       public function updateComptaFournisseurs($founi,$montant_net,$today,$type){
-            $fournisseur = Fournisseur::where('nom',$founi)->first();
+            $fournisseur = Fournisseur::where('nom_complet',$founi)->first();
             $compte = Comptefournisseur::create([
                   'fournisseur_id' => $fournisseur->id,
                   'debit' => ($type == "Débit") ? $montant_net : 0,

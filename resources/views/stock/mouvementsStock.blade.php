@@ -161,7 +161,7 @@ date_default_timezone_set("Africa/Douala");
                                     <td>{{ $mvt->date_operation }}</td>
                                     <td>{{ is_null($mvt->destination) ? '/' : $mvt->destination }}</td>
                                     <td>
-                                        <a id="detail_mvt" href="#" class="btn-block" type="button">
+                                        <a id="detail_operation" href="#" class="btn-block" type="button">
                                             plus de details
                                         </a>
                                     </td>
@@ -176,7 +176,7 @@ date_default_timezone_set("Africa/Douala");
         </div>
 
         <!-- modal detail-->
-        <div class="modal fade" id="modal-detailmouvment" tabindex="-1" role="dialog"
+        <div class="modal fade" id="modal-detailoperation" tabindex="-1" role="dialog"
             aria-labelledby="myLargeModalLabel" aria-hidden="true" style="">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content" style="transform:translateX(10%);">
@@ -373,7 +373,7 @@ date_default_timezone_set("Africa/Douala");
 
     {{-- detail d'un mouvement  --}}
     <script type="text/javascript">
-        $("a#detail_mvt").click(function (event) {
+        $("a#detail_operation").click(function (event) {
             event.preventDefault();
             let mouvement = $("table.multiple-select-row tr.selected").children(".table-plus").text();
             console.log(mouvement);
@@ -396,7 +396,7 @@ date_default_timezone_set("Africa/Douala");
                                 response[i].quantite_mouvement,
                             ]).draw();
                         }
-                        $('#modal-detailmouvment').modal('show');
+                        $('#modal-detailoperation').modal('show');
                     }
                 },
                 error: function (error) {

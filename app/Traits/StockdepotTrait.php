@@ -20,7 +20,7 @@ trait StockdepotTrait {
       public static function checkStockMarchDispoByDesign($designation, $quantite){
             $idmarch = Marchandise::getMarchId($designation);
             $march = Stockdepot::where('marchandise_id', $idmarch)
-                  ->where('quantite_stock','>',$quantite)
+                  ->where('quantite_stock','>=',$quantite)
                   ->first();
             return  $march;
       }

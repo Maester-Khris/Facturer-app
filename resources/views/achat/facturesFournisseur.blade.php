@@ -75,7 +75,7 @@
 								@foreach ($factures as $fac)
 									<tr>
 										<td class="table-plus">{{$fac->code_facture}}</td>
-										<td>{{$fac->fournisseur->nom}}</td>
+										<td>{{$fac->fournisseur->nom_complet}}</td>
 										{{-- <td>{{  date('Y/m/d h:m:s',strtotime($fac->date_facturation)) }}</td> --}}
 										<td>{{$fac->date_facturation}}</td>
 										<td>{{$fac->montant_net}}</td>

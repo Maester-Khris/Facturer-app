@@ -8,4 +8,8 @@ trait ComptoirTrait {
             $comptoir = Comptoir::where('libelle',$libele)->where('depot_id',$depotid)->first();
             return  $comptoir->id;
       }
+      public static function getComptoirByLibelle($libele, $depotid){
+            $comptoir = Comptoir::where('libelle',$libele)->where('depot_id',$depotid)->first();
+            return  $comptoir;
+      }
 }

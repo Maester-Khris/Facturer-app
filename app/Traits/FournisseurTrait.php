@@ -40,7 +40,7 @@ trait FournisseurTrait {
             $activities = collect();
             foreach($factures as $fac){
                   $ligne = [
-                        'fournisseur'  => $fac->fournisseur->nom,
+                        'fournisseur'  => $fac->fournisseur->nom_complet,
                         'codefac'  => $fac->code_facture,
                         'total'  => $fac->montant_net,
                         'date_operation'  => $fac->date_facturation,
@@ -53,7 +53,7 @@ trait FournisseurTrait {
                   if($caisses != null){
                         foreach($caisses as $caisse){
                               $ligne1 = [
-                                    'fournisseur'  => $fac->fournisseur->nom,
+                                    'fournisseur'  => $fac->fournisseur->nom_complet,
                                     'codefac'  => $fac->code_facture,
                                     'total'  => $fac->montant_net,
                                     'date_operation'  => $caisse->date_operation,

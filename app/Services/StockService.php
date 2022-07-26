@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Inventaire;
+use App\Models\Depot;
 use App\Models\Stockdepot;
 use App\Models\Mouvementstock;
 use App\Models\Marchandise;
@@ -45,6 +46,38 @@ class StockService{
       return  Stockdepot::getSituationDepot($depot);
    }
 
+   public static function addMarchandiseInAllStock($marchid){
+      $depots = Depot::all();
+      $depots->each(function($item) use ($marchid){
+         $stock = new Stockdepot;
+         $stock->depot_id = $item->id;
+         $stock->marchandise_id = $marchid;
+         $stock->quantite_stock = 0;
+         $stock->save();
+      });
+   }
+
+   /**
+    *   reajouter un controler pour les qte negative pour gerer les factures d'avoir
+    *   comment gerer le fait qu'on veuille enlever plus qu'il yen a dans le stock ??
+   */
+   public static function updatStockMarchandise($id_march, $qtemodifie, $type, $today){
+      $stock = Stockdepot::where("marchandise_id",$id_march)->first();
+      if($type == "Sortie" || $type == "Transfert"){
+         if($qtemodifie > 0){
+            $stock->quantite_stock = ($stock->quantite_stock >= $qtemodifie) ? $stock->quantite_stock - $qtemodifie : 0;
+         }else{
+            // utilisé pour modeliser les facture d'avoir
+            $stock->quantite_stock = $stock->quantite_stock + abs($qtemodifie);
+         }
+      }else{
+         $stock->quantite_stock = $stock->quantite_stock + $qtemodifie;
+      }
+      
+      $stock->date_derniere_modif_qté = $today;
+      $stock->save();
+   }
+
    public function updateCmupDernierPrixAchat($marchs){
       foreach($marchs as $march){
          $marchandise = Marchandise::getMarch($march['name']);
@@ -64,7 +97,7 @@ class StockService{
       $ref_mouv = DataService::genCode("Mouvement", $nbrows + 1);
       $today = new DateTime();
       foreach($marchs as $march){
-         $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Transfert", $destination, $today);
+         $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Transfert", $destination, $today, true);
          // put the code to add each marchandise in the stock of the destination depot
       }
    }
@@ -75,14 +108,14 @@ class StockService{
       $today = new DateTime();
       foreach($marchs as $march){
          if($type == "Entrée"){
-            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Entrée", null, $today);
+            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Entrée", null, $today, true);
          }else{
-            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Sortie", null, $today);
+            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Sortie", null, $today, true);
          }
       }
    }
 
-   public function newMouvementMarchandises($mouv_ref, $id_march, $quantité, $type, $destination, $date){
+   public function newMouvementMarchandises($mouv_ref, $id_march, $quantité, $type, $destination, $date, $allow_stock_modif){
       $mvt = new Mouvementstock;
       $mvt->marchandise_id = $id_march;
       $mvt->stockdepot_id = 1;
@@ -92,16 +125,9 @@ class StockService{
       $mvt->date_operation = $date; 
       $mvt->destination = $destination == null ? null : $destination;
       $mvt->save();
-     
-      $stock = Stockdepot::where("marchandise_id",$id_march)->first();
-      if($type == "Sortie" || $type == "Transfert"){
-         $stock->quantite_stock = abs($stock->quantite_stock - $quantité);
-      }else{
-         $stock->quantite_stock = $stock->quantite_stock + $quantité;
+      if($allow_stock_modif == true){
+         StockService::updatStockMarchandise($id_march, $quantité, $type, $date);
       }
-      
-      $stock->date_derniere_modif_qté = $date;
-      $stock->save();
    }
 
    public function newSaisieInventaire($marchs){
@@ -163,115 +189,4 @@ class StockService{
       return $etat;
    }
 
-
-   /**
-    * Retourne nb totale facture vente, nb totale ticket vente
-    * marge et chiffre Affaire
-   */
-   /**
-      * doit etre modifié pour prendre en compte les ventes deja reglé et les tickets cloturé
-   */
-   public function getStatGenerale($depotid){
-      $nb_facture_ventes = Vente::all()->count();
-      $nb_tickets = Ticket::all()->count();
-
-      // calcul du chiffre Affaire :  somme montant net de tout les fac ventes reglé + pareil pour ticket cloturé
-      $ventes = Vente::all();
-      $tickets = Ticket::all();
-      $somme_ventes = $ventes->reduce(function ($current, $vente) {
-         return $current + $vente->montant_net ;
-      },0);
-      $somme_tickets = $tickets->reduce(function ($current, $ticket) {
-         return $current + ($ticket->quantite * $ticket->prix_vente) ;
-      },0);
-      $chiffreAf = $somme_ventes + $somme_tickets;
-
-      // calcul de la marge : chiffreAf - ( cmup * nbvente de chaque article )
-      $ventes_marchandises = $this->getStatsVenteArticles(1);
-      $valeur = $ventes_marchandises->reduce(function($current,$march){
-         return $current + ($march->cmup * $march->nbvente);
-      },0);
-      $marge = $chiffreAf - $valeur;
-
-     return [$nb_facture_ventes, $nb_tickets, $chiffreAf, $marge ];
-   }
-
-   /**
-    * recupere la liste des facture de ventes (reglé avec leur marchandise) : FAA, designa
-    * recupere la liste des tickets de ventes (pourra etre modifié plustard pour deja cloturé) : TC00, designa
-    * on recupere la liste des articles du stock
-    * pour chaque article on compte le nb de facture et ticket on additionne
-   */
-   /**
-   * doit etre modifié pour prendre en compte les ventes deja reglé et les tickets cloturé
-   */
-   public function getStatsVenteArticles($depotid){
-      
-
-      // recupere touts les articles du depot 1 et leur infos
-      // $articles = $this->stockArticlesList(1);
-      $articles = Marchandise::select("reference","designation","cmup")->get();
-      
-      // recupere toutes les ventes du depot 1 et pour chaque ligne on a: ref_vente, ref_march, qte
-      $ventes = Vente::join("clients","clients.id","=","ventes.client_id")
-         ->join("detailtransactions","detailtransactions.reference_transaction","=","ventes.code_vente")
-         ->select("ventes.code_vente","detailtransactions.reference_marchandise","detailtransactions.quantite")
-         ->where("clients.depot_id",1)
-         ->get();
-
-      // recupere toutes les ticket du depot 1 et pour chaque ligne on a: ref_ticket, ref_march, qte
-      $tickets = Ticket::join("comptoirs","comptoirs.id","=","tickets.comptoir_id")
-         ->select("tickets.code_ticket","tickets.reference_marchandise","tickets.quantite")
-         ->where("comptoirs.depot_id",1)
-         ->get();
-
-      /**
-       * articles map use vente et ticket
-       * nbvente=0
-       * if ventes contains article.designation; nbvente = count(indexof(articledesignation))dans vente
-       * if ticket meme chose nbventes = nbventes + mem chose
-       * return [article designation; reference, nbvente]
-       */
-      $results = $articles->map(function($article) use ($ventes,$tickets){
-         $res = new \stdClass();
-         $res->reference = $article->reference;
-         $res->designation = $article->designation;
-         $res->cmup = $article->cmup;
-         $res->nbvente = 0;
-         $nb1 = $ventes->filter(function ($value, $key) use ($article) {
-            return $value->reference_marchandise == $article->reference;
-         })->count();
-         $nb2 = $tickets->filter(function ($value, $key) use ($article) {
-            return $value->reference_marchandise == $article->reference;
-         })->count();
-         $res->nbvente += ($nb1 + $nb2);
-         return $res;
-      });
-      return $results;  
-      
-   }
-
-
-   // public function newTransfer($designation, $quantité, $destination){
-   //    $march = Marchandise::where("designation",$designation)->first();
-   //    $today = new DateTime();
-   //    $this->newMouvementMarchandises($march->id, $quantité, "Transfert", $destination, $today);
-   // }
-
-   // public function newSortie($designation, $quantité){
-   //    $march = Marchandise::where("designation",$designation)->first();
-   //    $today = new DateTime();
-   //    $this->newMouvementMarchandises($march->id, $quantité, "Sortie", null, $today);
-   // }
-
-   // public function reajustMarch($designation, $quantité, $date){
-   //    $march = Marchandise::where("designation",$designation)->first();
-
-   //    // enregistre egalement comme une sortie
-   //    $dif = abs($this->marchQuantity($march->id) - (int)$quantité);
-   //    $this->newMouvementMarchandises($march->id, $dif, "Sortie", null, $date);
-
-   //    // nouvelle ligne inventaire
-   //    $this->newLigneInventaire($designation, $quantité, $date, false);
-   // }
 }

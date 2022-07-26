@@ -17,6 +17,7 @@ class CreateCaissesTable extends Migration
             $table->increments('id');
             $table->string('libelle');
             $table->string('numero_caisse');
+            $table->string('statut')->default("ferme");
             $table->timestamps();
         });
     }

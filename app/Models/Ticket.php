@@ -12,11 +12,17 @@ class Ticket extends Model
     use TicketTrait;
 
     protected $fillable = [
-        'vente_id',
-        'marchandise_id',
-        'quantite',
-        'type_vente',
-        'prix_vente',
+        'code_ticket',
+        'comptoir_id',
+        'client_id',
+        'total',
+        'statut',
+        'date_operation'
     ];
+
+    public function comptoir()
+    {
+       return $this->belongsTo(Comptoir::class);
+    }
 
 }

@@ -38,7 +38,7 @@ class VenteService{
 
 
       public function ListVente($id_depot){
-           return Vente::allVente($id_depot);
+           return Vente::getAllVentesByDepot($id_depot);
       }
       public static function getVenteByCode($codevente){
            return Vente::getByCode($codevente);
@@ -119,7 +119,9 @@ class VenteService{
             $this->checkVentePaid($codevente);
       }
 
+      // utilise pour set le statut de la vente a true pour dire ; reglé
       public function checkVentePaid($codevente){
+            // modifie pour prendre en ompte le depot
             $vente = $this->getVenteByCode($codevente);
             $totalvente = Journalvente::getMontantFacture($vente->id);
             $deja_paye = Comptecaisse::MontantReglementVente($vente->code_vente);

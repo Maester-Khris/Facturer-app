@@ -22,9 +22,8 @@ class ClientSeeder extends Seeder
                 'nom_complet' => 'Ngane Eboutou',
                 'telephone' => '+237 98764356',
                 'solde' => 0,
-                'numero_client' => 'client001',
-                'type_client' => 'regulier',
-                'type_paiement' => 'cheque', 
+                'tarification_client' => 'detail',
+                // 'type_paiement' => 'cheque', 
                 'multi_depot_caisses' => true
             ],
             [
@@ -33,9 +32,8 @@ class ClientSeeder extends Seeder
                 'nom_complet' => 'Tarovsky Tall',
                 'telephone' => '+237 90776353',
                 'solde' => 0,
-                'numero_client' => 'client002',
-                'type_client' => 'regulier',
-                'type_paiement' => 'espece', 
+                'tarification_client' => 'gros',
+                // 'type_paiement' => 'espece', 
                 'multi_depot_caisses' => false
             ],
         ]);

@@ -55,10 +55,12 @@
                         <div class="pd-20 card-box">
                             <h4 class="mb-20 h4">Creation des entités</h4>
                             <div class="list-group">
-                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#depot" role="tab" aria-selected="true">Nouveau depot</button>
+                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#depot" role="tab" aria-selected="true">Nouveau Depot</button>
                                 <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#article" role="tab" aria-selected="true">Ajouter Article</button>
                                 <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#caisse" role="tab" aria-selected="true">Ajouter Caisse</button>
-                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#comptoir" role="tab" aria-selected="true">Ajouter comptoir</button>
+                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#comptoir" role="tab" aria-selected="true">Ajouter Comptoir</button>
+                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#client" role="tab" aria-selected="true">Ajouter Client</button>
+                                <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#fournisseur" role="tab" aria-selected="true">Ajouter Fournisseur</button>
                                 <button type="button" class="list-group-item list-group-item-action list-group-item-info" data-toggle="tab" href="#personnel" role="tab" aria-selected="true">Ajouter Personnel</button>
                             </div>
                         </div>
@@ -124,7 +126,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-12 col-md-4 col-form-label">Reference March: </label>
                                             <div class="col-sm-12 col-md-8">
-                                                <input class="form-control" name="reference" type="text" placeholder="REFXXXX">
+                                                <input class="form-control" name="reference" type="text" value="{{$ref_march}}" required readonly>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -202,7 +204,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-12 col-md-4 col-form-label">Num Caisse: </label>
                                             <div class="col-sm-12 col-md-8">
-                                                <input class="form-control" name="numero_caisse" value="CAOOOOO" type="tel" required>
+                                                <input class="form-control" name="numero_caisse" value="{{$code_caisse}}" type="tel" required readonly>
                                             </div>
                                         </div>
                                         <input class="btn btn-info" type="submit" value="Submit" >
@@ -248,7 +250,95 @@
                                             <div class="col-sm-12 col-md-8">
                                                 <select class="custom-select col-12" name="caisse_id">
                                                     @foreach($caisses as $caisse)
-                                                    <option value="{{$caisse->id}}" >{{$caisse->libelle}}</option>
+                                                    <option value="{{$caisse->id}}" >{{$caisse->numero_caisse}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <input class="btn btn-info" type="submit" value="Submit" >
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade show" id="client" role="tabpanel">
+                                    <div class="clearfix">
+                                        <div class="pull-left">
+                                            <h4 class="text-blue h4">Nouveau Client</h4>
+                                            <p class="mb-30">Veuillez remplir toutes les informations</p>
+                                        </div>
+                                    </div>
+                                    <form action="{{url('enregistrer-client')}}" method="POST">
+                                        @csrf
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Nom & prenoms: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <input class="form-control" name="nom" type="text" placeholder="Johnny Brown">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Num Telephone: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <input class="form-control" name="telephone" value="1-(111)-111-1111" type="tel">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Selectionner la tarification: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <select class="custom-select col-12" name="tarification">
+                                                    <option value="detail">Detail</option>
+                                                    <option value="gros">Gros</option>
+                                                    <option value="super_gros">Super gors</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Selectionner le depot: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <select class="custom-select col-12" name="depot_id">
+                                                    @foreach($depots as $depot)
+                                                    <option value="{{$depot->id}}" >{{$depot->nom_depot}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <input class="btn btn-info" type="submit" value="Submit" >
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade show" id="fournisseur" role="tabpanel">
+                                    <div class="clearfix">
+                                        <div class="pull-left">
+                                            <h4 class="text-blue h4">Nouveau Fournisseur</h4>
+                                            <p class="mb-30">Veuillez remplir toutes les informations</p>
+                                        </div>
+                                    </div>
+                                    <form action="{{url('enregistrer-fournisseur')}}" method="POST">
+                                        @csrf
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Nom & prenoms: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <input class="form-control" name="nom" type="text" placeholder="Johnny Brown">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Num Telephone: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <input class="form-control" name="telephone" value="1-(111)-111-1111" type="tel">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Selectionner la categorie fournisseur: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <select class="custom-select col-12" name="type_fournisseur">
+                                                    <option value="detail">Detail</option>
+                                                    <option value="gros">Gros</option>
+                                                    <option value="super_gros">Super gors</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Selectionner le depot: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <select class="custom-select col-12" name="depot_id">
+                                                    @foreach($depots as $depot)
+                                                    <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -303,13 +393,13 @@
                                         <div class="form-group row">
                                             <label class="col-sm-12 col-md-4 col-form-label">Date d'embauche</label>
                                             <div class="col-sm-12 col-md-8">
-                                                <input class="form-control date-picker" name="date_embauche" placeholder="Select Date" type="date">
+                                                <input class="form-control" name="date_embauche" placeholder="Select Date" type="date">
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-12 col-md-4 col-form-label">Matricule: </label>
                                             <div class="col-sm-12 col-md-8">
-                                                <input class="form-control" name="matricule" type="text" placeholder="Johnny Brown">
+                                                <input class="form-control" name="matricule" type="text" value="{{$matricule_personnel}}" required readonly>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -357,7 +447,6 @@
                 </div>
             </div>
         </div>
-        
     </div>
 
     <div class="footer-wrap pd-20 mb-20 card-box center-foot center-foot">

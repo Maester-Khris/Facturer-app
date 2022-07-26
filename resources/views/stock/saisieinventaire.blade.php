@@ -150,9 +150,9 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#linkI").addClass("active");
-            $("#linkI").closest(".dropdown").addClass("show");
-            $("#linkI").closest(".submenu").css("display", 'block');
+            $("#linkSI").addClass("active");
+            $("#linkSI").closest(".dropdown").addClass("show");
+            $("#linkSI").closest(".submenu").css("display", 'block');
         });
     </script>
 

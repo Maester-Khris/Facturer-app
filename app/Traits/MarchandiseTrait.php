@@ -8,6 +8,14 @@ trait MarchandiseTrait {
             $march = Marchandise::where('designation',$designation)->first();
             return  $march->id;
       }
+      public static function getMarchIdByRef($ref){
+            $march = Marchandise::where('reference',$ref)->first();
+            return  $march->id;
+      }
+      public static function getMarchByRef($ref){
+            $march = Marchandise::where('reference',$ref)->first();
+            return  $march;
+      }
 
       public static function getMarchRef($designation){
             $march = Marchandise::where('designation',$designation)->first();

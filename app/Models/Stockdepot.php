@@ -12,7 +12,7 @@ class Stockdepot extends Model
     use StockdepotTrait;
 
     // date derniere misae a jour doit etre nullable: pour quand on cree un stock
-    protected $fillable=['depot_id','marchandise_id','quantite_stock','qte_derniere_modif'];
+    protected $fillable=['depot_id','marchandise_id','quantite_stock'];
 
     public function depot(){
       return $this->belongsTo(Depot::class);

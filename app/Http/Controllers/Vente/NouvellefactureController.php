@@ -56,7 +56,7 @@ class NouvellefactureController extends Controller
             $today
         );
         
-        $res = DataService::newTransaction($vente->code_vente, $marchandises);        
+        $res = DataService::newTransaction($vente->code_vente, $marchandises, $today);        
         $mvts = $this->stock->newMvtEntreeSortie($marchandises, "Sortie");
         
         $id_compteclient = $this->vente->updateComptaClient($client, $request->facture['net'], $today, "Débit");

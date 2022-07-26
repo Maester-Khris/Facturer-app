@@ -4,7 +4,16 @@ namespace App\Traits;
 use App\Models\Facture;
 
 trait FactureTrait {
-      public static function getFacList($id_depot){
+
+      public static function getFactureByDepot($code, $id_depot){
+            $fac = Facture::where('code_facture',$code)
+            ->with(['fournisseur' => function($query) use ($id_depot){
+                        $query->where('depot_id', $id_depot);
+                  }])->orderBy('date_facturation','desc')->first();
+
+            return $fac;
+      }
+      public static function getAllFacturesByDepot($id_depot){
             $facs = Facture::with(['fournisseur' => function($query) use ($id_depot){
                         $query->where('depot_id', $id_depot);
                   }])->orderBy('date_facturation','desc')->get();

@@ -11,6 +11,7 @@ class Detailtransactions extends Model
     protected $fillable = [
         'reference_transaction',
         'reference_marchandise',
-        'quantité',
+        'quantite',
+        'prix'
     ];
 }

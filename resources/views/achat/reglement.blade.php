@@ -75,7 +75,7 @@
                                 <tbody>
                                     @foreach($impayes as $fac)
                                         <tr>
-                                            <td class="table-plus">{{$fac->fournisseur->nom}}</td>
+                                            <td class="table-plus">{{$fac->fournisseur->nom_complet}}</td>
                                             <td>{{$fac->code_facture}}</td>
                                             {{-- <td>{{ date('Y/m/d h:m:s', strtotime($fac->date_facturation) ) }}</td> --}}
                                             <td>{{$fac->date_facturation}}</td>

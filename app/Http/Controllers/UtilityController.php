@@ -17,6 +17,12 @@ class UtilityController extends Controller
       $data = $this->data->Marchandisesuggestion($request->produit);
       return response()->json($data);
     }
+    public function suggestproductForComptoir(Request $request)
+    {
+      $data = $this->data->MarchandisescompletionVente($request->produit);
+      // $data2 = $this->data->Marchandisestockinfo($data[0]->designation);
+      return response()->json($data);
+    }
 
     public function suggestclient(Request $request)
     {

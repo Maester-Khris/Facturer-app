@@ -1,17 +1,46 @@
 <?php
 namespace App\Services;
 
-use App\Models\Facture;
+use App\Models\Depot;
+use App\Models\Comptoir;
+use App\Models\Client;
 use App\Models\Fournisseur;
-use App\Models\Comptefournisseur;
 use App\Models\Personnel;
-use App\Models\Stockdepot;
-use App\Models\Mouvementstock;
-use App\Models\Marchandise;
-use App\Models\Journalachat;
 use DateTime;
 
-class AchatService{
+class AdministrationService{
+
+      public static function associatePersonelToDepot($matricule_perso, $depotid){
+            $employee = Personnel::getEmployeeByMatricule($matricule_perso);
+            $depot = Depot::find($depotid);
+            $depot->personnels()->save($employee);
+      }
+      public static function associateComptoirToPersonnel($comptoir_libelle, $perso_id){
+            $employee = Personnel::find($perso_id);
+            $comptoir = Comptoir::getComptoirByLibelle($comptoir_libelle, $employee->depot->id);
+            $employee->comptoir()->save($comptoir);
+      }
+
+      public static function newFournisseur($data){
+            $fournisseur = Fournisseur::create([
+                  "nom_complet" => $data->nom,
+                  "telephone" => $data->telephone,
+                  "type_fournisseur" => $data->type_fournisseur
+            ]);
+            $depot = Depot::find($data->depot_id);
+            $depot->fournisseurs()->save($fournisseur);
+      }
+      public static function newClient($data){
+            // dd($data);
+            $client = Client::create([
+                  "nom_complet" => $data->nom,
+                  "telephone" => $data->telephone,
+                  // "type_paiement" => $data->type_paiement,
+                  "tarification_client" => $data->tarification
+            ]);
+            $depot = Depot::find($data->depot_id);
+            $depot->clients()->save($client);
+      }
 
       /**
        * Condition actuel

@@ -29,7 +29,7 @@
                     <ul class="submenu">
                         <li><a href="{{  url('interrogerArticles')  }}" id="linkIA">Interroger Articles</a></li>
                         <li><a href="{{ url('mouvementsStock') }}" id="linkMS">Mouvements de Stocks</a></li>
-                        <li><a href="{{ url('inventaire') }}" id="linkI">Saisie Inventaire</a></li>
+                        <li><a href="{{ url('inventaire') }}" id="linkSI">Saisie Inventaire</a></li>
                         <li><a href="{{ url('listeinventaire') }}"  id="linkLI">Liste Inventaires</a></li>
                         <li><a href="{{ url('etatinventaire') }}"  id="linkEI">Etat Inventaire</a></li>
                     </ul>
@@ -59,16 +59,26 @@
                     </ul>
                 </li>
 
-                <li>
-                    <a href="{{ url('ventesComptoir') }}" class="dropdown-toggle no-arrow" id="linkVenteComptoir">
-                        <span class="micon dw dw-shopping-cart"></span><span class="mtext">Ventes au comptoir</span>
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <span class="micon dw dw-shopping-cart"></span><span class="mtext">Caisse & Comptoirs</span>
                     </a>
+                    <ul class="submenu">
+                        <li><a href="{{ url('operationCaisse') }}" id="linkLOC">Operations Caisses</a></li>
+                        <li><a href="{{ url('ventesComptoir') }}" id="linkLVC">Ventes au comptoir</a></li>
+                    </ul>
                 </li>
-                <li>
-                    <a href="{{ url('statArticle') }}" class="dropdown-toggle no-arrow" id="linkStatistique">
+
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon dw dw-analytics-21"></span><span class="mtext">Statistiques</span>
                     </a>
+                    <ul class="submenu">
+                        <li><a href="{{ url('statGenerale') }}" id="linkLLP">Palmares Ventes/Achat</a></li>
+                        <li><a href="{{ url('ventesComptoir') }}" id="linkLLB">Balance Client/Fournisseur</a></li>
+                    </ul>
                 </li>
+
             </ul>
         </div>
     </div>

@@ -19,21 +19,17 @@ class FournisseurSeeder extends Seeder
             [
                 'id' => 1,
                 'depot_id' => 1,
-                'nom' => 'Mr Nzali',
-                'prenom' => 'Francois',
+                'nom_complet' => 'Mr Nzali Dejesus',
                 'telephone' => '+237 75843976',
                 'solde' => 0,
-                'numero_fournisseur' => 'Four001',
                 'type_fournisseur' => 'gros',
             ],
             [
                 'id' => 2,
                 'depot_id' => 1,
-                'nom' => 'Ndengue',
-                'prenom' => 'Rodrigue',
+                'nom_complet' => 'Ndengue Rodrigue',
                 'telephone' => '+237 56982345',
                 'solde' => 0,
-                'numero_fournisseur' => 'Four002',
                 'type_fournisseur' => 'semi-gros',
             ],
         ]);

@@ -16,15 +16,14 @@ class CreateTicketsTable extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code_ticket');
+            $table->integer('client_id')->nullable()->unsigned();
             $table->integer('comptoir_id')->unsigned();
-            $table->string('reference_marchandise');
-            // $table->integer('marchandise_id')->unsigned();
-            $table->integer('quantite');
-            $table->string('type_vente');
-            $table->integer('prix_vente');
+            $table->integer('total');
+            $table->string('statut')->default("en cours");
+            $table->dateTime('date_operation'); 
             $table->timestamps();
             $table->foreign('comptoir_id')->references('id')->on('comptoirs');
-            // $table->foreign('marchandise_id')->references('id')->on('marchandises');
+            $table->foreign('client_id')->references('id')->on('clients');
         });
 
         

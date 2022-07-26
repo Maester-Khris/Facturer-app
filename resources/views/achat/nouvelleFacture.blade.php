@@ -306,7 +306,8 @@
             for (var i = 0; i < rows.length; i++) {
                 let marchfac = {
                     'name': rows[i][2],
-                    'prix_achat': rows[i][3],
+                    // 'prix_achat': rows[i][3],
+                    'prix': rows[i][3],
                     'quantite': rows[i][4]
                 }
                 marchandises.push(marchfac);

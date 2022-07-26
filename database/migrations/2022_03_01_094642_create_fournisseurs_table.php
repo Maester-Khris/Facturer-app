@@ -15,13 +15,12 @@ class CreateFournisseursTable extends Migration
     {
         Schema::create('fournisseurs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('depot_id')->unsigned();
-            $table->string('nom');
-            $table->string('prenom');
+            $table->integer('depot_id')->nullable()->unsigned();
+            $table->string('nom_complet');
             $table->string('telephone');
-            $table->integer('solde');
+            $table->integer('solde')->default(0);
             $table->dateTime('date_dernier_calcul_solde')->nullable();
-            $table->string('numero_fournisseur');
+            // $table->string('numero_fournisseur');
             $table->string('type_fournisseur');
             $table->timestamps();
             $table->foreign('depot_id')->references('id')->on('depots');

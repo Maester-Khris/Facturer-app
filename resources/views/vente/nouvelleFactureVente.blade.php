@@ -299,6 +299,7 @@
 			let marchfac = {
 				'name': rows[i][2],
 				'type_vente': rows[i][3],
+				'prix': rows[i][4],
 				'quantite': rows[i][5]
 			}
 			marchandises.push(marchfac);
