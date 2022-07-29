@@ -45,9 +45,6 @@ class VentecomptoirService{
             $ticket->save();
       }
 
-      public static function OpenCaisse(){
-
-      }
 
       /** Factures vente de fin de journee apres la cloture de la caisse
        * remise=0, total =0, net=sum du total de chaque ticket du client
@@ -107,23 +104,20 @@ class VentecomptoirService{
             }
       }
 
-      
-
-      public static function getTicketArchiveByPeriod($caisse, $periode_min, $periode_max){
-            $comptoirids = $caisse->comptoirs->map(function($item){
-                  return $item->id;
-            });
-            $tickets = Ticket::where('statut','archive')
-                  ->whereIn('comptoir_id', $comptoirids)
-                  ->whereBetween('date_operation', [$periode_min, Carbon::parse($periode_max)->endOfDay()])
-                  ->get();
-            if(!$tickets->isEmpty()){
-                  return $tickets;
-            }else{
-                  return collect();
+      public static function requestTicketCaisse($caisse, $statut, $periode_min, $periode_max){
+            if($statut == "archive"){
+                  $data = Ticket::getTicketArchiveByComptoir($caisse, $periode_min, $periode_max);
+            }else if($statut == "en_cours"){
+                  $data = Ticket::getTicketEnCoursByComptoir($caisse, $periode_min, $periode_max);
             }
+            return $data;
       }
 
+      
+
+      /**
+       *  Details about waiting tickets
+      */ 
       public static function getTicketenAttente(){
             $data = Ticket::where('statut','non termine')
             ->join('detailtransactions',"tickets.code_ticket","=","detailtransactions.reference_transaction")

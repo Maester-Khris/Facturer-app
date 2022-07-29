@@ -22,11 +22,10 @@
         console.log(event.target);
     }
 </script>
-<!-- <script src="text/javascript" >
-  console.log("entrer");
-  $('table tr').click(function(){
-     console.log("entrer");
-     let ref= $(this).children(".table-plus").text();
-     console.log(ref);
-  })
-</script> -->
+<script type="text/javascript">
+  $("#logout").click(function(e){
+    e.preventDefault();
+    console.log("e");
+    window.location.replace("/deconnect");
+  });
+</script>

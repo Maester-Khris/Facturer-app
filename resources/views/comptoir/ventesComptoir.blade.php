@@ -80,22 +80,16 @@
                                 @if(Session::has('depot_name'))
                                     <h4 class="text-blue h4">Entrepot {{Session::get('depot_name')}}</h4>
                                 @else
-                                    <h4 class="text-blue h4">Entrepot Saint José</h4>
+                                    <h4 class="text-blue h4">Entrepot Valtos</h4>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @if ($statut_caisse == false)
-                    <div class="col-md-12 col-sm-12 text-right">
-                        <div class="card-box">
-                            <div class="pd-20 d-flex flex-row justify-content-center align-items-center">
-                                <span>Caisse Fermé</span>
-                            </div>
-                        </div>
-                    </div>
-                @else
+                {{-- @if ($statut_caisse == false) --}}
+                   
+                {{-- @else --}}
                     <div class="row">
                         <div class="col-md-9">
                             <div class="card-box mb-30">
@@ -210,7 +204,7 @@
                             </div>
                         </div>
                     </div>
-                @endif
+                {{-- @endif --}}
 
                 <!-- modal detail-->
                 <div class="modal fade" id="modal-rappel" tabindex="-1" role="dialog"
@@ -576,97 +570,10 @@
 
 
 
-
-
-{{-- // $("#valider-ticket").click(function (e) {
-    //     e.preventDefault();
-    //     var table = $('table.table-ticket').DataTable();
-    //     let rows = table.rows({selected: true}).data();
-    //     let _token = $('meta[name="csrf-token"]').attr('content');
-    //     let client = $('#client_name').text();
-    //     let codeticket = $('#code_ticket').text();
-    //     let total = $('#total_ticket').text();
-
-    //     let marchandises = [];
-    //     for (var i = 0; i < rows.length; i++) {
-    //         let marchticket = {
-    //             'name': rows[i][1],
-    //             'quantite': rows[i][2],
-    //             'prix': rows[i][3]
-    //         }
-    //         marchandises.push(marchticket);
-    //     }
-
-    //     var ticket = {
-    //         'marchandises': marchandises,
-    //         'client': client,
-    //         'codeticket': codeticket,
-    //         'total': total
-    //     }
-    //     console.log(ticket);
-        
-
-    //     $.ajax({
-    //         url: "/enregistrer-ticketencours",
-    //         type: "POST",
-    //         data: {
-    //             'ticket': ticket,
-    //             '_token': _token
-    //         },
-    //         success: function (response) {
-    //             if (response) {
-    //                 console.log(response);
-    //                 // window.location.replace("/nouvelleFacture");
-    //             }
-    //         }
-
-    //     });
-    // }); --}}
-
-
-
-{{-- <div class="card-box mb-30">
-    <div class="pd-20" style="padding-bottom: 10px;">
-        <h4 class="text-blue h4">Nouveau Ticket caisse</h4>
-    </div>
-
-    <div class="pd-20" style="padding-top: 10px;">
-        <form action="">
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    <div class="form-group" style="position: relative;">
-                        <label>Le produit</label>
-                        <input id="march" class="form-control" type="text"
-                            placeholder="rechercher le produit">
-                        <ul id="march_suggest" class="autosuggest">
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-12">
-                    <div class="form-group" style="position: relative;">
-                        <label>Qte <code>stock</code></label>
-                        <input id="march_stock" class="form-control" type="number" value="0" readonly>
-                    </div>
-                </div>
-                <div class="col-md-7"></div>
-                <div class="col-md-3 col-sm-12">
-                    <div class="form-group ">
-                        <label>nombre d'articles</label>
-                        <input id="demo3" type="number" value="" name="demo3" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Prix de vente <code>l'unité</code></label>
-                        <input class="prix_vente" id="demo3" type="number" value="" name="demo3">
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-12" style="padding-top:35px;">
-                    <a href="#" class="btn btn-primary" id="addMarch">
-                        Ajouter
-                    </a>
-                </div>
-            </div>
-        </form>
+{{-- <div class="col-md-12 col-sm-12 text-right">
+    <div class="card-box">
+        <div class="pd-20 d-flex flex-row justify-content-center align-items-center">
+            <span>Caisse Fermé</span>
+        </div>
     </div>
 </div> --}}

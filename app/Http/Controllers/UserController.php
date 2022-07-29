@@ -37,23 +37,27 @@ class UserController extends Controller
                 session()->put('depot_name', $employe->depot->nom_depot);
                 Auth::login($user, $remember = true);
                 $request->session()->regenerate();
-                // mettre l'id du personnel et le nom de son depot en session
-                
             }else{
                 session()->put('personnel_id', $employe->id);
                 session()->put('depot_name', $employe->depot->nom_depot);
                 Auth::login($user);
-                $request->session()->regenerate();
-                
-                // mettre l'id du personnel et le nom de son depot en session
+                $request->session()->regenerate();  
             }
-            return redirect('/ventesComptoir');
+            
+            if($user->hasAnyRole(["vendeur","chef_equipe"])){
+                return redirect('/ventesComptoir');
+            }else if("magasinier"){
+                return redirect('/transfertStock');
+            }else if("comptable"){
+                return redirect('/');
+            }
         }
     }
 
     public function deconnect(Request $request){
         $request->session()->flush();
         Auth::logout();
-        return redirect('/');
+        return redirect('/connexion');
     }
+
 }

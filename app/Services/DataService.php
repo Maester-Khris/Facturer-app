@@ -210,7 +210,8 @@ class DataService{
             }else if($code_type == "Personnel") {
                   $racine = 'MAT';
             }else{
-                  // caisse
+                  // Mouvement
+                  $racine = 'MVT';
             }
     
             $indice = '';

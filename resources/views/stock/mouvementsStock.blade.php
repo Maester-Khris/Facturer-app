@@ -70,7 +70,11 @@ date_default_timezone_set("Africa/Douala");
                         </div>
                         <div class="col-md-6 col-sm-12 text-right">
                             <div class="pd-20">
-                                <h4 class="text-blue h4">Entrepot Saint José</h4>
+                                @if(Session::has('depot_name'))
+                                    <h4 class="text-blue h4">Entrepot {{Session::get('depot_name')}}</h4>
+                                @else
+                                    <h4 class="text-blue h4">Entrepot Valtos</h4>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -209,12 +213,23 @@ date_default_timezone_set("Africa/Douala");
                         <h4 class="modal-title" id="myLargeModalLabel">Transferer un stock vers</h4>
                         <div class="col-md-4" style="height: 40px;margin-left:20px;">
                             <div class="form-group">
-                                <select class="selectpicker form-control depot_transf" data-size="5"
+                                <select class="selectpicker form-control depot_depart" data-size="5"
+                                    data-style="btn-outline-infmvt_typeo" data-selected-text-format="count"
+                                    name="depart">
+                                    @foreach($depots as $depot)
+                                     <option value="{{$depot->nom_depot}}" >{{$depot->nom_depot}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="height: 40px;margin-left:10px;">
+                            <div class="form-group">
+                                <select class="selectpicker form-control depot_destination" data-size="5"
                                     data-style="btn-outline-infmvt_typeo" data-selected-text-format="count"
                                     name="destination">
-                                    <option>Port-Hou-Boué</option>
-                                    <option>Grand-Bassam</option>
-                                    <option>Bonamoussadi</option>
+                                    @foreach($depots as $depot)
+                                     <option value="{{$depot->nom_depot}}" >{{$depot->nom_depot}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -285,6 +300,17 @@ date_default_timezone_set("Africa/Douala");
                     <div class="modal-header">
                         <h4 class="modal-title" id="myLargeModalLabel">Mouvement Stock</h4>
                         <div class="col-md-4" style="height: 40px;margin-left:20px;">
+                            <div class="form-group">
+                                <select class="selectpicker form-control depot" data-size="5"
+                                    data-style="btn-outline-infmvt_typeo" data-selected-text-format="count"
+                                    name="depot">
+                                    @foreach($depots as $depot)
+                                     <option value="{{$depot->nom_depot}}" >{{$depot->nom_depot}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="height: 40px;margin-left:10px;">
                             <div class="form-group">
                                 <select class="selectpicker form-control mvt_type" data-style="btn-outline-primary"
                                     name="prix_vente" data-size="5">
@@ -501,7 +527,8 @@ date_default_timezone_set("Africa/Douala");
     <script type="text/javascript">
         $("#validermvt_transf").click(function (event) {
             let _token = $('meta[name="csrf-token"]').attr('content');
-            let depot_destination = $('select.depot_transf').children("option:selected").val();
+            let depot_depart = $('select.depot_depart').children("option:selected").val();
+            let depot_destination = $('select.depot_destination').children("option:selected").val();
             var table = $('table.checkbox-datatable.table-transfert').DataTable();
             let rows = table.rows({
                 selected: true
@@ -523,6 +550,7 @@ date_default_timezone_set("Africa/Douala");
                 data: {
                     'marchs': marchandises,
                     'depot_destination': depot_destination,
+                    'depot_depart': depot_depart,
                     '_token': _token
                 },
                 success: function (response) {
@@ -555,6 +583,7 @@ date_default_timezone_set("Africa/Douala");
     <script type="text/javascript">
         $("#validermvt").click(function (event) {
             let _token = $('meta[name="csrf-token"]').attr('content');
+            let depot = $('select.depot').children("option:selected").val();
             let type_achat = $('select.mvt_type').children("option:selected").val();
             var table = $('table.checkbox-datatable.table-mouvement').DataTable();
             let rows = table.rows({
@@ -576,6 +605,7 @@ date_default_timezone_set("Africa/Douala");
                 type: "POST",
                 data: {
                     'marchs': marchandises,
+                    'depot': depot,
                     '_token': _token
                 },
                 success: function (response) {

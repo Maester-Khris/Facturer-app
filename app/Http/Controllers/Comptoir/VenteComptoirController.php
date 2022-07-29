@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Comptoir;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\Client;
+use App\Models\Caisse;
 use App\Services\DataService;
 use App\Services\VentecomptoirService; 
 use Illuminate\Http\Request;
@@ -21,7 +22,16 @@ class VenteComptoirController extends Controller
         $nbrows = Ticket::count();
         $nouveau_code = DataService::genCode("Ticket", $nbrows + 1);
         $statut_caisse = DataService::checkCaisseOpened($comptoir->caisse->id);
-        return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'))->with(compact('statut_caisse'));
+        if($statut_caisse == true){
+            return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
+        }
+        else{
+            $caisse = Caisse::find($comptoir->caisse->id);
+            $caisse->statut == "ouvert";
+            $caisse->save();
+            return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
+        }
+        // ->with(compact('statut_caisse'))
     }
 
     /**

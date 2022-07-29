@@ -56,9 +56,17 @@ class CaisseController extends Controller
         $caisses = Caisse::all();
         $caisse = Caisse::find($request->caisse);
         if($caisse){
-            $data = VentecomptoirService::getTicketArchiveByPeriod($caisse, $request->periode_min, $request->periode_max);
-            return view('comptoir.operationComptoir')->with(compact('caisses'))->with(compact('data'));
-        }else{
+            $data = VentecomptoirService::requestTicketCaisse($caisse, $request->type_ticket, $request->periode_min, $request->periode_max);
+            $type = $request->type_ticket == 'archive' ? 'Archivé' : 'En Cours';
+            $total =  !$data->isEmpty() ? $data->sum('total') : 0; 
+            return view('comptoir.operationComptoir')
+            ->with(compact('caisses'))
+            ->with(compact('caisse'))
+            ->with(compact('type'))
+            ->with(compact('total'))
+            ->with(compact('data'));
+        }
+        else{
             $transf_error = "Aucune correspondance, verifiez le formalaire";
             return back()->with('error_form_caisse',$transf_error);
         }
@@ -73,8 +81,4 @@ class CaisseController extends Controller
         $caisse->save();
         VentecomptoirService::closeCaisseFactureVentes($caisse);
     }
-
-    // $employee_id = $request->session()->get('personnel_id');
-    // $comptoir = DataService::getComptoirPersonnel($employee_id);
-    // $caisse = $comptoir->caisse;
 }

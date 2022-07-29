@@ -17,8 +17,11 @@ class StockService{
    public function marchandiseDetails($ref){
       return Marchandise::where("reference",$ref)->get();
    }
-   public function allMouvements($stockdepot){
-      return Mouvementstock::getMouvementOperations($stockdepot);
+   public function allMouvements($iddepot){
+      return Mouvementstock::getMouvementOperations($iddepot);
+   } 
+   public function allTransferts($iddepot){
+      return Mouvementstock::getMouvementTransfertOperations($iddepot);
    }
    public function detailsMouvement($stockdepot, $code_mouvement){
       return Mouvementstock::getMarchandiseMvt($stockdepot, $code_mouvement);
@@ -61,8 +64,8 @@ class StockService{
     *   reajouter un controler pour les qte negative pour gerer les factures d'avoir
     *   comment gerer le fait qu'on veuille enlever plus qu'il yen a dans le stock ??
    */
-   public static function updatStockMarchandise($id_march, $qtemodifie, $type, $today){
-      $stock = Stockdepot::where("marchandise_id",$id_march)->first();
+   public static function updatStockMarchandise($stock, $qtemodifie, $type, $today){
+      // $stock = Stockdepot::where('depot_id',$id_depot)->where("marchandise_id",$id_march)->first();
       if($type == "Sortie" || $type == "Transfert"){
          if($qtemodifie > 0){
             $stock->quantite_stock = ($stock->quantite_stock >= $qtemodifie) ? $stock->quantite_stock - $qtemodifie : 0;
@@ -92,33 +95,40 @@ class StockService{
       }
    }
 
-   public function newMvtTransf($marchs, $destination){
+   public function newMvtTransf($id_depot, $marchs, $destination){
       $nbrows = Mouvementstock::distinct()->count('reference_mouvement');
       $ref_mouv = DataService::genCode("Mouvement", $nbrows + 1);
       $today = new DateTime();
       foreach($marchs as $march){
-         $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Transfert", $destination, $today, true);
+         $march_id = Marchandise::getMarchId($march["name"]);
+         $this->newMouvementMarchandises($id_depot, $ref_mouv, $march_id, $march["quantite"], "Transfert", $destination, $today, true);
          // put the code to add each marchandise in the stock of the destination depot
+         $depot = Depot::where("nom_depot",$destination)->first();
+         $stockdepotmarch = Stockdepot::where('depot_id',$depot->id)->where('marchandise_id',$march_id)->first();
+         StockService::updatStockMarchandise($stockdepotmarch, $march["quantite"], "Entree", $today);
       }
    }
 
-   public function newMvtEntreeSortie($marchs, $type){
+   public function newMvtEntreeSortie($id_depot, $marchs, $type){
       $nbrows = Mouvementstock::distinct()->count('reference_mouvement');
       $ref_mouv = DataService::genCode("Mouvement", $nbrows + 1);
       $today = new DateTime();
       foreach($marchs as $march){
          if($type == "Entrée"){
-            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Entrée", null, $today, true);
+            $this->newMouvementMarchandises($id_depot, $ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Entrée", null, $today, true);
          }else{
-            $this->newMouvementMarchandises($ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Sortie", null, $today, true);
+            $this->newMouvementMarchandises($id_depot, $ref_mouv, Marchandise::getMarchId($march["name"]), $march["quantite"], "Sortie", null, $today, true);
          }
       }
    }
 
-   public function newMouvementMarchandises($mouv_ref, $id_march, $quantité, $type, $destination, $date, $allow_stock_modif){
+   public function newMouvementMarchandises($id_depot, $mouv_ref, $id_march, $quantité, $type, $destination, $date, $allow_stock_modif){
       $mvt = new Mouvementstock;
       $mvt->marchandise_id = $id_march;
-      $mvt->stockdepot_id = 1;
+      $stockdepot = Stockdepot::where('depot_id',$id_depot)->where('marchandise_id',$id_march)->first();
+      // dd($stockdepot);
+      // find stockdepot where iddepot et idmarchandise puis on set
+      $mvt->stockdepot_id =  $stockdepot->id;
       $mvt->reference_mouvement =  $mouv_ref;
       $mvt->type_mouvement = $type;
       $mvt->quantite_mouvement = $quantité;
@@ -126,7 +136,7 @@ class StockService{
       $mvt->destination = $destination == null ? null : $destination;
       $mvt->save();
       if($allow_stock_modif == true){
-         StockService::updatStockMarchandise($id_march, $quantité, $type, $date);
+         StockService::updatStockMarchandise($stockdepot, $quantité, $type, $date);
       }
    }
 

@@ -6,9 +6,9 @@ namespace App\Http\Controllers\Administration;
 use \stdClass;
 use Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+// use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+// use App\Models\User;
 use App\Models\Depot;
 use App\Models\Caisse;
 use App\Models\Comptoir;
@@ -91,32 +91,25 @@ class NewEntitiesController extends Controller
 
     public function savepersonnel(Request $request){
         $validator = Validator::make($request->all(),[
-            'nom_complet' => 'required',
-            'sexe' => 'required',
-            'telephone' => 'required',
-            'email' => 'required',
-            'cni' => 'required',
-            'matricule' => 'required',
-            'matricule_cnps' => 'required',
-            'date_embauche' => 'required',
-            'type_contrat' => 'required',
-            'poste' => 'required',
-            'depot_id' => 'required'
+            'nom_complet' => 'required','sexe' => 'required', 'telephone' => 'required',
+            'email' => 'required', 'cni' => 'required','matricule' => 'required',
+            'matricule_cnps' => 'required','date_embauche' => 'required','type_contrat' => 'required',
+            'poste' => 'required','depot_id' => 'required'
         ]);
         if ($validator->fails()) {
             $transf_error = "Formulaire mal remplie";
             return back()->with('error_form_entite',$transf_error);
         }
-
         Personnel::create($request->all());
-        $user = User::create([
-            'name' => $request->nom_complet,
-            'email' => $request->email,
-            'password' => Hash::make($request->matricule),
-        ]);
         $personnel = Personnel::where('matricule',$request->matricule)->first();
-        $personnel->user_id = $user->id;
-        $personnel->save();
+
+        // create his user account
+        $user = AdministrationService::createEmployeeUser($personnel, $request->nom_complet, $request->email, $request->matricule);
+        
+        // get role and permission to this person
+        AdministrationService::giveEmployeeUserPermission($user, $request->poste);
+
+        // register his depot
         AdministrationService::associatePersonelToDepot($request->matricule, $request->depot_id);
         return redirect('/nouvellesEntites');
     }
@@ -175,3 +168,11 @@ class NewEntitiesController extends Controller
         return redirect('/nouvellesEntites');
     }
 }
+
+// $user = User::create([
+        //     'name' => $request->nom_complet,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->matricule),
+        // ]);
+        // $personnel->user_id = $user->id;
+        // $personnel->save();

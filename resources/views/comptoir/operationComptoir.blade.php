@@ -46,7 +46,11 @@
                         </div>
                         <div class="col-md-6 col-sm-12 text-right">
                             <div class="pd-20">
-                                <h4 class="text-blue h4">Entrepot Saint José</h4>
+                                @if(Session::has('depot_name'))
+                                    <h4 class="text-blue h4">Entrepot {{Session::get('depot_name')}}</h4>
+                                @else
+                                    <h4 class="text-blue h4">Entrepot Valtos</h4>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -127,6 +131,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label class="col-sm-12 col-md-4 col-form-label">Selectionner le type de ticket:
+                                        </label>
+                                        <div class="col-sm-12 col-md-8">
+                                            <select class="custom-select col-12" name="type_ticket">
+                                                <option value="archive">Ticket Archivés</option>
+                                                <option value="en_cours">Ticket en Cours</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label class="col-sm-12 col-md-4 col-form-label">Periode Min: </label>
                                         <div class="col-sm-12 col-md-8">
                                             <input class="form-control" name="periode_min" placeholder="Select Date"
@@ -143,10 +157,13 @@
                                     <input class="btn btn-info" type="submit" value="Consulter">
                                 </form>
                                 @else
+                                <h4 class="text-blue h4">Liste Tickets {{$type}} </h4>
+                                <h5 class="text-grey h5">Caisse: {{$caisse->libelle}}</h5>
                                 <table class="table hover multiple-select-row data-table-export nowrap">
                                     <thead>
                                         <tr>
                                             <th class="table-plus datatable-nosort">Ref. Ticket</th>
+                                            <th>Heure</th>
                                             <th>Total</th>
                                             <th>Autre</th>
                                         </tr>
@@ -155,6 +172,7 @@
                                         @foreach ($data as $ticket)
                                         <tr>
                                             <td class="table-plus">{{$ticket->code_ticket}}</td>
+                                            <td>{{$ticket->date_operation}}</td>
                                             <td>{{$ticket->total}}</td>
                                             <td>
                                                 <a id="detail_operation" href="#" class="btn-block" type="button">
@@ -165,6 +183,21 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="clearfix" style="margin-top: 20px;margin-right:10px;">
+                                    <div class="pull-right">
+                                        <form action="">
+                                            <div class="row">
+                                                <div class="offset-md-4 col-md-8 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Total Caisse des tickets <code>{{$type}}</code></label>
+                                                        <input id="total_net" type="number" class="form-control" value="{{$total}}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
                                 @endif
                             </div>
                         </div>
@@ -255,6 +288,7 @@
                         if (response) {
                             var table = $('table.table-detail').DataTable();
                             for (var i = 0; i < response.length; i++) {
+                                table.clear().draw();
                                 table.row.add([
                                     response[i].reference_marchandise,
                                     response[i].designation,

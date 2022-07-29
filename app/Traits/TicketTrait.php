@@ -30,4 +30,34 @@ trait TicketTrait {
             ->get(); 
             return $tickets;
       }
+
+      public static function getTicketArchiveByComptoir($caisse, $periode_min, $periode_max){
+            $comptoirids = $caisse->comptoirs->map(function($item){
+                  return $item->id;
+            });
+            $tickets = Ticket::where('statut','archive')
+                  ->whereIn('comptoir_id', $comptoirids)
+                  ->whereBetween('date_operation', [$periode_min, Carbon::parse($periode_max)->endOfDay()])
+                  ->get();
+            if(!$tickets->isEmpty()){
+                  return $tickets;
+            }else{
+                  return collect();
+            }
+      }
+
+      public static function getTicketEnCoursByComptoir($caisse, $periode_min, $periode_max){
+            $comptoirids = $caisse->comptoirs->map(function($item){
+                  return $item->id;
+            });
+            $tickets = Ticket::where('statut','en cours')
+                  ->whereIn('comptoir_id', $comptoirids)
+                  ->whereBetween('date_operation', [$periode_min, Carbon::parse($periode_max)->endOfDay()])
+                  ->get();
+            if(!$tickets->isEmpty()){
+                  return $tickets;
+            }else{
+                  return collect();
+            }
+      }
 }

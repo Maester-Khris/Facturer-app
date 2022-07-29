@@ -6,6 +6,11 @@ use App\Models\Comptoir;
 use App\Models\Client;
 use App\Models\Fournisseur;
 use App\Models\Personnel;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use DateTime;
 
 class AdministrationService{
@@ -31,15 +36,40 @@ class AdministrationService{
             $depot->fournisseurs()->save($fournisseur);
       }
       public static function newClient($data){
-            // dd($data);
             $client = Client::create([
                   "nom_complet" => $data->nom,
                   "telephone" => $data->telephone,
-                  // "type_paiement" => $data->type_paiement,
                   "tarification_client" => $data->tarification
             ]);
             $depot = Depot::find($data->depot_id);
             $depot->clients()->save($client);
+      }
+
+      public static function createEmployeeUser($employee, $name, $email, $matricule){
+            $user = User::create([
+                  'name' => $name,
+                  'email' => $email,
+                  'password' => Hash::make($matricule),
+            ]);
+            $employee->user_id = $user->id;
+            $employee->save();
+            return $user;
+      }
+
+      public static function giveEmployeeUserPermission($user, $poste){
+            if($poste == "vendeur"){
+                  $role = Role::find(1);
+            }
+            else if($poste == "magasinier"){
+                  $role = Role::find(2);
+            }
+            else if($poste == "chef_equipe"){
+                  $role = Role::find(3);
+            }
+            else if($poste == "comptable"){
+                  $role = Role::find(4);
+            }
+            $user->assignRole($role);
       }
 
       /**

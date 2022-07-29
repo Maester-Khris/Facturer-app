@@ -38,6 +38,7 @@ Route::get('/suiviActivites', function () {
 //                  STOCK
 // =============== ************** ================================
 Route::get('/interrogerArticles', 'App\Http\Controllers\Stock\ArticleController@index');
+Route::get('/transfertStock', 'App\Http\Controllers\Stock\MouvementController@transfert');
 Route::get('/mouvementsStock', 'App\Http\Controllers\Stock\MouvementController@index');
 Route::get('/listeinventaire', 'App\Http\Controllers\Stock\InventaireController@listinventaire');
 Route::get('/inventaire','App\Http\Controllers\Stock\InventaireController@index');
@@ -112,7 +113,7 @@ Route::post('/statDepot', 'App\Http\Controllers\Statistique\StatArticleControlle
 //                  REDIRECT HOME
 // =============== ************** ================================
 Route::get('/', function () {
-    return redirect('/interrogerArticles');
+    return redirect('/nouvellesEntites');
 });
 
 

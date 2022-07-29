@@ -61,7 +61,11 @@
                         </div>
                         <div class="col-md-6 col-sm-12 text-right">
                             <div class="pd-20">
-                                <h4 class="text-blue h4">Entrepot Saint José</h4>
+                                @if(Session::has('depot_name'))
+                                    <h4 class="text-blue h4">Entrepot {{Session::get('depot_name')}}</h4>
+                                @else
+                                    <h4 class="text-blue h4">Entrepot Valtos</h4>
+                                @endif
                             </div>
                         </div>
                     </div>
