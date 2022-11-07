@@ -45,14 +45,15 @@
 */
 
 /**
- * Note Fonctionement : fournisseur et client
+ * Note Fonctionement : compte fournisseur et client
+ * fournisseur
  * credité: apres approvisioneme -> reception facture a payer
- * debité: apres reglement de la facture
+ * debité: apres reglement de la facture 
 
  * client:
- * debite: apres vente -> ticket caisse
- * credite: lorsque client paye ticket
-
+ * debite: apres vente -> ticket caisse (represente les somme facture aux client et non regle)
+ * credite: lorsque client paye ticket (enregistre les montant regle par le client)
+ * client paye on credite; apres facure avoir on credite
  * solde compte = diff(total(debit) - total(credit))
 */
 
@@ -67,30 +68,75 @@
  * total des ventes journalieres
  * detail: date, designation, prix, libele des operations
  * operation compta
- *    montant augmente pour les ventes (debité)
- *     montant diminué pour les achat (credité)
+ *    montant augmente pour les ventes (debité): debit
+ *     montant diminué pour les achat (credité): 
  * 
  * controle du solde de caisse en fin de journéé: 
  *    solde a l'ouverture + somme encaisse - somme decaissement
  *    compare avec solde compté physiquement
 */
 
- /* Notes Question au client:
-      - combien de personne peuvent faire les ticket et les facture. connaitre le nom de l'employé
-      - Quand est ce que on a besoin pour une facture de connaitre la liste des marchandises et les quantite
-      comment gerer reajustement stock
+/** Resume Achant vente (client, founissuer & caisse)
+ * Vente: facture vente: cpt clt debite -> apres payement total: cpt clt credite -> cpt caisse debite; ecri journalvente
+ * Achat: facture achat: cpt fr credite -> apres payement total: cpt clt debit -> cpt caisse credite; ecri journalachat
 */
 
+/** vente comptoir
+ * Apres cloture caisse: marquer facture de vente relgé 
+ * implique jeux compte client et compte caisse
+ * puisque c'est enfin de journe qu'on fait les vente:
+ * facture d'avior pour ticket augmente juste le stock en avec la nouvelle facture negative
+*/
+
+/** Gestion des facture avoir:  pour erreur sur facture ou retour sur marchandise
+ * augmenter le stock qui a ete reduit: (sans marquer de mvt stock)
+ * effectuer un remboursement (jeu compe client / compte caisse)
+ * client: credite le compte fournisseur, compte caisse (credite) ?
+ * founisseur: debite le compte fournisseur, compte caisse (debite) ?
+*/
+
+/** App user
+ * Murray - MAT0007
+ * Johnny Brown - MAT0003
+ * Randy - MAT0006
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 /**
  * confondre sa comptabilite personnel et sa comptabilite d'entreprise en At c'est apprendre
  * sur son lieu de travail ce qu'on aurait du apprendre sur son temps libre
  * difference entre la passion et la corvée et le rapport sur le niveau du productivite
  * cour sur le college de france
- */
-
-/**
- * modifier facture et mouvement 
- * prendre en compte une facture concerne les produit d'un depot precis
  */
 
  /**
@@ -99,21 +145,4 @@
   * https://open.spotify.com/show/7vjdsslSmuMnDlqMFofict
   * https://open.spotify.com/show/2AOoWEcm5DwgA6rZylnzID
   * https://techbeacon.com/app-dev-testing/12-must-listen-software-engineering-podcast-episodes
-*/
-
-/**
- * Note de service: factur client
- * ajout de l'attribut de categorisation du client
- * dans facture client charger le prix en fonctoin de la categorisation du iencli
-*/
-
-/**
- * Note de service vente au comptoir: 
- * difference entre type paiment et type client
- * quel attribut pour enregistrer la categorisation du client
- * ajouter un attriut cloturé a ticket (1/0)
- * pour un ticket certain auront la possibilité de changer la tarification de vente
- * chaque vente au comptoir est enregistrer dans un ticket
- * en fin de journé on cree un vente, pour un client (par defaut) qui va contenir tout les ventes fait en journé
- * 
 */

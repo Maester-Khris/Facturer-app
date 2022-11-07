@@ -12,4 +12,8 @@ trait ComptoirTrait {
             $comptoir = Comptoir::where('libelle',$libele)->where('depot_id',$depotid)->first();
             return  $comptoir;
       }
+      public static function getFirstComptoirDepot($depotid){
+            $comptoir = Comptoir::where('depot_id',$depotid)->first();
+            return  $comptoir;
+      }
 }

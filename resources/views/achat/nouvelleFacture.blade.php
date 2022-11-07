@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
-    {{-- <meta name="csrf-token" content="{{ csrf_token() }}" /> --}}
 
     <style>
         .center-foot {
@@ -15,22 +14,22 @@
             justify-content: center;
             align-items: center;
         }
-
-        #march_suggest {
+        .autosuggest {
             z-index: 10;
             position: absolute;
             width: 100%;
             display: none;
         }
-
-        #march_suggest li {
+        .autosuggest li {
             background: #E9ECEF;
             padding: 10px;
             cursor: pointer;
         }
-
-        #march_suggest li:hover {
+        .autosuggest li:hover {
             background: #CCE4F7;
+        }
+        .table-actions i {
+            color: red;
         }
     </style>
 </head>
@@ -84,43 +83,50 @@
                         <form action="">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Selectionner le Fournisseur</label>
-                                        <select id="fourni" class="selectpicker form-control"
-                                            data-style="btn-outline-primary" name="client" data-size="5">
-                                            @foreach ($fournisseurs as $fourni)
-                                            <option value="{{$fourni->nom}}">{{$fourni->nom}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-12">
-                                    <div class="form-group">
-                                        <label>Employé</label>
-                                        <input type="text" placeholder="Mr Akenzeng" class="form-control" readonly>
-                                    </div>
-                                </div>
+									<div class="form-group">
+										<label>Selectionner le depot</label>
+										<select id="depot" class="form-control" data-style="btn-outline-primary" name="depot" data-size="5">
+											@foreach ($depots as $depot)
+											<option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+											@endforeach
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3 col-sm-12">
+									<div class="form-group">
+										<label>Fournisseur</label>
+										<input id="fournisseur" type="text" class="form-control" placeholder="nom du fournisseur">
+										<ul id="suggest" class="autosuggest" style="width: 80%;">
+										</ul>
+									</div>
+								</div>
                                 <div class="col-md-3 col-sm-12">
                                     <div class="form-group">
                                         <label>Code Facture</label>
-                                        <input id="codefac" type="text" class="form-control" value="{{$code}}" readonly>
+                                        <input id="codefac" type="text" class="form-control" value="" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-12">
                                 </div>
                                 <div class="col-md-3 col-sm-12">
-                                    <div class="form-group" style="position: relative;">
-                                        <label>Le produit</label>
-                                        <input id="march" class="form-control" type="text"
-                                            placeholder="rechercher le produit">
-                                        <ul id="march_suggest">
-                                        </ul>
-                                    </div>
-                                </div>
+									<div class="form-group">
+										<label>Le produit</label>
+										<input id="march" class="form-control" type="text" placeholder="rechercher le produit">
+										<ul id="march_suggest" class="autosuggest">
+										</ul>
+									</div>
+								</div>
+                                <div class="col-md-3 col-sm-12">
+									<div class="form-group" style="position: relative;">
+									    <label>Qte <code>stock</code></label>
+									    <input id="march_stock" class="form-control" type="number" value=""
+										  readonly>
+									</div>
+								</div>
                                 <div class="col-md-3 col-sm-12">
                                     <div class="form-group ">
                                         <label>nombre d'articles</label>
-                                        <input id="demo3" type="number" value="" name="demo3">
+                                        <input class="qte_article" id="demo3" type="number" value="" name="demo3">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -139,8 +145,7 @@
                     </div>
                 </div>
                 <div class="card-box mb-30" style="padding-top: 20px;margin-top:70px;">
-                    <!-- <div class="pd-20"> -->
-                    <table class="checkbox-datatable table nowrap" style="margin: 15px 0;">
+                    <table class="checkbox-datatable multiple-select-row table nowrap" style="margin: 15px 0;">
                         <thead>
                             <tr>
                                 <th>
@@ -154,6 +159,7 @@
                                 <th>Prix d'achat</th>
                                 <th>Quantité à acheter</th>
                                 <th>Total</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -194,41 +200,31 @@
                             </div>
                         </div>
                     </div>
-                    <!-- </div> -->
                 </div>
-
+                <div id="error_container" class="container d-flex flex-row justify-content-end" style="max-width:1270px;margin-top:10px;padding-left:0px;display:none!important;">
+					<div id="error_message" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 400px;">
+						<i class="fa fa-exclamation" aria-hidden="true" style="color:#df4759;margin-right:10px;font-size:20px;"></i>
+						<strong>Alerte: </strong>
+						<span id="notif_body"></span>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				</div>
             </div>
         </div>
 
-        <div class="alert alert-warning alert-dismissible fade show" role="alert"
-            style="position:absolute;top:260px;left:41%;z-index:900;display:none;">
-            <strong>Alerte !</strong>
-            <span id="notif_body">You should check in on some of those fields below.</span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
     </div>
-    <template>
-        <tr>
-            <td></td>
-            <td id="newlignref">Tiger Nixon</td>
-            <td id="newligndes">System Architect</td>
-            <td id="newlignqte">12</td>
-            <td id="newligntot">20800</td>
-        </tr>
-    </template>
-    <template id="suggestions">
-        <li>Mon produit</li>
-    </template>
 
     <div class="footer-wrap pd-20 mb-20 card-box center-foot">
         @include('includes/footer')
     </div>
 
     @include('includes/js_assets')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.4/underscore-umd-min.js"></script> --}}
-
+   
+    <script src="{{asset('src/scripts/facture_functions.js')}}"></script>
+    <script src="{{asset('src/scripts/myautocomplete.js')}}"></script>
+    
     <script type="text/javascript">
         $(document).ready(function () {
             $("#linkNFA").addClass("active");
@@ -236,153 +232,53 @@
             $("#linkNFA").closest(".submenu").css("display", 'block');
             $('.alert-warning').hide();
         });
+        var box = '<input type="checkbox"></input>';
+        var _token = $('meta[name="csrf-token"]').attr('content');
+	    var codedfac = document.querySelector("#codefac");
+        setCodeFacture()
     </script>
-
     <script type="text/javascript">
-        $("input#remise").change(function () {
-            let newnet = ($("input#totalfacture").val() - $("input#remise").val());
-            $("input#total_net").val(newnet);
-        });
-    </script>
-
-    <script type="text/javascript">
-        $("#addMarch").click(function (e) {
-            let produit = $('#march').val();
-            let quantite = $('#demo3').val();
+    let button = '<div class="table-actions"><a href="#" data-color="#e95959"><i class="icon-copy dw dw-delete-3"></i></a></div>';
+      autocompleteFactureAchat();
+      updateFactureNet();
+      $("select#depot").change(function () {
+            setCodeFacture();
+      });
+      $("#addMarch").click(function (e) {
+            let newLigneInfo = getDataLigneFacture();
             let prixu = $('.prix_achat').val();
-            // let type_achat = $('select.prix').children("option:selected").val();
-            // console.log(type_achat);
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/ligne-facture",
-                type: "POST",
-                data: {
-                    'designation': produit,
-                    '_token': _token
-                },
-                success: function (response) {
-                    if (response) {
-                        let march = response.success;
-                        let total = quantite * prixu;
-
-                        console.log(march);
-                        var table = $('table.checkbox-datatable').DataTable();
-                        table.row.add([
-                            '<input type="checkbox"></input>',
-                            march.reference,
-                            march.designation,
-                            prixu,
-                            quantite,
-                            total
-                        ]).draw();
-                        $('#march').val('');
-                        $('#demo3').val('');
-                        let newtotal = parseInt($('#totalfacture').val()) + total;
-                        $('#totalfacture').val(newtotal);
-                        $("input#remise").val(0)
-                        $('input#total_net').val(newtotal);
-                    }
-                },
-                error: function (error) {
-                    $('.alert-warning span#notif_body').text(error.responseJSON.error)
-                    $('.alert-warning').show();
-                    console.log(error);
+            let quantite = newLigneInfo[2];
+            addFactureLine("achat",newLigneInfo,_token, function(response){
+                if (response) {
+                    let march = response.success;
+                    let total = quantite * prixu;
+                    console.log(march);
+                    var table = $('table.checkbox-datatable').DataTable();
+                    table.row.add([ box, march.reference, march.designation, prixu, quantite, total, button]).draw();
+                    let newtotal = parseInt($('#totalfacture').val()) + total;
+                    $('#totalfacture').val(newtotal);
+                    $('input#total_net').val(newtotal);
+                    resetLigneFacture();
+                    $('.prix_achat').val(0);
+                    $('#march_stock').val(0);
                 }
             });
         });
-    </script>
-
-    <script type="text/javascript">
         $("#validerfac").click(function (e) {
             e.preventDefault();
-            var table = $('table.checkbox-datatable').DataTable();
-            // let fournisseur = $('#fourni').val();
-            let fournisseur = $('select#fourni').children("option:selected").val();
-            let codefac = $('#codefac').val();
-            let total = $('#totalfacture').val();
-            let remise = $("input#remise").val();
-            let net = $("input#total_net").val();
-            let marchandises = [];
-
-            let rows = table.rows({
-                selected: true
-            }).data();
-            for (var i = 0; i < rows.length; i++) {
-                let marchfac = {
-                    'name': rows[i][2],
-                    // 'prix_achat': rows[i][3],
-                    'prix': rows[i][3],
-                    'quantite': rows[i][4]
-                }
-                marchandises.push(marchfac);
-            }
-
-            var facture = {
-                'marchandises': marchandises,
-                'fournisseur': fournisseur,
-                'codefac': codefac,
-                'total': total,
-                'remise': remise,
-                'net': net
-            }
+            let table = $('table.checkbox-datatable').DataTable();
+            let facture = extractFacItems(table, "achat");
             console.log(facture);
-            let _token = $('meta[name="csrf-token"]').attr('content');
-
-            $.ajax({
-                url: "/enregistrer-factureachat",
-                type: "POST",
-                data: {
-                    'facture': facture,
-                    '_token': _token
-                },
-                success: function (response) {
-                    if (response) {
-                        // console.log(response);
-                        window.location.replace("/nouvelleFacture");
-                    }
-                }
-
+            validateFacture("achat", facture, _token, function(response){
+                console.log(response);
+                window.location.replace("/nouvelleFacture");
             });
         });
-    </script>
-
-    <script type="text/javascript">
-        $('ul#march_suggest').on( "click", "li",function () {
-            $('#march').val($(this).text());
-            let ul_sugestion = $('#march_suggest');
-            ul_sugestion.hide();
+        $('table.checkbox-datatable tbody').on('click', 'tr.selected div.table-actions', function (e) {
+            e.preventDefault();
+            console.log("clicked");
+            var table = $('table.checkbox-datatable').DataTable();
+            table.row($(this).parents('tr')).remove().draw();
         });
     </script>
-
-    <script type="text/javascript">
-        $('#march').keyup(_.debounce(function () {
-            var march_name = $(this).val();
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/autocomplete",
-                type: "POST",
-                data: {
-                    'produit': march_name,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                    let ul_sugestion = $('#march_suggest');
-                    ul_sugestion.empty();
-                    if (response.length == 0) {
-                        ul_sugestion.append("<li>Aucune correspondance</li>");
-                    } else {
-                        for (let i = 0; i < response.length; i++) {
-                            ul_sugestion.append("<li>" + response[i].designation + "</li>");
-                        }
-                    }
-                    ul_sugestion.show();
-                },
-                error: function (error) {}
-            });
-        }, 500));
-    </script>
-
-</body>
-
 </html>

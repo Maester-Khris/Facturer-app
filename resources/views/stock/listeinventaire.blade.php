@@ -6,31 +6,7 @@
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
-    <style>
-	.center-foot {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-	}
-	#march_suggest1,
-	#march_suggest2 {
-		z-index: 10;
-		position: absolute;
-		width: 100%;
-		display: none;
-	}
-	#march_suggest1 li,
-	#march_suggest2 li {
-		background: #E9ECEF;
-		padding: 10px;
-		cursor: pointer;
-	}
-	#march_suggest1 li:hover,
-	#march_suggest2 li:hover {
-		background: #CCE4F7;
-	}
-    </style>
+    @include('includes/css_myadditional')
 </head>
 
 <body>
@@ -73,6 +49,40 @@
 				</div>
 			</div>
 
+			<div class="card-box mb-30">
+				<div class="pd-20">
+				    <h4 class="text-blue h4">Lister les operations d'inventaires d'un depot</h4>
+				</div>
+    
+				<div class="pd-20" style="padding-top: 0;">
+					<form action="{{url('listInventaire')}}" method="POST">
+					    @csrf
+					    <div class="row">
+						  <div class="col-md-3">
+							<div class="form-group">
+							    <label>Selectionner le depot</label>
+							    <select id="depot" class="form-control" data-style="btn-outline-primary" name="depot"
+								  data-size="5" required>
+								  @foreach ($depots as $depot)
+								  @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+								  <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+								  @else
+								  <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+								  @endif
+								  @endforeach
+							    </select>
+							</div>
+						  </div>
+						  <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+							<button type="submit" class="activities btn btn-primary">
+							    Afficher l'inventaire
+							</button>
+						  </div>
+					    </div>
+					</form>
+				</div>
+			</div>
+
 			<!-- Table etat inventaire -->
 			<div class="pd-20 card-box mb-30" style="position: relative;">
 				<div class="clearfix mb-20">
@@ -91,29 +101,20 @@
 					</tr>
 				</thead>
 				<tbody>
-					{{-- <tr>
-						<td>PO 12</td>
-						<td>PO 12</td>
-						<td>PO 12</td>
-						<td>
-							<a href="#" class="btn-block" data-toggle="modal" data-target="#modal-inventaire"
-								type="button">
-								plus de details
-							</a>
-						</td>
-					</tr> --}}
-					@foreach($lignes as $ligne)
-						<tr>
-							<td class="table-plus">{{$ligne->reference_inventaire}}</td>
-							<td>{{$ligne->date_reajustement}}</td>
-							<td>
-								<a href="#" id="detail_ivt" class="btn-block" 
-									type="button">
-									plus de details
-								</a>
-							</td>
-						</tr>
-					@endforeach
+					@if (isset($lignes))
+						@foreach($lignes as $ligne)
+							<tr>
+								<td class="table-plus">{{$ligne->reference_inventaire}}</td>
+								<td>{{$ligne->date_reajustement}}</td>
+								<td>
+									<a href="#" id="detail_ivt" class="btn-block" 
+										type="button">
+										plus de details
+									</a>
+								</td>
+							</tr>
+						@endforeach
+					@endif
 				</tbody>
 				</table>
 			</div>
@@ -124,20 +125,22 @@
 	<div class="modal fade" id="modal-inventaire" tabindex="-1" role="dialog"
 		aria-labelledby="myLargeModalLabel" aria-hidden="true" style="">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
-		<div class="modal-content" style="transform:translateX(10%);">
+		<div class="modal-content" style="transform:translateX(10%);width:910px;">
 			<div class="modal-header">
 				<h4 class="modal-title" id="myLargeModalLabel">Detail de l'inventaire</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			</div>
 			<div class="modal-body">
-				<table class="data-table table table-detail stripe hover nowrap" style="margin: 15px 0;">
+				<table class="data-table table table-detail stripe hover nowrap" style="margin: 10px 0;">
 				<thead>
 					<tr>
-						<th>Ref March.</th>
-						<th>Deisgnation</th>
-						<th>Ancienne Qte</th>
-						<th>Quantité réelle</th>
-						<th>Difference</th>
+						<th style="width: 10%;">Ref March.</th>
+						<th style="width: 10%;">Designation</th>
+						<th style="width: 10%;">Q.Theorique</th>
+						<th style="width: 10%;">Q.Réelle</th>
+						<th style="width: 10%;">Ecart</th>
+						<th style="width: 10%;">Cmup</th>
+						<th style="width: 10%;">Difference</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -165,70 +168,26 @@
     </div>
 
     @include('includes/js_assets')
-
+    <script src="{{asset('src/scripts/stock_function.js')}}"></script>
+    
     <script type="text/javascript">
 	$(document).ready(function () {
 		$("#linkLI").addClass("active");
 		$("#linkLI").closest(".dropdown").addClass("show");
 		$("#linkLI").closest(".submenu").css("display", 'block');
+		$('table.checkbox-datatable').DataTable().page.len(4);
 	});
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('table.checkbox-datatable').DataTable().page.len(4);
-            //  table2.page.len(4);
-        });
-    </script>
-    <script type="text/javascript">
-        $("button#btn-transfer").click(function (event) {
-            event.preventDefault();
-            console.log("cliquer!");
-            $("form#form-transfer").submit();
-        });
-        $("button#btn-reajust").click(function (event) {
-            event.preventDefault();
-            console.log("cliquer!");
-            $("form#form-reajust").submit();
-        });
+	let _token = $('meta[name="csrf-token"]').attr('content');
     </script>
 
-    {{-- detail d'un mouvement  --}}
     <script type="text/javascript">
 	$("a#detail_ivt").click(function (event) {
 	    event.preventDefault();
 	    let code_inv = $("table.multiple-select-row tr.selected").children(".table-plus").text();
-	    console.log(code_inv);
-	    let _token = $('meta[name="csrf-token"]').attr('content');
-	    $.ajax({
-		  url: "/details-ivt",
-		  type: "POST",
-		  data: {
-			'code': code_inv,
-			'_token': _token
-		  },
-		  success: function (response) {
-			if (response) {
-			    console.log(response);
-			    var table = $('table.table-detail').DataTable();
-			    for (var i = 0; i < response.length; i++) {
-				  table.row.add([
-					response[i].marchandise.reference,
-					response[i].marchandise.designation,
-					response[i].ancienne_quantite,
-					response[i].quantite_reajuste,
-					response[i].difference
-				  ]).draw();
-			    }
-			    $('#modal-inventaire').modal('show');
-			}
-		  },
-		  error: function (error) {
-			console.log(error);
-		  }
-	    });
+	    let depot = $('select#depot').children("option:selected").val();
+	    detailsInv(code_inv, depot, _token);
 	})
   </script>
 
 </body>
-
 </html>

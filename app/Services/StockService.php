@@ -23,31 +23,33 @@ class StockService{
    public function allTransferts($iddepot){
       return Mouvementstock::getMouvementTransfertOperations($iddepot);
    }
-   public function detailsMouvement($stockdepot, $code_mouvement){
-      return Mouvementstock::getMarchandiseMvt($stockdepot, $code_mouvement);
+   public function detailsMouvement($code_mouvement){
+      return Mouvementstock::getMarchandiseMvt($code_mouvement);
    }
-   public function listInventory($stockdepot){
-      return Inventaire::getInventory($stockdepot);
+   public function listInventory($depot){
+      return Inventaire::getInventory($depot);
    }
-   public function detailsInventaire($stockdepot, $code_inventaire){
-      return Inventaire::getMarchandiseIvt($stockdepot, $code_inventaire);
+   public function detailsInventaire($depot, $code_inventaire){
+      return Inventaire::getMarchandiseIvt($depot, $code_inventaire);
    }
    public function marchQuantity($marchandise){
       return Stockdepot::marchandiseQuantityStock($marchandise);
    }
-   public function stockMarchDisponibility($designation, $quantite){
-      return Stockdepot::checkStockMarchDispoByDesign($designation, $quantite);
+   public function stockMarchDisponibility($iddepot, $designation, $quantite){
+      return Stockdepot::checkStockMarchDispoByDesign($iddepot, $designation, $quantite);
    }
    public function stockMarchFull($designation){
       return Stockdepot::checkStockMarchFullByDesign($designation);
    }
-   // retourne tout les articles du stock et leur info
-   public function stockArticlesList($depot){
+   public function stockArticlesList($depot){       // retourne tout les articles du stock et leur info
       return Stockdepot::getAllStockArticles($depot);
    }
    public function situationDepot($depot){
       return  Stockdepot::getSituationDepot($depot);
    }
+
+
+
 
    public static function addMarchandiseInAllStock($marchid){
       $depots = Depot::all();
@@ -60,21 +62,19 @@ class StockService{
       });
    }
 
-   /**
-    *   reajouter un controler pour les qte negative pour gerer les factures d'avoir
-    *   comment gerer le fait qu'on veuille enlever plus qu'il yen a dans le stock ??
-   */
    public static function updatStockMarchandise($stock, $qtemodifie, $type, $today){
-      // $stock = Stockdepot::where('depot_id',$id_depot)->where("marchandise_id",$id_march)->first();
       if($type == "Sortie" || $type == "Transfert"){
          if($qtemodifie > 0){
             $stock->quantite_stock = ($stock->quantite_stock >= $qtemodifie) ? $stock->quantite_stock - $qtemodifie : 0;
          }else{
-            // utilisé pour modeliser les facture d'avoir
             $stock->quantite_stock = $stock->quantite_stock + abs($qtemodifie);
          }
       }else{
-         $stock->quantite_stock = $stock->quantite_stock + $qtemodifie;
+         if($qtemodifie > 0){
+            $stock->quantite_stock = $stock->quantite_stock + $qtemodifie;
+         }else{
+            $stock->quantite_stock = $stock->quantite_stock - abs($qtemodifie);
+         }
       }
       
       $stock->date_derniere_modif_qté = $today;
@@ -85,19 +85,17 @@ class StockService{
       foreach($marchs as $march){
          $marchandise = Marchandise::getMarch($march['name']);
          $ancien_valeur_stock = $this->marchQuantity($marchandise->id) *  $marchandise->dernier_prix_achat;
-         $cout_acquisition = $march['quantite'] * $march['prix_achat'];
+         $cout_acquisition = $march['quantite'] * $march['prix'];
          $new_totalstock = $this->marchQuantity($marchandise->id) +  $march['quantite'];
          $new_cmup = ($ancien_valeur_stock + $cout_acquisition ) / $new_totalstock;
 
          $marchandise->cmup = $new_cmup;
-         $marchandise->dernier_prix_achat = $march['prix_achat'];
+         $marchandise->dernier_prix_achat = $march['prix'];
          $marchandise->save();
       }
    }
 
-   public function newMvtTransf($id_depot, $marchs, $destination){
-      $nbrows = Mouvementstock::distinct()->count('reference_mouvement');
-      $ref_mouv = DataService::genCode("Mouvement", $nbrows + 1);
+   public function newMvtTransf($id_depot, $ref_mouv, $marchs, $destination){
       $today = new DateTime();
       foreach($marchs as $march){
          $march_id = Marchandise::getMarchId($march["name"]);
@@ -109,9 +107,7 @@ class StockService{
       }
    }
 
-   public function newMvtEntreeSortie($id_depot, $marchs, $type){
-      $nbrows = Mouvementstock::distinct()->count('reference_mouvement');
-      $ref_mouv = DataService::genCode("Mouvement", $nbrows + 1);
+   public function newMvtEntreeSortie($id_depot, $ref_mouv, $marchs, $type){
       $today = new DateTime();
       foreach($marchs as $march){
          if($type == "Entrée"){
@@ -126,8 +122,6 @@ class StockService{
       $mvt = new Mouvementstock;
       $mvt->marchandise_id = $id_march;
       $stockdepot = Stockdepot::where('depot_id',$id_depot)->where('marchandise_id',$id_march)->first();
-      // dd($stockdepot);
-      // find stockdepot where iddepot et idmarchandise puis on set
       $mvt->stockdepot_id =  $stockdepot->id;
       $mvt->reference_mouvement =  $mouv_ref;
       $mvt->type_mouvement = $type;
@@ -140,28 +134,28 @@ class StockService{
       }
    }
 
-   public function newSaisieInventaire($marchs){
-      // $march = Marchandise::where("designation",$designation)->first();
+   public function newSaisieInventaire($marchs, $depotid){
       $today = new DateTime();
       $nbrows = Inventaire::distinct()->count('reference_inventaire');
       $ref_inv = DataService::genCode("Inventaire", $nbrows + 1);
 
       foreach($marchs as $march){
          $march_id = Marchandise::getMarchId($march["name"]);
+         $stock = Stockdepot::where('depot_id',$depotid)->where('marchandise_id',$march_id)->first();
          $ivt = new Inventaire;
-         $ivt->stockdepot_id = 1;
+
+         $ivt->stockdepot_id =  $stock->id;
          $ivt->marchandise_id = $march_id;
          $ivt->reference_inventaire = $ref_inv;
          $ivt->ancienne_quantite =  $this->marchQuantity($march_id);
          $ivt->quantite_reajuste = (int)$march["newquantite"];
 
          // pensez a faire la valeur absolue
-         $ivt->difference = abs($ivt->ancienne_quantite - $ivt->quantite_reajuste);
+         $ivt->difference = $ivt->quantite_reajuste - $ivt->ancienne_quantite;
          $ivt->date_reajustement = $today;
          $ivt->save();
       
          // modifie le stock
-         $stock = Stockdepot::where("marchandise_id",$march_id)->first();
          $stock->quantite_stock = (int)$march["newquantite"];
          $stock->date_derniere_modif_qté = $today;
          $stock->save();

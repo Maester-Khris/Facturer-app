@@ -19,13 +19,15 @@ trait VenteTrait {
                   $query->where('depot_id', $id_depot);
             }])
             ->get();
+            $ventes = $ventes->filter(function($item){
+                  if($item->client) return $item;
+            });
             return $ventes;
       }
 
       public static function countVentes($id_depot){
-            $count = Vente::with(['client' => function($query) use ($id_depot){
-                  $query->where('depot_id', $id_depot);
-            }])->count();
+            $ventes = Vente::getAllVentesByDepot($id_depot);
+            $count =  $ventes->count();
             return $count;
       }
 
@@ -34,11 +36,28 @@ trait VenteTrait {
             return $vente;
       }
 
+      public static function getClientVente($codevente, $depot){
+            $client = Vente::where("code_vente",$codevente)
+                  ->join("clients","ventes.client_id","=","clients.id")
+                  ->where("clients.depot_id",$depot)
+                  ->select("clients.nom_complet")
+                  ->first();
+
+            return $client;
+      }
+
       public static function unpaidVente($id_depot){
             $ventes = Vente::with(['client' => function($query) use ($id_depot){
-                        $query->where('depot_id', $id_depot);
-                  }])
-                  ->where('statut',false)->get();
+                  $query->where('depot_id', $id_depot);
+            }])
+            ->join('journalventes','journalventes.vente_id',"=",'ventes.id')
+            ->where('statut',false)
+            ->select('ventes.*')
+            ->get();
+            $ventes = $ventes->filter(function($item){
+                  if($item->client) return $item;
+            });
+            // dd($ventes);
             return $ventes;
       }
 

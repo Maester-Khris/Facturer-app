@@ -16,6 +16,15 @@ class VentecomptoirService{
             $ticket = Ticket::where("code_ticket",$code)->where("statut","non termine")->first();
             return $ticket;
       }
+      public static function requestTicketCaisse($caisse, $statut, $periode_min, $periode_max){
+            if($statut == "archive"){
+                  $data = Ticket::getTicketArchiveByComptoir($caisse, $periode_min, $periode_max);
+            }else if($statut == "en_cours"){
+                  $data = Ticket::getTicketEnCoursByComptoir($caisse, $periode_min, $periode_max);
+            }
+            return $data;
+      }
+
 
       public function newTicket($code, $client, $statut, $total, $employee_id, $today){
             $comptoir = DataService::getComptoirPersonnel($employee_id);
@@ -30,7 +39,6 @@ class VentecomptoirService{
             ]);
             return $ticket;
       }
-
       public function updateWaitingTicket($ticket, $total){
             $today = new DateTime();
             $ticket->total = $total;
@@ -45,76 +53,6 @@ class VentecomptoirService{
             $ticket->save();
       }
 
-
-      /** Factures vente de fin de journee apres la cloture de la caisse
-       * remise=0, total =0, net=sum du total de chaque ticket du client
-       * UNIQUEMENT LES TICKET EN COURS ???
-      */
-      /**
-         * suppose que une caisse a ++ comptoir
-         * recupere la liste des comptoir
-         * recupere la liste des tickets avec idcomptoir in comptoir
-         * cree un tableau qui contient la liste des clientid
-         * pour chaque idclient on filtre les ticket et cree une facture vente 
-         * on cree aussi detail transaction pour cette facture
-        */
-      public static function closeCaisseFactureVentes($caisse){
-            $comptoirids = $caisse->comptoirs->map(function($item){
-                  return $item->id;
-            });
-            $tickets = Ticket::whereIn('comptoir_id', $comptoirids)->get();
-            if(!$tickets->isEmpty()){
-                  $clientids = $tickets->map(function($item){
-                        return $item->client_id;
-                  })->unique('client_id')->values()->all();
-
-                  foreach($clientids as $client){
-                        $today = new DateTime();
-                        $ticketsclient =  $tickets->filter(function($item) use ($client){
-                              return $item->client_id == $client;
-                        });
-                        $comptoir = $caisse->comptoirs->first();
-                        $nbrows = VenteService::allDepotVenteCount($comptoir->depot->id);
-                        $code =  DataService::genCode("Vente", $nbrows + 1);
-                        $montant = [0, 0, $ticketsclient->sum('total')];
-                        $vente = VenteService::newVente($client, $code, $montant, $today);
-                        // devra etre modifé plustard pour integrer les operations compta
-                        $vente->statut = true;
-                        $vente->save();
-                        $ticketsclient->each(function ($item, $key) use($vente, $today) {
-                              $transaction = new Detailtransactions;
-                              $transaction->reference_transaction = $vente->code_vente;
-                              $transaction->reference_marchandise = $item->code_ticket;
-                              $transaction->quantite = 0 ;
-                              $transaction->prix = 0 ;
-                              $transaction->save();  
-
-                              $details = Detailtransactions::where('reference_transaction',$item->code_ticket)->get();
-                              if($details){
-                                    $details->each(function ($detail, $key) use($vente, $today) {
-                                          $marchid = Marchandise::getMarchIdByRef($detail->reference_marchandise);
-                                          $marchqte = $detail->quantite;
-                                          StockService::newMouvementMarchandises($vente->code_vente, $marchid, $marchqte, "Sortie", null, $today, false);
-                                    });
-                              }
-                              $item->statut = "archive";
-                              $item->save();
-                        });
-                  }
-            }
-      }
-
-      public static function requestTicketCaisse($caisse, $statut, $periode_min, $periode_max){
-            if($statut == "archive"){
-                  $data = Ticket::getTicketArchiveByComptoir($caisse, $periode_min, $periode_max);
-            }else if($statut == "en_cours"){
-                  $data = Ticket::getTicketEnCoursByComptoir($caisse, $periode_min, $periode_max);
-            }
-            return $data;
-      }
-
-      
-
       /**
        *  Details about waiting tickets
       */ 
@@ -128,5 +66,53 @@ class VentecomptoirService{
             )->orderBy('tickets.date_operation','asc')
             ->get();
             return $data;
+      }
+
+      /** 
+       * Generer Factures vente de fin de journee apres la cloture de la caisse
+       * remise=0, total =0, net=sum du total de chaque ticket du client
+      */
+      public static function closeCaisseFactureVentes($caisse){
+            $comptoirids = $caisse->comptoirs->map(function($item){ return $item->id; });
+            $tickets = Ticket::whereIn('comptoir_id', $comptoirids)->get();
+            if(!$tickets->isEmpty()){
+                  $clientids = $tickets->map(function($item){ return $item->client_id; })->unique('client_id')->values()->all();
+                  foreach($clientids as $client){
+                        $today = new DateTime();
+                        $comptoir = $caisse->comptoirs->first();
+                        $nbrows = VenteService::allDepotVenteCount($comptoir->depot->id);
+                        // $code =  DataService::genCode("Vente", $nbrows + 1);
+                        $code =  Vente::count();
+                        $ticketsclient =  $tickets->filter(function($item) use ($client){
+                              return $item->client_id == $client;
+                        });
+                        $montant = [0, 0, $ticketsclient->sum('total')];
+                        $vente = VenteService::newVente($client, $code, $montant, $today);
+                        $clientObj = Client::getClientById($client, $comptoir->depot->id);
+                        $numcompte = VenteService::updateComptaClient($clientObj, $vente->code_vente, $ticketsclient->sum('total'), $today, "Débit");
+                        $numcompte = VenteService::updateComptaClient($clientObj, $vente->code_vente, $ticketsclient->sum('total'), $today, "Crédit");
+                        $vente->statut = true;
+                        $vente->save();
+                        $ticketsclient->each(function ($item, $key) use($vente, $today, $comptoir) {
+                              $transaction = new Detailtransactions;
+                              $transaction->reference_transaction = $vente->code_vente;
+                              $transaction->reference_marchandise = $item->code_ticket;
+                              $transaction->quantite = 0 ;
+                              $transaction->prix = 0 ;
+                              $transaction->save();  
+
+                              $details = Detailtransactions::where('reference_transaction',$item->code_ticket)->get();
+                              if($details){
+                                    $details->each(function ($detail, $key) use($vente, $today, $comptoir) {
+                                          $marchid = Marchandise::getMarchIdByRef($detail->reference_marchandise);
+                                          $marchqte = $detail->quantite;
+                                          StockService::newMouvementMarchandises($comptoir->depot->id, $vente->code_vente, $marchid, $marchqte, "Sortie", null, $today, false);
+                                    });
+                              }
+                              $item->statut = "archive";
+                              $item->save();
+                        });
+                  }
+            }
       }
 }

@@ -55,6 +55,39 @@
 					</div>
 				</div>
 
+                <div class="card-box mb-30">
+					<div class="pd-20">
+					    <h4 class="text-blue h4">Liste des ventes en attente de paiement</h4>
+					</div>
+	    
+					<div class="pd-20" style="padding-top: 0;">
+						<form action="{{url('getUnpaidVente')}}" method="POST">
+							@csrf
+					         <div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Selectionner le depot</label>
+									<select id="depot" class="form-control" data-style="btn-outline-primary" name="depot" data-size="5" required>
+										@foreach ($depots as $depot)
+                                        @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+                                            <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+                                        @else
+                                            <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+                                        @endif
+										@endforeach
+									</select>
+								</div>
+							</div>
+					            <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+					                 <button type="submit" class="activities btn btn-primary">
+					                     Lister les factures
+							     </button>
+					            </div>
+					         </div>
+					     </form>
+					</div>
+				</div>
+
                         <!-- Export Datatable start -->
                     <div class="card-box mb-30">
                         <div class="pd-20">
@@ -77,16 +110,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($impayes as $vente)
-                                        <tr>
-                                            <td class="table-plus">{{$vente->client->nom_complet}}</td>
-                                            <td>{{$vente->code_vente}}</td>
-                                            {{-- <td>{{  date('Y/m/d h:m:s', strtotime($vente->date_facturation) ) }}</td> --}}
-                                            <td>{{$vente->date_operation}}</td>
-                                            <td>{{$vente->montant_net}}</td>
-                                            <td>{{$vente->reste_vente}}</td>
-                                        </tr>
-                                   @endforeach
+                                    @if (isset($impayes))
+                                        @foreach($impayes as $vente)
+                                            <tr>
+                                                <td class="table-plus">{{$vente->client->nom_complet}}</td>
+                                                <td>{{$vente->code_vente}}</td>
+                                                <td>{{$vente->date_operation}}</td>
+                                                <td>{{$vente->montant_net}}</td>
+                                                <td>{{$vente->reste_vente}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -106,6 +140,14 @@
                                             <label>Client</label>
                                             <input id="client" class="form-control" type="text" name="client" readonly>
                                           </div>
+                                         <div class="form-group " style="visibility: hidden;height:0;margin:0;">
+                                            <label>Depot</label>
+                                            @if (isset($selecteddepot))
+                                                <input id="depot" class="form-control" type="text" name="depot" value="{{$selecteddepot}}">
+                                            @else
+                                                <input id="depot" class="form-control" type="text" name="depot" value="">
+                                            @endif
+                                          </div>
                                           <div class="row">
                                                 <div class="col-md-6 col-6">
                                                       <div class="form-group">
@@ -118,6 +160,17 @@
                                                       </div>
                                                 </div>
                                           </div>
+                                           @if(isset($caisses))
+                                                <div class="form-group">
+                                                    <label>Selectionner la caisse à utiliser pour le reglement</label>
+                                                    <select id="depot" class="form-control" data-style="btn-outline-primary" name="caisse"
+                                                        data-size="5" required>
+                                                        @foreach ($caisses as $caisse)
+                                                            <option value="{{$caisse->id}}">{{$caisse->libelle}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            @endif
                                           
                                           <div class="form-group ">
                                                 <label>Somme <code>à regler</code></label>
@@ -164,7 +217,7 @@
             console.log(row);
             $('input#client').val(row[0]);
             $('input#codevente').val(row[1]);
-            $('ins#net').text(row[3]);
+            $('ins#net').text(row[4]);
       });
     </script>
     <script type="text/javascript">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\StockService;
+use App\Models\Depot;
 
 class EtatInventaireController extends Controller
 {
@@ -14,20 +15,14 @@ class EtatInventaireController extends Controller
     }
 
     public function index(){
-        $etats = $this->stock->NewEtatInventaireWithValorisation(1,"prix_achat");
-        $prices = $etats->map(function($ligne){
-            return $ligne->prix_achat;
-        });
-        $total = $this->getTotalVal1($etats);
-        $valorisation = "type1";
-        return view('stock.etatInventaire')
-            ->with(compact('etats'))->with(compact('total'))
-            ->with(compact('valorisation'));
+        $depots = Depot::all();
+        return view('stock.etatInventaire')->with(compact('depots'));
     }
 
     public function nouvelEtat(Request $request){
+        $depots = Depot::all();
         if($request->option_valorisation == "normal"){
-            $etats = $this->stock->NewEtatInventaireWithValorisation(1,"prix_achat");
+            $etats = $this->stock->NewEtatInventaireWithValorisation($request->depot,"prix_achat");
             $prices = $etats->map(function($ligne){
                 return $ligne->prix_achat;
             });
@@ -35,7 +30,7 @@ class EtatInventaireController extends Controller
             $total = $this->getTotalVal1($etats);
         }
         if($request->option_valorisation == "dernier"){
-            $etats = $this->stock->NewEtatInventaireWithValorisation(1,"dernier_prix_achat");
+            $etats = $this->stock->NewEtatInventaireWithValorisation($request->depot,"dernier_prix_achat");
             $prices = $etats->map(function($ligne){
                 return $ligne->dernier_prix_achat;
             });
@@ -43,7 +38,7 @@ class EtatInventaireController extends Controller
             $total = $this->getTotalVal2($etats);
         }
         if($request->option_valorisation == "cmup"){
-            $etats = $this->stock->NewEtatInventaireWithValorisation(1,"cmup");
+            $etats = $this->stock->NewEtatInventaireWithValorisation($request->depot,"cmup");
             $prices = $etats->map(function($ligne){
                 return $ligne->cmup;
             });
@@ -51,13 +46,16 @@ class EtatInventaireController extends Controller
             $total = $this->getTotalVal3($etats);
         }
         if($request->option_valorisation == "standart"){
-            $etats = $this->stock->NewEtatInventaire(1);
+            $etats = $this->stock->NewEtatInventaire($request->depot);
             $total = 0;
             $valorisation = "type0";
         }
-
+        $selecteddepot = $request->depot;
         return view('stock.etatInventaire')
-            ->with(compact('etats'))->with(compact('total'))
+            ->with(compact('depots'))
+            ->with(compact('selecteddepot'))
+            ->with(compact('etats'))
+            ->with(compact('total'))
             ->with(compact('valorisation'));
     }
 

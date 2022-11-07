@@ -5,18 +5,7 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
         @include('includes/css_assets')
-		<meta name="csrf-token" content="{{ csrf_token() }}" />
-        <style>
-           .center-foot{
-               display:flex; 
-                flex-direction:row;
-                justify-content:center;
-                align-items:center;
-            }
-            .linewarning{
-                color: #ffcc00;
-            }
-        </style>
+        @include('includes/css_myadditional')
 	</head>
 <body>
 
@@ -42,7 +31,7 @@
                             <nav aria-label="breadcrumb" role="navigation">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="index.html">Stocks</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Marchandises</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Interrogation Article</li>
                                 </ol>
                             </nav>
                         </div>
@@ -58,16 +47,50 @@
                     </div>
                 </div>
 
+                <div class="card-box mb-30">
+					<div class="pd-20">
+					    <h4 class="text-blue h4">Lister les marchandises d'un depot</h4>
+					</div>
+	    
+					<div class="pd-20" style="padding-top: 0;">
+						<form action="{{url('listArticles')}}" method="POST">
+						    @csrf
+						    <div class="row">
+						        <div class="col-md-3">
+						            <div class="form-group">
+						                <label>Selectionner le depot</label>
+						                <select id="depot" class="form-control" data-style="btn-outline-primary" name="depot"
+						                    data-size="5" required>
+						                    @foreach ($depots as $depot)
+						                    @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+						                    <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+						                    @else
+						                    <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+						                    @endif
+						                    @endforeach
+						                </select>
+						            </div>
+						        </div>
+						        <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+						            <button type="submit" class="activities btn btn-primary">
+						                Lister les Marchandises
+						            </button>
+						        </div>
+						    </div>
+						</form>
+					</div>
+				</div>
+
                 <!-- Export Datatable start -->
                 <div class="card-box mb-30">
                     <div class="pd-20">
                         <h4 class="text-blue h4">Liste des Marchandises</h4>
                     </div>
                     <div class="pb-20">
-                        <button id="voir"
+                        <button id="detailstock"
                             class="btn btn-secondary" type="submit" style="margin-left: 20px;"
                             data-toggle="modal" data-target="#Medium-modal" >
-                            voir fiche produit
+                            Details stock produit
                         </button>
                         <table class="table hover multiple-select-row data-table-export nowrap">
                             <thead>
@@ -80,59 +103,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($articles as $article)
-                                <tr>
-                                    <td class="table-plus">{{$article->reference}}</td>
-                                    <td>{{$article->designation}}</td>
-                                    <td>{{$article->limite}}</td>
-                                    <td>{{$article->quantite_optimal}}</td>
-                                    <td>{{$article->quantite_stock}}</td>
-                                </tr>
-                                @endforeach
+                                @if(isset($articles))
+                                    @foreach($articles as $article)
+                                    <tr>
+                                        <td class="table-plus">{{$article->reference}}</td>
+                                        <td>{{$article->designation}}</td>
+                                        <td>{{$article->limite}}</td>
+                                        <td>{{$article->quantite_optimal}}</td>
+                                        <td>{{$article->quantite_stock}}</td>
+                                    </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
                 </div>
 
+                {{-- fiche detail stock --}}
                 <div class="modal fade" id="Medium-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" >
                         <div class="modal-content" style="transform:translateX(20%);">
                             <div class="modal-header">
-                                <h4 class="modal-title" id="myLargeModalLabel">Fiche du produit</h4>
+                                <h4 class="modal-title" id="myLargeModalLabel">Fiche de detail stock</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-bordered table-striped">
+                                <table class="data-table table-march-inf table stripe hover nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%;">Designation March.</th>
+                                            <th style="width: 15%;">Depot Oper.</th>
+                                            <th style="width: 10%;">Ref Mvt.</th>
+                                            <th style="width: 15%;">Date operation</th>
+                                            <th style="width: 10%;">Qte E</th>
+                                            <th style="width: 10%;">Qte S</th>
+                                            <th style="width: 10%;">Stock</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        <tr>
-                                            <th scope="row">Désignation</th>
-                                            <td id="des">Honor Y L23</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Unité achat</th>
-                                            <td id="uach">Carton</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Prix d'achat</th>
-                                            <td id="p_ach">5670</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Dernier prix d'achat</th>
-                                            <td id="de_ach">6600</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Prix de gros</th>
-                                            <td id="p_gro">7200</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Prix au détail</th>
-                                            <td id="p_det">4500</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Conditionnement</th>
-                                            <td id="cond">boite</td>
-                                        </tr>
-
                                     </tbody>
                                 </table>
                             </div>
@@ -153,59 +161,24 @@
 
 	@include('includes/js_assets')
 
-	<script type="text/javascript">
-		$("button#voir").click(function(event){
-			let ref= $("table tr.selected").children(".table-plus").text();
-			let _token = $('meta[name="csrf-token"]').attr('content');
-
-			$.ajax({
-			  url: "/fiche-marchandise",
-			  type:"POST",
-			  data:{
-				  'reference':ref,
-			     '_token': _token
-			  },
-			  success:function(response){
-				  if(response) {
-					 let march = response.success[0];
-					 $("td#des").text(march.designation);
-					 $("td#uach").text(march.unite_achat);
-					 $("td#p_ach").text(march.prix_achat);
-					 $("td#de_ach").text(march.dernier_prix_achat);
-					 $("td#p_gro").text(march.prix_vente_gros);
-					 $("td#p_det").text(march.prix_vente_detail);
-					 $("td#cond").text(march.Conditionnement);
-				  }
-				  $("table tr.selected").removeClass('selected');
-			  },
-			  error: function(error) {
-				console.log(error);
-			  }
-			});
-		});
-	</script>
-    <script>
-        $(document).ready( function () {
-            var table = $('.multiple-select-row').DataTable();
-            console.log(table.rows().data());
-            let rows = table.rows().data();
-            for(var i=0; i<rows.length; i++){
-                console.log(rows[i][4]);
-                if(parseInt(rows[i][4]) <= parseInt(rows[i][2]) ){
-                    console.log("inferieur au seuil");
-                    $('.multiple-select-row tbody tr:nth-child('+(i+1)+')').addClass('linewarning');
-                }
-            }
-        });
-    </script>
+    <script src="{{asset('src/scripts/stock_function.js')}}"></script>
     <script type="text/javascript">
         $( document ).ready(function() {
             $("#linkIA").addClass("active");
             $("#linkIA").closest(".dropdown").addClass("show");
             $("#linkIA").closest(".submenu").css("display", 'block');
+            detectQteTreshold();
         });
+        let _token = $('meta[name="csrf-token"]').attr('content');
     </script> 
-
-
+	<script type="text/javascript">
+		$("button#detailstock").click(function(event){
+			let ref= $("table tr.selected").children(".table-plus").text();
+            let depot= $("select#depot").children("option:selected").val();
+            let td = document.querySelectorAll(".table-march-inf td");
+            td.forEach(element => {  element.innerText=''; });
+            voirMachDetailsStock(ref, depot, _token);
+		});
+	</script>
 </body>
 </html>

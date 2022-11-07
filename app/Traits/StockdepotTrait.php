@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 trait StockdepotTrait {
 
-      public function marchandiseStockInfo($marchandiseid){
-            $stock_march = Stockdepot::where("marchandise_id",$marchandiseid)->first();
+      public function marchandiseStockInfo($marchandiseid, $id_depot){
+            $stock_march = Stockdepot::where('depot_id',$id_depot)->where("marchandise_id",$marchandiseid)->first();
             return $stock_march;
          }
       
@@ -17,9 +17,10 @@ trait StockdepotTrait {
          return $stock_march->quantite_stock;
       }
 
-      public static function checkStockMarchDispoByDesign($designation, $quantite){
+      public static function checkStockMarchDispoByDesign($iddepot, $designation, $quantite){
             $idmarch = Marchandise::getMarchId($designation);
             $march = Stockdepot::where('marchandise_id', $idmarch)
+                  ->where('depot_id','>=',$iddepot)
                   ->where('quantite_stock','>=',$quantite)
                   ->first();
             return  $march;
@@ -33,11 +34,12 @@ trait StockdepotTrait {
       }
 
       public static function getAllStockArticles($id_depot){
+            
             $articles = Stockdepot::where("depot_id",$id_depot)
-                  ->join("marchandises","marchandises.id","=","stockdepots.id")
+                  ->join("marchandises","marchandises.id","=","stockdepots.marchandise_id")
                   ->select("stockdepots.quantite_stock","stockdepots.quantite_optimal","stockdepots.limite","marchandises.reference","marchandises.designation")
                   ->get();
-
+            // dd($articles);
             return $articles;
       }
 

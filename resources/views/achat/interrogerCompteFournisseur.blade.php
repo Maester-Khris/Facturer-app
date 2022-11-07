@@ -19,6 +19,20 @@
 			tr td:nth-child(6){
 				text-align: right;
 			}
+			.autosuggest {
+	          z-index: 10;
+	          position: absolute;
+	          width: 100%;
+	          display: none;
+	      }
+	      .autosuggest li {
+	          background: #E9ECEF;
+	          padding: 10px;
+	          cursor: pointer;
+	      }
+	      .autosuggest li:hover {
+	          background: #CCE4F7;
+	      }
 		</style>
 	</head>
 <body>
@@ -68,32 +82,42 @@
 	    
 					<div class="pd-20" style="padding-top: 0;">
 						{{-- {{url('fourni-activities')}} --}}
-					     <div>
+						<form action="{{url('fourni-activities')}}" method="POST">
+							@csrf
 					         <div class="row">
-					             {{-- <div class="col-md-3 col-sm-12">
-					                 <div class="form-group">
-					                     <label>Fournisseur</label>
-					                     <input id="fourni" type="text" name="fournisseur" class="form-control"
-					                         placeholder="rechercher le fournisseur">
-					                 </div>
-					             </div> --}}
-							 <div class="col-md-3">
+							<div class="col-md-3">
 								<div class="form-group">
-									<label>Selectionner le Fournisseur</label>
-									<select id="fourni" class="selectpicker form-control" data-style="btn-outline-primary" name="fournisseur" data-size="5">
-										@foreach ($fournisseurs as $fourni)
-										<option value="{{$fourni->nom}}">{{$fourni->nom}}</option>
+									<label>Selectionner le depot</label>
+									<select id="depot" class="form-control" data-style="btn-outline-primary" name="depot" data-size="5">
+										@foreach ($depots as $depot)
+										@if(isset($selecteddepot) && $depot->id == $selecteddepot)
+											<option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+										@else
+											<option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+										@endif
 										@endforeach
 									</select>
 								</div>
 							</div>
+							 <div class="col-md-3">
+								<div class="form-group">
+									<label>Selectionner le Fournisseur</label>
+									@if (isset($selectedfourni))
+										<input id="founisseur" name="fournisseur" type="text" class="form-control" value="{{$selectedfourni}}">
+									@else
+										<input id="fournisseur" name="fournisseur" type="text" class="form-control" placeholder="nom du fournisseur">
+									@endif
+									<ul id="suggest" class="autosuggest" style="width: 80%;">
+									</ul>
+								</div>
+							</div>
 					             <div class="col-md-3 col-sm-12" style="padding-top:35px;">
-					                 <a href="#" class="activities btn btn-primary">
+					                 <button type="submit" class="activities btn btn-primary">
 					                     Consulter transactions
-					                 </a>
+							     </button>
 					             </div>
 					         </div>
-					     </div>
+						</form>
 					</div>
 				</div>
 
@@ -109,18 +133,29 @@
 								<th>Date transaction</th>
 								<th>Credit</th>
 								<th>Debit</th>
+								<th>Solde progressif</th>
 							</tr>
 						</thead>
 						<tbody>
-							
-							{{-- <tr>
-								<td>{{$act->comptefournisseur->fournisseur->nom}}</td>
-								<td>{{$act->facture->code_facture}}</td>
-								<td>{{$act->facture->montant_total}}</td>
-								<td>{{  date('Y/m/d h:m:s',strtotime($act->date_facturation)) }}</td>
-								<td><code>-</code>{{$act->montant}}</td>
-							</tr> --}}
-							
+							@if(isset($activities))
+								@php
+									$solde = 0;
+								@endphp
+								@foreach ($activities as $activity)
+								@php
+									$solde = $solde + ($activity['debit'] - $activity['credit']);
+								@endphp
+								<tr>
+									<td class="table-plus">{{$activity['fournisseur']}}</td>
+									<td>{{$activity['codefac']}}</td>
+									<td>{{$activity['total']}}</td>
+									<td>{{$activity['date_operation']}}</td>
+									<td>{{$activity['credit']}}</td>
+									<td>{{$activity['debit']}}</td>
+									<td>{{$solde}}</td>
+								</tr>
+								@endforeach
+							@endif
 						</tbody>
 					</table>
 
@@ -131,8 +166,13 @@
 									<div class="offset-md-2 col-md-10 col-sm-12">
 										<div class="form-group d-flex flex-column" >
 											<label class="align-self-end">Total solde Compte</label>
-											<input id="solde_fourni" type="number" class="form-control"
-											 placeholder="0000" readonly style="font-size:15px;font-weight:bold;text-align:right;">
+											@if(!isset($solde))
+											<input id="solde_fourni" type="number" class="form-control" placeholder="0000" readonly
+											style="font-size:15px;font-weight:bold;text-align:right;">
+											@else
+											<input id="solde_fourni" type="number" class="form-control" value="{{$solde}}" readonly
+											style="font-size:15px;font-weight:bold;text-align:right;">
+											@endif
 										</div>
 									</div>
 								</div>
@@ -157,55 +197,11 @@
 		    $("#linkICF").closest(".dropdown").addClass("show");
 		    $("#linkICF").closest(".submenu").css("display", 'block');
 		});
+		var _token = $('meta[name="csrf-token"]').attr('content');
 	</script>
-	<script>
-		function mydate(date){
-			const str = (new Date(date)).toISOString().slice(0, 19).replace(/-/g, "/").replace("T", " ");
-			return str;
-		}
-	</script>
+	<script src="{{asset('src/scripts/myautocomplete.js')}}"></script>
 	<script type="text/javascript">
-		$('.activities').click(function(e){
-		// let fourni = $('input#fourni').val();
-		let fourni = $('select#fourni').children("option:selected").val();
-		let _token = $('meta[name="csrf-token"]').attr('content');
-		$.ajax({
-			url: "/fourni-activities",
-			type:"POST",
-			data:{
-				'fournisseur': fourni,
-				'_token': _token
-			},
-			success:function(response){
-				if(response) {
-					let activities = response.success[0];
-					let solde = response.success[1];
-					console.log(response.success);
-
-					var table = $('table.data-table').DataTable();
-					table.rows().remove();
-					for( var i=0; i<activities.length; i++){
-						// let date_fac = $.format.date(activities[i].date_derniere_modif_solde, 'yyyy/MM/dd HH:mm:ss');
-						let date_fac = mydate(activities[i].date_operation);
-						table.row.add([
-							'' + activities[i].fournisseur ,
-							activities[i].codefac,
-							activities[i].total,
-							// date_fac,
-							activities[i].date_operation,
-							activities[i].credit,
-							activities[i].debit
-						]).draw();
-						console.log("each time")
-					}
-					$('#solde_fourni').val(solde);
-				}
-			},
-			error: function(error) {
-				console.log(error);
-			}
-		});
-		});
+		autocompleteFournisseur();
 	</script>
 </body>
 </html>

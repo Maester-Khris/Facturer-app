@@ -16,8 +16,8 @@ class CreateComptefournisseursTable extends Migration
         Schema::create('comptefournisseurs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('fournisseur_id')->unsigned();
-            $table->integer('credit')->default(0);;
-            $table->integer('debit')->default(0);;
+            $table->integer('credit')->default(0);
+            $table->integer('debit')->default(0);
             $table->dateTime('date_credit')->nullable();
             $table->dateTime('date_debit')->nullable();
             $table->timestamps();

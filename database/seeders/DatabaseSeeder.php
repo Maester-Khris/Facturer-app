@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AppPermissionSeeder::class);
         $this->call(DepotSeeder::class);
+        $this->call(PosteSeeder::class);
         $this->call(MarchandisesSeeder::class);
         $this->call(StockdepotSeeder::class);
-        $this->call(PosteSeeder::class);
         // $this->call(MouvementstockSeeder::class);
         // $this->call(FournisseurSeeder::class);
         // $this->call(ClientSeeder::class);

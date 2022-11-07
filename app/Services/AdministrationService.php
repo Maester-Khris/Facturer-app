@@ -3,9 +3,11 @@ namespace App\Services;
 
 use App\Models\Depot;
 use App\Models\Comptoir;
+use App\Models\Caisse;
 use App\Models\Client;
 use App\Models\Fournisseur;
 use App\Models\Personnel;
+use App\Models\Compte;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +27,25 @@ class AdministrationService{
             $comptoir = Comptoir::getComptoirByLibelle($comptoir_libelle, $employee->depot->id);
             $employee->comptoir()->save($comptoir);
       }
+      public static function newCompte($numero, $intitule, $type="tiers"){
+            $compte = new Compte;
+            $compte->numero_compte = $numero;
+            $compte->intitule = $intitule;
+            $compte->type = isset($type) ? $type : "tiers";
+            $compte->save();
+      }
 
+      public static function newCaisse($data){
+            $caisse = Caisse::create([
+                  "depot_id" => $data->depot_id,
+                  "libelle" => $data->libelle,
+                  "numero_caisse" => $data->numero_caisse,
+            ]);
+            // $nbcaisse = DataService::countCaissePerDepot($data->depot_id);
+            $nbcaisse = Caisse::count();
+            $numcompte = DataService::genCode('CompteCAI', $nbcaisse);
+            AdministrationService::newCompte($numcompte, $caisse->libelle, "tresorerie");
+      }
       public static function newFournisseur($data){
             $fournisseur = Fournisseur::create([
                   "nom_complet" => $data->nom,
@@ -34,6 +54,10 @@ class AdministrationService{
             ]);
             $depot = Depot::find($data->depot_id);
             $depot->fournisseurs()->save($fournisseur);
+            // $nbfournisseur = DataService::countFournisseurPerDepot($data->depot_id);
+            $nbfournisseur = Fournisseur::count();
+            $numcompte = DataService::genCode('CompteF', $nbfournisseur );
+            AdministrationService::newCompte($numcompte, $fournisseur->nom_complet);
       }
       public static function newClient($data){
             $client = Client::create([
@@ -43,8 +67,27 @@ class AdministrationService{
             ]);
             $depot = Depot::find($data->depot_id);
             $depot->clients()->save($client);
+            // $nbclients = DataService::countClientPerDepot($data->depot_id);
+            $nbclients = Client::count();
+            $numcompte = DataService::genCode('CompteCLT', $nbclients);
+            AdministrationService::newCompte($numcompte, $client->nom_complet);
       }
-
+      public static function newCompteMarchandise($march){
+            $nbmarchs = DataService::countAllMarchs();
+            $numcompte1 = DataService::genCode('CompteMarchA', $nbmarchs);
+            $numcompte2 = DataService::genCode('CompteMarchV', $nbmarchs);
+            AdministrationService::newCompte($numcompte1, $march->designation, "gestion");
+            AdministrationService::newCompte($numcompte2, $march->designation, "gestion");
+      }
+      public static function newAutreTypeCompte($data){
+            $depot = Depot::getDepotById($data->depot_id);
+            Compte::create([
+                  "numero_compte" => $data->numero_compte,
+                  "intitule" => $data->intitule . ' - ' . strtolower($depot->nom_depot),
+                  "type" => $data->type_compte
+            ]);
+      }
+      
       public static function createEmployeeUser($employee, $name, $email, $matricule){
             $user = User::create([
                   'name' => $name,
@@ -55,7 +98,6 @@ class AdministrationService{
             $employee->save();
             return $user;
       }
-
       public static function giveEmployeeUserPermission($user, $poste){
             if($poste == "vendeur"){
                   $role = Role::find(1);

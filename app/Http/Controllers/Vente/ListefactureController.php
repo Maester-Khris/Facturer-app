@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Vente;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Depot;
 use App\Services\VenteService;
 
 class ListefactureController extends Controller
@@ -15,8 +16,14 @@ class ListefactureController extends Controller
     }
 
     public function index(){
-        $ventes =  $this->vente->ListVente(1);
-        return view('vente.listeFacturesClient')->with(compact('ventes'));
-        // return response()->json(['success'=> $alls]);
+        $depots = Depot::all();
+        return view('vente.listeFacturesClient')->with(compact('depots'));
+    }
+
+    public function listfacture(Request $request){
+        $depots = Depot::all();
+        $selecteddepot=$request->depot;
+        $ventes =  $this->vente->ListVente($request->depot);
+        return view('vente.listeFacturesClient')->with(compact('selecteddepot'))->with(compact('depots'))->with(compact('ventes'));
     }
 }

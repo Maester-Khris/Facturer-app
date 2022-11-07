@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Vente;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use App\Models\Depot;
+use App\Models\Caisse;
 use App\Models\Client;
 use App\Services\VenteService;
 
@@ -16,15 +19,24 @@ class ReglementfactureController extends Controller
     }
 
     public function index(){
-        $impayes = $this->vente->ListNonPaidVentes(1);
+        $depots = Depot::all();
+        return view('vente.reglement')->with(compact('depots'));
+    }
+    public function listfactureimpayes(Request $request){
+        $caisses = Caisse::all();
+        $depots = Depot::all();
+        $impayes = $this->vente->ListNonPaidVentes($request->depot);
+        $selecteddepot=$request->depot;
         // dd($impayes);
-        // return response()->json(['success'=> $impayes]);
-        return view('vente.reglement')->with(compact('impayes'));
+        // on prend toute les vente qui ont une ecriture dans journal ventes et on selectin
+        // celle qui ont le statut 0 et les client dans notre depot
+        return view('vente.reglement')->with(compact('selecteddepot'))->with(compact('depots'))->with(compact('caisses'))->with(compact('impayes'));
     }
 
     public function soldvente(Request $request){
-        $client = Client::getClient($request->client,1);
-        $this->vente->soldVente($client, $request->codevente, $request->demo3);
+        // dd($request->depot);
+        $client = Client::getClient($request->client,$request->depot);
+        $this->vente->soldVente($client, $request->codevente, $request->demo3, $request->caisse);
         return redirect('/reglementFactureVente');
     }
 }

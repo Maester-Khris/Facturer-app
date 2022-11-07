@@ -211,6 +211,16 @@
                                                 <input class="form-control" name="numero_caisse" value="{{$code_caisse}}" type="tel" required readonly>
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-md-4 col-form-label">Selectionner le depot: </label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <select class="custom-select col-12" name="depot_id">
+                                                    @foreach($depots as $depot)
+                                                    <option value="{{$depot->id}}" >{{$depot->nom_depot}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                         <input class="btn btn-info" type="submit" value="Submit" >
                                     </form>
                                 </div>
@@ -243,8 +253,8 @@
                                             <label class="col-sm-12 col-md-4 col-form-label">Personnel vendeur: </label>
                                             <div class="col-sm-12 col-md-8">
                                                 <select class="custom-select col-12" name="personnel_id">
-                                                    @foreach($personnels as $perso)
-                                                    <option value="{{$perso->id}}" >{{$perso->nom_complet}}</option>
+                                                    @foreach($vendeurs as $vendeur)
+                                                    <option value="{{$vendeur->id}}" >{{$vendeur->nom_complet}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -289,7 +299,7 @@
                                                 <select class="custom-select col-12" name="tarification">
                                                     <option value="detail">Detail</option>
                                                     <option value="gros">Gros</option>
-                                                    <option value="super_gros">Super gors</option>
+                                                    <option value="super gros">Super gors</option>
                                                 </select>
                                             </div>
                                         </div>

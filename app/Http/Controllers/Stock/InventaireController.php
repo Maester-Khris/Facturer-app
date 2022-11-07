@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\StockService;
+use App\Models\Depot;
 use DateTime;
 
 class InventaireController extends Controller
@@ -16,21 +17,29 @@ class InventaireController extends Controller
     }
 
     public function index(){
-       return view('stock.saisieinventaire');
+       $depots = Depot::all();
+       return view('stock.saisieinventaire')->with(compact('depots'));
    }
 
    public function listinventaire(){
-        $lignes = $this->stock->listInventory(1);
-        return view('stock.listeinventaire')->with(compact('lignes'));
+          $depots = Depot::all();
+        return view('stock.listeinventaire')->with(compact('depots'));
+   }
+
+   public function inventaireOperations(Request $request){
+          $depots = Depot::all();
+          $lignes = $this->stock->listInventory($request->depot);
+          $selecteddepot = $request->depot;
+          return view('stock.listeinventaire')->with(compact('lignes'))->with(compact('depots'))->with(compact('selecteddepot'));
    }
 
    public function newSaisie(Request $request){
-        $this->stock->newSaisieInventaire($request["marchs"]) ;
-        return redirect('/inventaire');
+        $this->stock->newSaisieInventaire($request["marchs"], $request->depot) ;
+        return response()->json(["res" => "succeed"], 200);
    }
 
    public function getDetailsIvts(Request $request){
-        $articles = $this->stock->detailsInventaire(1,$request["code"]);
+        $articles = $this->stock->detailsInventaire($request->depot,$request["code"]);
         return response()->json($articles);
    }
 }

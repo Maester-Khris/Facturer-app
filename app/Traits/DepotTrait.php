@@ -8,4 +8,9 @@ trait DepotTrait {
             $depot = Depot::where('id',$depotid)->first();
             return  $depot;
       }
+      public static function getDepotId($depot){
+            $depot = Depot::where('nom_depot',$depot)->first();
+            return  $depot->id;
+      }
+
 }

@@ -23,7 +23,10 @@ class Facture extends Model
 
     public function getResteFactureAttribute(){
         $totalfac = Journalachat::getMontantFacture($this->id);
-        $deja_paye = Comptecaisse::MontantReglementFacture($this->code_facture);
+        $libele = 'Reglement facture '. $this->code_facture;
+        $montant = Detailcompte::where('reference_operation',$libele)->sum('credit');
+        $deja_paye = $montant != null ? $montant : 0;
+        // $deja_paye = Comptecaisse::MontantReglementFacture($this->code_facture);
         return ($totalfac - $deja_paye);
     }
 

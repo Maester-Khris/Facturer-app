@@ -157,13 +157,20 @@
                                     <input class="btn btn-info" type="submit" value="Consulter">
                                 </form>
                                 @else
-                                <h4 class="text-blue h4">Liste Tickets {{$type}} </h4>
-                                <h5 class="text-grey h5">Caisse: {{$caisse->libelle}}</h5>
+                                <h4 class="text-blue h4">
+                                    <a href="{{ url()->previous() }}"><i class="icon-copy ion-arrow-left-c" style="font-size:22px;margin-right:10px;"></i></a>
+                                    <span>
+                                        Liste Tickets {{$type}}  <code>Depot: {{$caisse->depot->nom_depot}}</code>
+                                    </span>
+                                </h4>
+                                <h5 class="text-warning h5">
+                                    Nom Caisse: <span id="selectedcaisse">{{$caisse->libelle}}</span>
+                                </h5>
                                 <table class="table hover multiple-select-row data-table-export nowrap">
                                     <thead>
                                         <tr>
                                             <th class="table-plus datatable-nosort">Ref. Ticket</th>
-                                            <th>Heure</th>
+                                            <th>Date & Heure</th>
                                             <th>Total</th>
                                             <th>Autre</th>
                                         </tr>
@@ -221,6 +228,8 @@
                                             <th>Reference March.</th>
                                             <th>Deisgnation</th>
                                             <th>Quantité déplacé</th>
+                                            <th>Prix</th>
+                                            <th>Montant</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -280,8 +289,8 @@
                     url: "/details-ticket",
                     type: "POST",
                     data: {
-                        'code': $("table.multiple-select-row tr.selected").children(".table-plus")
-                        .text(),
+                        'code': $("table.multiple-select-row tr.selected").children(".table-plus").text(),
+                        'caisse': $('#selectedcaisse').text(),
                         '_token': _token
                     },
                     success: function (response) {
@@ -293,6 +302,8 @@
                                     response[i].reference_marchandise,
                                     response[i].designation,
                                     response[i].quantite,
+                                    response[i].prix,
+                                    response[i].quantite * response[i].prix
                                 ]).draw();
                             }
                             $('#modal-detailoperation').modal('show');

@@ -28,7 +28,7 @@ class ClientSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'depot_id' => 1,
+                'depot_id' => 2,
                 'nom_complet' => 'Tarovsky Tall',
                 'telephone' => '+237 90776353',
                 'solde' => 0,

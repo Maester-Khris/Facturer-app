@@ -15,12 +15,13 @@ class CreateJournalachatsTable extends Migration
     {
         Schema::create('journalachats', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('comptefournisseur_id')->unsigned();
+            $table->string('numero_compte');
+            // $table->integer('comptefournisseur_id')->unsigned();
             $table->integer('facture_id')->unsigned();
             $table->dateTime('date_facturation');
             $table->integer('montant');
             $table->timestamps();
-            $table->foreign('comptefournisseur_id')->references('id')->on('comptefournisseurs');
+            // $table->foreign('comptefournisseur_id')->references('id')->on('comptefournisseurs');
             $table->foreign('facture_id')->references('id')->on('factures');
         });
     }

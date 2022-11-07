@@ -17,15 +17,15 @@ trait FactureTrait {
             $facs = Facture::with(['fournisseur' => function($query) use ($id_depot){
                         $query->where('depot_id', $id_depot);
                   }])->orderBy('date_facturation','desc')->get();
-
+            $facs = $facs->filter(function($item){
+                  if($item->fournisseur) return $item;
+            });
             return $facs;
       }
 
       public static function countFactures($id_depot){
-            $count = Facture::with(['fournisseur' => function($query) use ($id_depot){
-                        $query->where('depot_id', $id_depot);
-                  }])->count();
-
+            $facs = Facture::getAllFacturesByDepot($id_depot);
+            $count = $facs->count();
             return $count;
       }
 
@@ -44,11 +44,27 @@ trait FactureTrait {
             return $fac;
       }
 
+      public static function getFournisseurAchat($codefac, $depot){
+            $fourni = Facture::where("code_facture",$codefac)
+                  ->join("fournisseurs","factures.fournisseur_id","=","fournisseurs.id")
+                  ->where("fournisseurs.depot_id",$depot)
+                  ->select("fournisseurs.nom_complet")
+                  ->first();
+
+            return $fourni;
+      }
+
       public static function unSoldedFactures($id_depot){
-            $fac = Facture::with(['fournisseur' => function($query) use ($id_depot){
+            $facs = Facture::with(['fournisseur' => function($query) use ($id_depot){
                         $query->where('depot_id', $id_depot);
                   }])
-                  ->where('statut',false)->get();
-            return $fac;
+                  ->join('journalachats','journalachats.facture_id',"=",'factures.id')
+                  ->where('statut',false)
+                  ->select('factures.*')
+                  ->get();
+            $facs = $facs->filter(function($item){
+                  if($item->fournisseur) return $item;
+            });
+            return $facs;
       }
 }

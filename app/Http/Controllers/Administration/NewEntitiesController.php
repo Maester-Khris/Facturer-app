@@ -26,13 +26,14 @@ class NewEntitiesController extends Controller
         $depots = Depot::all();
         $caisses = Caisse::all();
         $personnels = Personnel::all();
+        $vendeurs = Personnel::where('poste','vendeur')->get();
         $nbrowsmarch = Marchandise::all()->count();
         $ref_march = DataService::genCode("Marchandise", $nbrowsmarch + 1);
         $code_caisse =  DataService::genCode("Caisse", $caisses->count() + 1);
         $matricule_personnel =  DataService::genCode("Personnel", $personnels->count() + 1);
 
         return view('administration.nouvellesEntites')
-        ->with(compact('depots'))->with(compact('caisses'))->with(compact('personnels'))
+        ->with(compact('depots'))->with(compact('caisses'))->with(compact('personnels'))->with(compact('vendeurs'))
         ->with(compact('ref_march'))->with(compact('code_caisse'))->with(compact('matricule_personnel'));
     }
 
@@ -54,14 +55,15 @@ class NewEntitiesController extends Controller
     public function savecaisse(Request $request){
         $validator = Validator::make($request->all(),[
             'libelle' => 'required',
-            'numero_caisse' => 'required'
+            'numero_caisse' => 'required',
+            'depot_id' => 'required'
         ]);
         if ($validator->fails()) {
             $transf_error = "Formulaire mal remplie";
             return back()->with('error_form_entite',$transf_error);
         }
-
-        Caisse::create($request->all());
+        $data = (object) $request->input();
+        AdministrationService::newCaisse($data);
         return redirect('/nouvellesEntites');
     }
 
@@ -133,6 +135,7 @@ class NewEntitiesController extends Controller
 
         $march = Marchandise::create($request->all());
         StockService::addMarchandiseInAllStock($march->id);
+        AdministrationService::newCompteMarchandise($march);
         return redirect('/nouvellesEntites');
     }
 
@@ -167,9 +170,25 @@ class NewEntitiesController extends Controller
         AdministrationService::newFournisseur($data);
         return redirect('/nouvellesEntites');
     }
+
+    public function savecompte(Request $request){
+        $validator = Validator::make($request->all(),[
+            'intitule' => 'required',
+            'type_compte' => 'required',
+            'numero_compte' => 'required',
+            'depot_id' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $transf_error = "Formulaire mal remplie";
+            return back()->with('error_form_entite',$transf_error);
+        }
+
+        $data = (object) $request->input();
+        AdministrationService::newAutreTypeCompte($data);
+        return redirect('/planCompte');
+    }
 }
 
-// $user = User::create([
         //     'name' => $request->nom_complet,
         //     'email' => $request->email,
         //     'password' => Hash::make($request->matricule),

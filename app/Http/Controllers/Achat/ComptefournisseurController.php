@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AchatService;
 use App\Models\Fournisseur;
+use App\Models\Depot;
 
 class ComptefournisseurController extends Controller
 {
@@ -16,14 +17,18 @@ class ComptefournisseurController extends Controller
     }
 
     public function index(){
-        $fournisseurs = Fournisseur::getByDepot(1); ## ajouter juste pour faciliter les test
-        return view('achat.interrogerCompteFournisseur')->with(compact('fournisseurs'));
+        $depots = Depot::all();
+        return view('achat.interrogerCompteFournisseur')->with(compact('depots'));
     }
 
     public function activities(Request $request){
-        $activities = $this->achat->ProviderActivities(1, $request->fournisseur);
-        // dd($activities);
-        $solde = $this->achat->getFourniSolde($request->fournisseur);
-        return response()->json(["success" => [ $activities, $solde] ]);
+        $depots = Depot::all();
+        $activities = $this->achat->ProviderActivities($request->depot, $request->fournisseur);
+        $selecteddepot= $request->depot;
+        $selectedfourni = $request->fournisseur;
+        $solde = $this->achat->getFourniSolde($request->depot, $request->fournisseur);
+        return view('achat.interrogerCompteFournisseur')
+        ->with(compact('selecteddepot'))->with(compact('selectedfourni'))
+        ->with(compact('activities'))->with(compact('depots'))->with(compact('solde'));
     }
 }

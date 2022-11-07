@@ -31,6 +31,11 @@ class Depot extends Model
       return $this->hasMany(Fournisseur::class);
    }
 
+   public function caisses()
+   {
+      return $this->hasMany(Caisse::class);
+   }
+
    public function comptoirs()
    {
       return $this->hasMany(Comptoir::class);

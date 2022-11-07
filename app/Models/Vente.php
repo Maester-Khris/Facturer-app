@@ -23,10 +23,15 @@ class Vente extends Model
     ];
 
     public function getResteVenteAttribute(){
+        // dd($this->id);
         $totalvente = Journalvente::getMontantFacture($this->id);
-        $deja_paye = Comptecaisse::MontantReglementVente($this->code_vente);
+        // $deja_paye = Comptecaisse::MontantReglementVente($this->code_vente);
+        $libele = 'Reglement vente '. $this->code_vente;
+        $montant = Detailcompte::where('reference_operation',$libele)->sum('debit');
+        $deja_paye = $montant != null ? $montant : 0;
         return ($totalvente - $deja_paye);
     }
+    
     public function client() { 
         return $this->belongsTo(Client::class);
     }

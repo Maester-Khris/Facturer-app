@@ -6,26 +6,10 @@
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
+    @include('includes/css_myadditional')
     <style>
-        .center-foot {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-        #march_suggest {
-            z-index: 10;
-            position: absolute;
-            width: 100%;
-            display: none;
-        }
-        #march_suggest li {
-            background: #E9ECEF;
-            padding: 10px;
-            cursor: pointer;
-        }
-        #march_suggest li:hover {
-            background: #CCE4F7;
+        .table-actions i{
+            color: red;
         }
     </style>
 </head>
@@ -43,9 +27,9 @@
     </div>
 
 
-    <div class="main-container">
-        <div class="pd-ltr-20 xs-pd-20-10">
-            <div class="min-height-200px">
+    <div class="main-container" >
+        <div class="pd-ltr-20 xs-pd-20-10" >
+            <div class="min-height-200px" style="position: relative;">
                 <div class="page-header">
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
@@ -71,7 +55,7 @@
                     </div>
                 </div>
 
-                <div class="card-box mb-30">
+                <div class="card-box mb-30" >
                     <div class="pd-20">
                         <h4 class="text-blue h4">Nouvelle Saisie Inventaire</h4>
                     </div>
@@ -80,6 +64,22 @@
                         <form id="form-inv" action="" method="POST">
                             @csrf
                             <div class="row">
+                                <div class="col-md-3">
+						            <div class="form-group">
+						                <label>Selectionner le depot</label>
+						                <select id="depot" class="form-control" data-style="btn-outline-primary" name="depot"
+						                    data-size="5" required>
+						                    @foreach ($depots as $depot)
+                                                @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+                                                <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+                                                @else
+                                                <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+                                                @endif
+						                    @endforeach
+						                </select>
+						            </div>
+						        </div>
+                                <div class="col-md-9"></div>
                                 <div class="col-md-3 col-sm-12">
                                     <div class="form-group" style="position: relative;">
                                         <label>Design. Marchandise</label>
@@ -105,29 +105,17 @@
                 </div>
 
                 <div class="card-box mb-30" style="padding: 20px 0;">
-                    <table class="data-table table-inventaire table stripe hover nowrap">
+                    <table class="data-table table-inventaire table hover multiple-select-row nowrap">
                         <thead>
                             <tr>
                                 <th class="table-plus datatable-nosort">Reference</th>
                                 <th>Designation</th>
                                 <th>Ancienne Qté</th>
                                 <th>Qté réelle <code>(réajusté)</code></th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @foreach($lignes as $ligne)
-                            <tr>
-                                <td class="table-plus">{{$ligne->marchandise->reference}}</td>
-                            <td>{{$ligne->marchandise->designation}}</td>
-                            <td>{{$ligne->ancienne_quantite}}</td>
-                            <td>{{$ligne->quantite_reajuste}}</td>
-                            <td>{{$ligne->difference}}</td>
-                            <td>
-                                {{$ligne->date_reajustement}}
-                            </td>
-                            </tr>
-                            @endforeach --}}
-
                         </tbody>
                     </table>
 
@@ -142,6 +130,27 @@
                     </div>
                 </div>
 
+                <div id="error_container" class="container d-flex flex-row justify-content-end" style="max-width:1270px;margin-top:10px;padding-left:0px;display:none!important;">
+					<div id="error_message" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 400px;">
+						<i class="fa fa-exclamation" aria-hidden="true" style="color:#df4759;margin-right:10px;font-size:20px;"></i>
+						<strong>Alerte: </strong>
+						<span id="notif_body"></span>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				</div>
+
+                {{-- <div id="error_container" class="container" style="width:450px;position:absolute;z-index:10;right:15px;top:150px;display:none;">
+                    <div id="error_message" class="alert alert-warning alert-dismissible fade show" role="alert" >
+                        <i class="fa fa-exclamation" aria-hidden="true" style="color:#e4d50bee;margin-right:10px;font-size:20px;"></i>
+                        <strong>Alerte: </strong> 
+                        <span id="notif_body"> Produit non trouvé, recommencez ! </span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -152,118 +161,51 @@
 
     @include('includes/js_assets')
 
+    <script src="{{asset('src/scripts/stock_function.js')}}"></script>
+    <script src="{{asset('src/scripts/myautocomplete.js')}}"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             $("#linkSI").addClass("active");
             $("#linkSI").closest(".dropdown").addClass("show");
             $("#linkSI").closest(".submenu").css("display", 'block');
         });
+        let _token = $('meta[name="csrf-token"]').attr('content');
+        $('#error_container').hide();
     </script>
-
-    {{-- autosuggestion --}}
+    
     <script type="text/javascript">
-        $('ul#march_suggest').on("click", "li", function () {
-            $('#march').val($(this).text());
-            let ul_sugestion = $('#march_suggest');
-            ul_sugestion.hide();
-        });
-    </script>
-    <script type="text/javascript">
-        $('#march').keyup(_.debounce(function () {
-            var march_name = $(this).val();
-            console.log
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/autocomplete",
-                type: "POST",
-                data: {
-                    'produit': march_name,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                    let ul_sugestion = $('#march_suggest');
-                    ul_sugestion.empty();
-                    if (response.length == 0) {
-                        ul_sugestion.append("<li>Aucune correspondance</li>");
-                    } else {
-                        for (let i = 0; i < response.length; i++) {
-                            ul_sugestion.append("<li>" + response[i].designation + "</li>");
-                        }
-                    }
-                    ul_sugestion.show();
-                },
-                error: function (error) {}
-            });
-        }, 500));
-    </script>
-
-    {{-- Ajouter produit: stockinfo  --}}
-    <script type="text/javascript">
+        let button = '<div class="table-actions"><a href="#" data-color="#e95959"><i class="icon-copy dw dw-delete-3"></i></a></div>';
+        autocompletemarchandiseWeb();
         $("a#btn-form-inv").click(function (event) {
             event.preventDefault();
-
+            let depot = $('select#depot').children("option:selected").val();
             var march_name = $('#march').val();
             var march_qte = $('#qte').val();
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/stockinfo",
-                type: "POST",
-                data: {
-                    'produit': march_name,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response)
-                    var table = $('table.data-table').DataTable();
-                    table.row.add([
-                        response[1],
-                        march_name,
-                        response[0],
-                        march_qte,
-                    ]).draw();
-                    $('#march').val("");
-                    $('#qte').val("");
-                },
-                error: function (error) {}
+            stockInfos(march_name, depot, _token, function (response) {
+                var table = $('table.data-table').DataTable();
+                table.row.add([ response[1], march_name, response[0], march_qte, button]).draw();
+                $('#march').val("");
+                $('#qte').val("");
             });
-            // stockinfo
-
         });
-    </script>
-
-    {{-- enregistrer invenataire  --}}
-    <script type="text/javascript">
         $("#validerinv").click(function (event) {
-            let _token = $('meta[name="csrf-token"]').attr('content');
+            let depot = $('select#depot').children("option:selected").val();
             var table = $('table.table-inventaire').DataTable();
             let rows = table.rows({}).data();
-
             let marchandises = [];
             for (var i = 0; i < rows.length; i++) {
-                let marchinv = {
-                    'name': rows[i][1],
-                    'newquantite': rows[i][3]
-                }
+                let marchinv = {'name': rows[i][1], 'newquantite': rows[i][3] }
                 marchandises.push(marchinv);
             }
-            console.log(marchandises);
-
-            $.ajax({
-                url: "/saisie-inv",
-                type: "POST",
-                data: {
-                    'marchs': marchandises,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                }
-            });
+            newSaisieInv(marchandises, depot, _token);
         });
-
+        $('.table-inventaire tbody').on('click', 'tr.selected div.table-actions', function (e) {
+            e.preventDefault();
+            var table = $('.table-inventaire').DataTable();
+            table.row($(this).parents('tr')).remove().draw();
+        });
     </script>
 
 </body>
-
 </html>

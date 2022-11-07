@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class PosteSeeder extends Seeder
 {
@@ -15,53 +17,54 @@ class PosteSeeder extends Seeder
      */
     public function run()
     {
-        //
-        DB::table('users')->insert([
-            'name' => 'Niklaus',
+        
+        $user = User::create([
+            'name' => 'Daniel Tanong',
             'email' => 'monemail@gmail.com',
-            'password' => Hash::make('MAT0001'),
+            'password' => Hash::make('MAT0001')
         ]);
-
+        $role = Role::find(4);
+        $user->assignRole($role);
         DB::table('personnels')->insert([
             'id' => 1,
-            'depot_id' => 2,
+            'depot_id' => 1,
             'user_id' => 1,
-            'nom_complet' => 'Niklaus',
+            'nom_complet' => 'Daniel Tanong',
             'sexe' => 'F',
             'telephone' => '(+237) 98643595',
             'email' => 'monemail@gmail.com',
             'cni' => '23436576787889',
             'date_embauche' => '2021-12-26',
             'type_contrat' => 'CDD',
-            'poste' => 'Caissier',
+            'poste' => 'Comptable',
             'statut' => 'Actif',
             'matricule' => 'MAT0001',
             'matricule_cnps' => 'PNLCNP001',
         ]);
 
-        DB::table('caisses')->insert([
-            'id' => 1,
-            'numero_caisse' => 'CAI001',
-            'libelle' => 'Caisse principal',
-        ]);
-        DB::table('comptoirs')->insert([
-            'id' => 1,
-            'depot_id' => 2,
-            'personnel_id' => 1,
-            'caisse_id' => 1,
-            'libelle' => 'Comptoir 1',
-        ]);
-        DB::table('clients')->insert([
-            [
-                'id' => 1,
-                'depot_id' => 2,
-                'nom_complet' => 'Clt Comptoir 1',
-                'telephone' => '+237 98764356',
-                'solde' => 0,
-                'tarification_client' => 'detail',
-                'multi_depot_caisses' => false
-            ]
-        ]);
+        // DB::table('caisses')->insert([
+        //     'id' => 1,
+        //     'numero_caisse' => 'CAI001',
+        //     'libelle' => 'Caisse principal',
+        // ]);
+        // DB::table('comptoirs')->insert([
+        //     'id' => 1,
+        //     'depot_id' => 2,
+        //     'personnel_id' => 1,
+        //     'caisse_id' => 1,
+        //     'libelle' => 'Comptoir 1',
+        // ]);
+        // DB::table('clients')->insert([
+        //     [
+        //         'id' => 1,
+        //         'depot_id' => 2,
+        //         'nom_complet' => 'Clt Comptoir 1',
+        //         'telephone' => '+237 98764356',
+        //         'solde' => 0,
+        //         'tarification_client' => 'detail',
+        //         'multi_depot_caisses' => false
+        //     ]
+        // ]);
         // DB::table('ventes')->insert([
         //     [
         //      'id' => 1,

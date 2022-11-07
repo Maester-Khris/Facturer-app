@@ -16,6 +16,10 @@ class Client extends Model
         return $this->hasMany(Ticket::class);
     }
 
+    public function ventes() { 
+      return $this->hasMany(Vente::class);
+  }
+
     public function depot()
    {
       return $this->belongsTo(Depot::class);

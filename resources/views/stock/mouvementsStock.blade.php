@@ -1,6 +1,3 @@
-@php
-date_default_timezone_set("Africa/Douala");
-@endphp
 <!DOCTYPE html>
 <html>
 
@@ -9,35 +6,7 @@ date_default_timezone_set("Africa/Douala");
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
-    <style>
-        .center-foot {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #march_suggest1,
-        #march_suggest2 {
-            z-index: 10;
-            position: absolute;
-            width: 100%;
-            display: none;
-        }
-
-        #march_suggest1 li,
-        #march_suggest2 li {
-            background: #E9ECEF;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        #march_suggest1 li:hover,
-        #march_suggest2 li:hover {
-            background: #CCE4F7;
-        }
-
-    </style>
+    @include('includes/css_myadditional')
 </head>
 
 <body>
@@ -81,48 +50,48 @@ date_default_timezone_set("Africa/Douala");
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-4 col-md-5 col-sm-12 mb-30">
+                    <div class="col-lg-8 col-md-5 col-sm-12 mb-30">
                         <div class="pd-20 card-box height-100-p">
-                            <h4 class="mb-20 h4">Sorties</h4>
-                            <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Recentes sorties
-                                    <span class="badge badge-primary badge-pill">14</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Facture ventes
-                                    <span class="badge badge-primary badge-pill">2</span>
-                                </li>
-                            </ul>
+                            <h4 class="mb-20 h4">Afficher les mouvements stocks d'un depot</h4>
+                            <form action="{{url('listMouvements')}}" method="POST">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Selectionner le depot</label>
+                                            <select id="depot" class="form-control" data-style="btn-outline-primary" name="depot"
+                                                data-size="5" required>
+                                                @foreach ($depots as $depot)
+                                                @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+                                                <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+                                                @else
+                                                <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+                                                @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-12" style="padding-top:35px;">
+                                        <button type="submit" class="activities btn btn-primary">
+                                            Lister les Mouvements
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-5 col-sm-12 mb-30">
-                        <div class="pd-20 card-box height-100-p">
-                            <h4 class="mb-20 h4">Entrée</h4>
-                            <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Nouvelle entrees
-                                    <span class="badge badge-primary badge-pill">14</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Factures Achats
-                                    <span class="badge badge-primary badge-pill">2</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    </div> 
                     <div class="col-lg-4 col-md-6 col-sm-12 mb-30">
                         <div class="pd-20 card-box height-100-p">
                             <h4 class="mb-20 h4">Operation Stocks</h4>
                             <ul class="list-group">
                                 <li class="list-group-item list-group-item-info">
-                                    <a href="#" class="btn-block" data-toggle="modal" data-target="#modal-transfert"
+                                    <a href="#" class="btn-block" id="link-transfert"
                                         type="button">
                                         Nouveau transfert
                                     </a>
                                 </li>
                                 <li class="list-group-item list-group-item-dark">
-                                    <a href="#" class="btn-block" data-toggle="modal" data-target="#modal-mouvment"
+                                    <a href="#" class="btn-block" id="link-mouvement"
                                         type="button">
                                         Nouvelle Entrée/Sortie
                                     </a>
@@ -144,33 +113,35 @@ date_default_timezone_set("Africa/Douala");
                                     <th class="table-plus datatable-nosort">Reference Mouv.</th>
                                     <th>Operation</th>
                                     <th>Date ope.</th>
+                                    <th>Depot</th>
                                     <th>Depot destination</th>
                                     <th>Autres</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($mvts)
-                                @foreach($mvts as $mvt)
-                                <tr>
-                                    <td class="table-plus">{{$mvt->reference_mouvement}}</td>
+                                @if(isset($mvts))
+                                    @foreach($mvts as $mvt)
+                                        <tr>
+                                            <td class="table-plus">{{$mvt->reference_mouvement}}</td>
 
-                                    @if($mvt->type_mouvement == "Entrée")
-                                    <td><span class="badge badge-success">{{$mvt->type_mouvement}}</span></td>
-                                    @elseif($mvt->type_mouvement == "Sortie")
-                                    <td><span class="badge badge-danger">{{$mvt->type_mouvement}}</span></td>
-                                    @else
-                                    <td><span class="badge badge-dark">{{$mvt->type_mouvement}}</span></td>
-                                    @endif
+                                            @if($mvt->type_mouvement == "Entrée")
+                                            <td><span class="badge badge-success">{{$mvt->type_mouvement}}</span></td>
+                                            @elseif($mvt->type_mouvement == "Sortie")
+                                            <td><span class="badge badge-danger">{{$mvt->type_mouvement}}</span></td>
+                                            @else
+                                            <td><span class="badge badge-dark">{{$mvt->type_mouvement}}</span></td>
+                                            @endif
 
-                                    <td>{{ $mvt->date_operation }}</td>
-                                    <td>{{ is_null($mvt->destination) ? '/' : $mvt->destination }}</td>
-                                    <td>
-                                        <a id="detail_operation" href="#" class="btn-block" type="button">
-                                            plus de details
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
+                                            <td>{{ $mvt->date_operation }}</td>
+                                            <td>{{ $mvt->nom_depot }}</td>
+                                            <td>{{ is_null($mvt->destination) ? '/' : $mvt->destination }}</td>
+                                            <td>
+                                                <a id="detail_operation" href="#" class="btn-block" type="button">
+                                                    plus de details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @endif
                             </tbody>
                         </table>
@@ -204,6 +175,7 @@ date_default_timezone_set("Africa/Douala");
                 </div>
             </div>
         </div>
+
         <!-- modal mvt transfert -->
         <div class="modal fade" id="modal-transfert" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
             aria-hidden="true">
@@ -276,15 +248,28 @@ date_default_timezone_set("Africa/Douala");
                                 </tr>
                             </thead>
                             <tbody>
+                                
                             </tbody>
                         </table>
 
                         <div class="clearfix" style="margin-top: 20px;margin-right:10px;">
                             <div class="pull-left">
-                                <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+                                <div class="col-md-3 col-sm-12" style="padding-top:15px;">
                                     <a href="#" id="validermvt_transf" class="btn btn-outline-secondary">
                                         Enregistrer
                                     </a>
+                                </div>
+                            </div>
+                             <div class="pull-right">
+                                <div id="error_container" class="container d-flex flex-row justify-content-end" style="max-width:1270px;margin-top:10px;padding-left:0px;display:none!important;">
+                                    <div id="error_message" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 400px;">
+                                        <i class="fa fa-exclamation" aria-hidden="true" style="color:#df4759;margin-right:10px;font-size:20px;"></i>
+                                        <strong>Alerte: </strong>
+                                        <span id="notif_body"></span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -292,6 +277,7 @@ date_default_timezone_set("Africa/Douala");
                 </div>
             </div>
         </div>
+
         <!-- modal mvt entree/sortie -->
         <div class="modal fade" id="modal-mouvment" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
             aria-hidden="true" style="">
@@ -348,12 +334,12 @@ date_default_timezone_set("Africa/Douala");
                                 </div>
                             </div>
                         </form>
-                        <table class="checkbox-datatable table-mouvement table nowrap" style="margin: 15px 0;">
+                        <table class="checkbox-datatable_1 table-mouvement table nowrap" style="margin: 15px 0;">
                             <thead>
                                 <tr>
                                     <th>
-                                        <div class="dt-checkbox">
-                                            <input type="checkbox" name="select_all" value="1" id="example-select-all">
+                                        <div class="dt-checkbox" >
+                                            <input type="checkbox" name="select_all" value="1" id="example-select-all_1">
                                             <span class="dt-checkbox-label"></span>
                                         </div>
                                     </th>
@@ -367,10 +353,22 @@ date_default_timezone_set("Africa/Douala");
 
                         <div class="clearfix" style="margin-top: 20px;margin-right:10px;">
                             <div class="pull-left">
-                                <div class="col-md-3 col-sm-12" style="padding-top:35px;">
+                                <div class="col-md-3 col-sm-12" style="padding-top:15px;">
                                     <a href="#" id="validermvt" class="btn btn-outline-secondary">
                                         Enregistrer
                                     </a>
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <div id="error_container" class="container d-flex flex-row justify-content-end" style="max-width:1270px;margin-top:10px;padding-left:0px;display:none!important;">
+                                    <div id="error_message" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 400px;">
+                                        <i class="fa fa-exclamation" aria-hidden="true" style="color:#df4759;margin-right:10px;font-size:20px;"></i>
+                                        <strong>Alerte: </strong>
+                                        <span id="notif_body"></span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -387,6 +385,8 @@ date_default_timezone_set("Africa/Douala");
     </div>
 
     @include('includes/js_assets')
+    <script src="{{asset('src/scripts/stock_function.js')}}"></script>
+    <script src="{{asset('src/scripts/myautocomplete.js')}}"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -394,229 +394,59 @@ date_default_timezone_set("Africa/Douala");
             $("#linkMS").closest(".dropdown").addClass("show");
             $("#linkMS").closest(".submenu").css("display", 'block');
         });
-
-    </script>
-
-    {{-- detail d'un mouvement  --}}
-    <script type="text/javascript">
-        $("a#detail_operation").click(function (event) {
+        $("#link-transfert").click(function(event){
             event.preventDefault();
-            let mouvement = $("table.multiple-select-row tr.selected").children(".table-plus").text();
-            console.log(mouvement);
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/details-mvt",
-                type: "POST",
-                data: {
-                    'code': mouvement,
-                    '_token': _token
-                },
-                success: function (response) {
-                    if (response) {
-                        console.log(response);
-                        var table = $('table.table-detail').DataTable();
-                        for (var i = 0; i < response.length; i++) {
-                            table.row.add([
-                                response[i].marchandise.reference,
-                                response[i].marchandise.designation,
-                                response[i].quantite_mouvement,
-                            ]).draw();
-                        }
-                        $('#modal-detailoperation').modal('show');
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        })
-    </script>
-
-    {{-- auto suggestion modal transf et mouvement  --}}
-    <script type="text/javascript">
-        $('ul#march_suggest1').on("click", "li", function () {
-            $('#march1').val($(this).text());
-            let ul_sugestion = $('#march_suggest1');
-            ul_sugestion.hide();
+            $('table.table-transfert').DataTable().clear().draw();
+            $("#modal-transfert").modal("show");
         });
-        $('ul#march_suggest2').on("click", "li", function () {
-            $('#march2').val($(this).text());
-            let ul_sugestion = $('#march_suggest2');
-            ul_sugestion.hide();
+        $("#link-mouvement").click(function(event){
+            event.preventDefault();
+            $('table.table-mouvement').DataTable().clear().draw();
+            $("#modal-mouvment").modal("show");
         });
-
+        let _token = $('meta[name="csrf-token"]').attr('content');
     </script>
     <script type="text/javascript">
-        $('#march1').keyup(_.debounce(function () {
-            var march_name = $(this).val();
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/autocomplete",
-                type: "POST",
-                data: {
-                    'produit': march_name,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                    let ul_sugestion = $('#march_suggest1');
-                    ul_sugestion.empty();
-                    if (response.length == 0) {
-                        ul_sugestion.append("<li>Aucune correspondance</li>");
-                    } else {
-                        for (let i = 0; i < response.length; i++) {
-                            ul_sugestion.append("<li>" + response[i].designation + "</li>");
-                        }
-                    }
-                    ul_sugestion.show();
-                },
-                error: function (error) {}
-            });
-        }, 500));
-
-    </script>
-    <script type="text/javascript">
-        $('#march2').keyup(_.debounce(function () {
-            var march_name = $(this).val();
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: "/autocomplete",
-                type: "POST",
-                data: {
-                    'produit': march_name,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                    let ul_sugestion = $('#march_suggest2');
-                    ul_sugestion.empty();
-                    if (response.length == 0) {
-                        ul_sugestion.append("<li>Aucune correspondance</li>");
-                    } else {
-                        for (let i = 0; i < response.length; i++) {
-                            ul_sugestion.append("<li>" + response[i].designation + "</li>");
-                        }
-                    }
-                    ul_sugestion.show();
-                },
-                error: function (error) {}
-            });
-        }, 500));
-
-    </script>
-
-    {{-- TRANSFERT MVT: add and validate  --}}
-    <script type="text/javascript">
+        autoCompleteMouvement();
+        $("a#btn_add_mvt").click(function (event) {
+            event.preventDefault();
+            let produit = $('#form-reajust #march2').val();
+            let quantite = $('#form-reajust #demo3').val();
+            addMarchtoTable(produit, quantite, "mouvement", _token);
+            $('#march2').val('');
+            $('#form-reajust #demo3').val('');
+        });
         $("a#btn_add_transf").click(function (event) {
             event.preventDefault();
             let produit = $('#form-transfer #march1').val();
             let quantite = $('#form-transfer #demo3').val();
             let depot_destination = $('select.depot_transf').children("option:selected").val();
-            console.log(produit, quantite, depot_destination);
-            var table = $('table.checkbox-datatable.table-transfert').DataTable();
-            table.row.add([
-                '<input type="checkbox"></input>',
-                produit,
-                quantite,
-            ]).draw();
+            addMarchtoTable(produit, quantite, "transfert", _token);
             $('#march1').val('');
             $('#form-transfer #demo3').val('');
         });
-
-    </script>
-    <script type="text/javascript">
         $("#validermvt_transf").click(function (event) {
-            let _token = $('meta[name="csrf-token"]').attr('content');
             let depot_depart = $('select.depot_depart').children("option:selected").val();
             let depot_destination = $('select.depot_destination').children("option:selected").val();
             var table = $('table.checkbox-datatable.table-transfert').DataTable();
-            let rows = table.rows({
-                selected: true
-            }).data();
-
-            let marchandises = [];
-            for (var i = 0; i < rows.length; i++) {
-                let marchrecu = {
-                    'name': rows[i][1],
-                    'quantite': rows[i][2]
-                }
-                marchandises.push(marchrecu);
-            }
-            console.log(marchandises);
-
-            $.ajax({
-                url: "/transfert-stock",
-                type: "POST",
-                data: {
-                    'marchs': marchandises,
-                    'depot_destination': depot_destination,
-                    'depot_depart': depot_depart,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                }
-            });
+            let rows = table.rows({ selected: true }).data();
+            marchandises = getMarchs(rows);
+            transfertStock(marchandises, depot_destination, depot_depart, "vue_all", _token);
         });
-
-    </script>
-
-    {{-- ENTREE/SORTIE MVT: add and validate  --}}
-    <script type="text/javascript">
-        $("a#btn_add_mvt").click(function (event) {
-            event.preventDefault();
-            let produit = $('#form-reajust #march2').val();
-            let quantite = $('#form-reajust #demo3').val();
-            let type_achat = $('select.mvt_type').children("option:selected").val();
-            console.log(produit, quantite, type_achat);
-            var table = $('table.checkbox-datatable.table-mouvement').DataTable();
-            table.row.add([
-                '<input type="checkbox"></input>',
-                produit,
-                quantite,
-            ]).draw();
-            $('#march2').val('');
-            $('#form-reajust #demo3').val('');
-        });
-
-    </script>
-    <script type="text/javascript">
         $("#validermvt").click(function (event) {
-            let _token = $('meta[name="csrf-token"]').attr('content');
             let depot = $('select.depot').children("option:selected").val();
             let type_achat = $('select.mvt_type').children("option:selected").val();
-            var table = $('table.checkbox-datatable.table-mouvement').DataTable();
-            let rows = table.rows({
-                selected: true
-            }).data();
-
-            let marchandises = [];
-            for (var i = 0; i < rows.length; i++) {
-                let marchrecu = {
-                    'name': rows[i][1],
-                    'quantite': rows[i][2]
-                }
-                marchandises.push(marchrecu);
-            }
-            console.log(marchandises);
-
-            $.ajax({
-                url: (type_achat == "entree" ? "/entree-stock" : "/sortie-stock"),
-                type: "POST",
-                data: {
-                    'marchs': marchandises,
-                    'depot': depot,
-                    '_token': _token
-                },
-                success: function (response) {
-                    console.log(response);
-                }
-            });
+            var table = $('table.checkbox-datatable_1.table-mouvement').DataTable();
+            let rows = table.rows({ selected: true }).data();
+            marchandises = getMarchs(rows);
+            newMvtStock(type_achat, marchandises, depot, _token);
         });
-
+        $("a#detail_operation").click(function (event) {
+            event.preventDefault();
+            let mouvement = $("table.multiple-select-row tr.selected").children(".table-plus").text();
+            detailMvt(mouvement, _token);
+        })
     </script>
 
 </body>
-
 </html>
-

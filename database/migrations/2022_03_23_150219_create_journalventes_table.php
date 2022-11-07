@@ -15,12 +15,13 @@ class CreateJournalventesTable extends Migration
     {
         Schema::create('journalventes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('compteclient_id')->nullable()->unsigned();
+            $table->string('numero_compte');
+            // $table->integer('compteclient_id')->nullable()->unsigned();
             $table->integer('vente_id')->unsigned();
             $table->integer('montant');
             $table->dateTime('date_facturation');
             $table->timestamps();
-            $table->foreign('compteclient_id')->references('id')->on('compteclients');
+            // $table->foreign('compteclient_id')->references('id')->on('compteclients');
             $table->foreign('vente_id')->references('id')->on('ventes');
         });
     }

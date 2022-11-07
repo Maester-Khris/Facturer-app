@@ -17,9 +17,9 @@
                         </a>
                         <ul class="submenu">
                             <li><a href="{{  url('nouvellesEntites')  }}" id="linkNE">Nouvelles Entités</a></li>
+                            <li><a href="{{  url('listeEntites')  }}" id="linkBC">Liste des Entités</a></li>
                             <li><a href="{{  url('descriptionSociete')  }}" id="linkDS">Description de la société</a></li>
                             <li><a href="{{  url('planCompte')  }}" id="linkPC">Plan de Compte</a></li>
-                            <li><a href="{{  url('balanceCompte')  }}" id="linkBC">Balance de Compte</a></li>
                             <li><a href="{{  url('suiviActivites')  }}" id="linkSA">Suivi des Activités</a></li>
                         </ul>
                     </li>
@@ -82,18 +82,18 @@
                     </li>
                 @endcan
                 @can('transfert_stock')
-                <li>
-                    <a href="{{ url('transfertStock') }}" class="dropdown-toggle no-arrow" id="linkTS">
-                        <span class="micon dw dw-balance"></span><span class="mtext">Transfert Stock</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ url('transfertStock') }}" class="dropdown-toggle no-arrow" id="linkTS">
+                            <span class="micon dw dw-balance"></span><span class="mtext">Transfert Stock</span>
+                        </a>
+                    </li>
                 @endcan
                 @can('vente_comptoir')
-                <li>
-                    <a href="{{ url('ventesComptoir') }}" class="dropdown-toggle no-arrow" id="linkVC">
-                        <span class="micon dw dw-shopping-cart"></span><span class="mtext">Ventes au comptoir</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ url('ventesComptoir') }}" class="dropdown-toggle no-arrow" id="linkVC">
+                            <span class="micon dw dw-shopping-cart"></span><span class="mtext">Ventes au comptoir</span>
+                        </a>
+                    </li>
                 @endcan
             </ul>
         </div>

@@ -6,14 +6,7 @@
     <meta charset="utf-8">
     <title>Facturer-App</title>
     @include('includes/css_assets')
-    <style>
-        .center-foot {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+    @include('includes/css_myadditional')
 </head>
 
 <body>
@@ -65,12 +58,25 @@
                         <form id="form-etat-inv" action="{{url('/newetat-inv')}}" method="POST">
                             @csrf
                             <div class="row">
+                                <div class="col-md-3">
+						            <div class="form-group">
+						                <label>Selectionner le depot</label>
+						                <select id="depot" class="form-control" data-style="btn-outline-primary" name="depot"
+						                    data-size="5" required>
+						                    @foreach ($depots as $depot)
+                                                @if(isset($selecteddepot) && $depot->id == $selecteddepot)
+                                                <option value="{{$depot->id}}" selected>{{$depot->nom_depot}}</option>
+                                                @else
+                                                <option value="{{$depot->id}}">{{$depot->nom_depot}}</option>
+                                                @endif
+						                    @endforeach
+						                </select>
+						            </div>
+						        </div>
+                                <div class="col-md-9"></div>
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Selectionnez l'option de valorisation de l'inventaire</label>
-                                        @php
-                                            // dd($valorisation)
-                                        @endphp
                                         <select class="selectpicker form-control prix" data-style="btn-outline-primary"
                                             name="option_valorisation" data-size="5">
                                             <option value="normal">Prix achat Normal</option>
@@ -82,9 +88,6 @@
                                 </div>
 
                                 <div class="col-md-3 col-sm-12" style="padding-top:35px;">
-                                    {{-- <a id="btn-form-inv" class="btn btn-primary">
-                                        Generer l'etat
-                                    </a> --}}
                                     <button id="btn-form-inv" type="submit" class="btn btn-primary">Generer l'etat</button>
                                 </div>
                             </div>
@@ -103,9 +106,11 @@
                               <table class="data-table table stripe hover nowrap">
                                     <thead>
                                     <tr>
-                                          <th class="table-plus datatable-nosort">Reference</th>
-                                          <th>Designation</th>
-                                          <th>Qté en Stock</th>
+                                        <th class="table-plus datatable-nosort">Reference</th>
+                                        <th>Designation</th>
+                                        <th>Qté en Stock</th>
+
+                                        @if(isset($valorisation))
                                             @if ($valorisation == "type1")
                                                 <th>Prix Achat <code>(normal)</code></th>
                                             @elseif ($valorisation == "type2")
@@ -113,29 +118,35 @@
                                             @elseif ($valorisation == "type3")
                                                 <th>Prix unitaire moyen <code>(cmup)</code></th>
                                             @endif
-                                          <th>Prix total en valeur</th>
+                                        @else
+                                            <th>Prix Achat <code>(normal)</code></th>
+                                        @endif
+                                       
+                                        <th>Prix total en valeur</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($etats as $ligne)
-                                            <tr>
-                                                <td class="table-plus">{{$ligne->reference}}</td>
-                                                <td>{{$ligne->designation}}</td>
-                                                <td>{{$ligne->quantite_stock}}</td>
-                                                @if ($valorisation == "type1")
-                                                    <td>{{$ligne->prix_achat}}</td>
-                                                    <td>{{$ligne->quantite_stock * $ligne->prix_achat}}</td>
-                                                @elseif ($valorisation == "type2")
-                                                    <td>{{$ligne->dernier_prix_achat}}</td>
-                                                    <td>{{$ligne->quantite_stock * $ligne->dernier_prix_achat}}</td>
-                                                @elseif ($valorisation == "type3")
-                                                    <td>{{$ligne->cmup}}</td>
-                                                    <td>{{$ligne->quantite_stock * $ligne->cmup}}</td>
-                                                @else
-                                                    <td>0</td>
-                                                @endif
-                                            </tr>
-                                        @endforeach 
+                                        @if (isset($etats))
+                                            @foreach($etats as $ligne)
+                                                <tr>
+                                                    <td class="table-plus">{{$ligne->reference}}</td>
+                                                    <td>{{$ligne->designation}}</td>
+                                                    <td>{{$ligne->quantite_stock}}</td>
+                                                    @if ($valorisation == "type1")
+                                                        <td>{{$ligne->prix_achat}}</td>
+                                                        <td>{{$ligne->quantite_stock * $ligne->prix_achat}}</td>
+                                                    @elseif ($valorisation == "type2")
+                                                        <td>{{$ligne->dernier_prix_achat}}</td>
+                                                        <td>{{$ligne->quantite_stock * $ligne->dernier_prix_achat}}</td>
+                                                    @elseif ($valorisation == "type3")
+                                                        <td>{{$ligne->cmup}}</td>
+                                                        <td>{{$ligne->quantite_stock * $ligne->cmup}}</td>
+                                                    @else
+                                                        <td>0</td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                        @endif 
                                     </tbody>
                               </table>
                               <div class="clearfix" style="margin-top: 20px;margin-right:10px;">
@@ -145,7 +156,11 @@
                                                 <div class="col-md-12 col-sm-12">
                                                     <div class="form-group" style="text-align: right;">
                                                         <label>Valeur Totale <code>net</code> du Stock</label>
+                                                        @if(isset($total))
                                                         <input id="total_net" type="text" class="form-control" value="{{$total}}" readonly style="text-align: right;font-weight:bold;">
+                                                        @else
+                                                        <input id="total_net" type="text" class="form-control" value="0" readonly style="text-align: right;font-weight:bold;">
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\VenteService;
 use App\Models\Client;
+use App\Models\Depot;
 
 class CompteclientController extends Controller
 {
@@ -16,14 +17,18 @@ class CompteclientController extends Controller
     }
 
     public function index(){
-        $clients = Client::allDepotClient(1); ## ajouter juste pour faciliter les test
-        return view('vente.interrogerCompteClient')->with(compact('clients'));
+        $depots = Depot::all();
+        return view('vente.interrogerCompteClient')->with(compact('depots'));
     }
 
     public function activities(Request $request){
-        $activities = $this->vente->ClientActivities(1, $request->client);
-        // dd($activities);
+        $depots = Depot::all();
+        $activities = $this->vente->ClientActivities($request->depot, $request->client);
+        $selecteddepot=$request->depot;
+        $selectedclient = $request->client;
         $solde = $this->vente->getClientSolde($request->client);
-        return response()->json(["success" => [ $activities, $solde] ]);
+        return view('vente.interrogerCompteClient')
+        ->with(compact('selecteddepot'))->with(compact('selectedclient'))
+        ->with(compact('activities'))->with(compact('depots'))->with(compact('solde'));
     }
 }

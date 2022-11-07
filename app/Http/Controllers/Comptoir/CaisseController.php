@@ -28,13 +28,10 @@ class CaisseController extends Controller
         }
     }
 
-    // doit etre modifie pour prendre en compte le depot 
-    // et le fait que le ref sont par depot sauf pour les march
+  
     public function getDetailTicket(Request $request){
-        $employee_id = $request->session()->get('personnel_id');
-        $comptoir = DataService::getComptoirPersonnel($employee_id);
-        $details = DataService::detailsTransaction('Ticket',$request["code"],$comptoir->depot->id);
-        // dd($details);
+        $caisse = Caisse::where('libelle',$request["caisse"])->first();
+        $details = DataService::detailsTransaction('Ticket',$request["code"],$caisse->depot_id);
         return response()->json($details);
     }
 
@@ -43,11 +40,17 @@ class CaisseController extends Controller
         $caisse = Caisse::find($caisse_id);
         if($caisse){
             if($caisse->statut == "ouvert"){
-                $this->closeCaisse($caisse);
-                return redirect('/');
+                $res = DataService::checkVendeursCaisseLoggedout($caisse);
+                if($res == true){
+                    $this->closeCaisse($caisse);
+                    return redirect('/operationCaisse');
+                }else{
+                    $caisse_error = "Probleme lors de la fermeture: Vendeurs encore en ligne";
+                    return back()->with('error_form_caisse',$caisse_error);
+                }
             }else{
                 $this->openCaisse($caisse);
-                return redirect('/ventesComptoir');
+                return redirect('/operationCaisse');
             }
         }
     }
@@ -67,8 +70,8 @@ class CaisseController extends Controller
             ->with(compact('data'));
         }
         else{
-            $transf_error = "Aucune correspondance, verifiez le formalaire";
-            return back()->with('error_form_caisse',$transf_error);
+            $caisse_error = "Aucune correspondance, verifiez le formalaire";
+            return back()->with('error_form_caisse',$caisse_error);
         }
     }
 
