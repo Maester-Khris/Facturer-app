@@ -123,8 +123,11 @@ class DataService{
               })->count();
             return $qteegatives;
       }
-      public static function Marchandisestockinfo($march_ref, $id_depot){
-            $march = Marchandise::getMarchByRef($march_ref);
+      public static function Marchandisestockinfo($march_des, $id_depot){
+            // dd($march_ref);
+            $march = Marchandise::getMarchByDes($march_des);
+            // dd('we comming');
+            // dd($march);
             $march_stock_info = Stockdepot::marchandiseStockInfo($march->id, $id_depot);
             return  [$march_stock_info->quantite_stock,  $march->reference];
       }
@@ -152,9 +155,12 @@ class DataService{
             $marchs = Marchandise::where('designation','LIKE','%'.$march_name.'%')
                 ->limit(3)
                 ->get();
+            // dd($marchs);
             $additional = $marchs->map(function($march) use($id_depot) {
+                  // dd($id_depot);
                   return DataService::Marchandisestockinfo($march->designation, $id_depot);
             });
+            // dd($additional);
             return [$marchs, $additional];
       }
       public static function Clientsuggestion($client_name, $depotid){

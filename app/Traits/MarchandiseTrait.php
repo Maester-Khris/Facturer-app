@@ -17,9 +17,9 @@ trait MarchandiseTrait {
             return  $march;
       }
 
-      public static function getMarchRef($designation){
+      public static function getMarchByDes($designation){
             $march = Marchandise::where('designation',$designation)->first();
-            return  $march->reference;
+            return  $march;
       }
 
       public static function getMarchPrixDet($march_id){

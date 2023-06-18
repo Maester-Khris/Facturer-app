@@ -7,6 +7,7 @@ use App\Models\Inventaire;
 use App\Models\Detailtransactions;
 use App\Services\StockService;
 use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
+use Illuminate\Support\Facades\Cookie;
 
 class TestController extends Controller
 {
@@ -17,6 +18,51 @@ class TestController extends Controller
     }
 
     public function index(){
+        // Cookie::queue('mycook', "cokkie1", 2);
+        $countries = array("Mark" => "USA", "Raymond" => "UK", "Jeff" => "JPN", "Mike" => "DE");
+        // dd(json_encode($countries));
+        Cookie::queue('countries1', json_encode($countries), 2);
+        // $data = Cookie::get('countries1');
+        // dd(json_decode($data,true));
+        // //======================= 
+        // $countries = array("Mark" => "USA", "Raymond" => "UK", "Jeff" => "JPN", "Mike" => "DE");
+        // $countriesJsoned = json_encode($countries);
+        // $countriesBack = json_decode($countriesJsoned, true);
+        // dd($countriesJsoned);
+        // dd($countriesBack);
+        // dd($countriesBack["Mark"]);
+        //======================= 
+        // echo "<script>window.open('/testprint', '_blank')</script>";
+        // echo "<script>window.open('".$url."', '_blank')</script>";
+    }
+
+    public function printScreen(){
+        $items = [
+            [
+                'name' => 'French Fries (tera)',
+                'qty' => 2,
+                'price' => 65000,
+            ],
+            [
+                'name' => 'Roasted Milk Tea (large)',
+                'qty' => 1,
+                'price' => 24000,
+            ],
+            [
+                'name' => 'Honey Lime (large)',
+                'qty' => 3,
+                'price' => 10000,
+            ],
+            [
+                'name' => 'Jasmine Tea (grande)',
+                'qty' => 3,
+                'price' => 8000,
+            ],
+        ];
+        return view("comptoir.ticketComptoir")->with(compact('items'));
+    }
+
+    public function indexe(){
         // return $this->stock->sayHello();
         // $transaction = Detailtransactions::where("reference_transaction","TKT0002")
         //           ->where("reference_marchandise", "REF0004")->first();

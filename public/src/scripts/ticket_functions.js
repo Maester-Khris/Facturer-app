@@ -91,10 +91,10 @@ async function postTicket(url_destination) {
                   if (response) {
                         console.log(response);
                         newTicket();
+                        window.open(`/print-ticket/${response.ref}`,'_blank');
                   }
             }
       });
-      return "ok";
 }
 
 

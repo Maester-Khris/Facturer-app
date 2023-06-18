@@ -291,7 +291,8 @@
         });
         $("#valider-ticket").click(function (e) {
             e.preventDefault();
-            postTicket("/enregistrer-ticketencours").then( console.log('saved ticket') );
+            postTicket("/enregistrer-ticketencours").then();
+            // then( console.log('saved ticket') );
         });
         $('.ticket-attente').click(function (e) {
             e.preventDefault();

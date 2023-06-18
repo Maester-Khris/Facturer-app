@@ -38,6 +38,7 @@ class UtilityController extends Controller
     public function suggestproductForComptoir(Request $request){
       $employee_depot = $request->session()->get('depot_name');
       $depot = Depot::where('nom_depot', $employee_depot)->first();
+      // dd($depot);
       $data = $this->data->MarchandisescompletionVente($request->produit, $depot->id);
       return response()->json($data);
     }

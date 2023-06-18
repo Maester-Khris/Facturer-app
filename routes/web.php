@@ -113,7 +113,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/enregistrer-ticketencours', 'App\Http\Controllers\Comptoir\VenteComptoirController@saveTicketEnCours');
     Route::post('/enregistrer-ticketenattente', 'App\Http\Controllers\Comptoir\VenteComptoirController@saveTicketEnAttente');
     
-
+    Route::get('print', 'App\Http\Controllers\Comptoir\VenteComptoirController@launchprintScreen');
+    Route::get('print-ticket/{codeTicket}', 'App\Http\Controllers\Comptoir\VenteComptoirController@printTicket');
     // =============== ************** ================================
     //                 STATISTIQUE
     // =============== ************** ================================
@@ -145,6 +146,8 @@ Route::group(['middleware' => 'auth'], function () {
 //                  REDIRECT HOME
 // =============== ************** ================================
 Route::get('test', 'App\Http\Controllers\TestController@index');
+Route::get('testview', function() { return view('comptoir.ticketComptoir');});
+Route::get('testprint', 'App\Http\Controllers\TestController@printScreen');
 Route::get('connexion', 'App\Http\Controllers\UserController@connexion'); 
 Route::post('connect', 'App\Http\Controllers\UserController@connect'); 
 Route::get('deconnect', 'App\Http\Controllers\UserController@deconnect'); 

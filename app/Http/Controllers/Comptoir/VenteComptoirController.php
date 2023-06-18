@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Comptoir;
 use DateTime;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cookie;
 
 use App\Models\Caisse;
 use App\Models\Client;
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
 
 class VenteComptoirController extends Controller
 {
+    /**
+     * CONNECTION METHODS
+     * GERER ERRUR FALASE CONNECTION
+     */
     public function index(Request $request){
         if(Auth::user()->hasAnyRole(["vendeur","chef_equipe"])){
             // erreur si le comptoir de ce bonhomme n'existe pas
@@ -30,21 +35,23 @@ class VenteComptoirController extends Controller
             $nouveau_code = DataService::genCode("Ticket", $nbrows + 1);
             $statut_caisse = DataService::checkCaisseOpened($comptoir->caisse->id);
             return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'))->with(compact('statut_caisse'));
-
-            // if($statut_caisse == true){
-            //     return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
-            // }else{
-            //     $caisse = Caisse::find($comptoir->caisse->id);
-            //     $caisse->statut == "ouvert";
-            //     $caisse->save();
-            //     return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
-            // }
         }else{
             return view('comptoir.ventesComptoirRedirect');
         }
     }
-
     /**
+     * VIEWW RENDERING METHODS
+    */
+    public function printTicket(Request $request, $codeTicket){
+        $employee_id = $request->session()->get('personnel_id');
+        $id_depot = DataService::getComptoirDepotId($employee_id);
+        $details = DataService::detailsTransaction('Ticket',$codeTicket,$id_depot);
+        return view('comptoir.ticketComptoir')->with(compact('details')); 
+    }
+    
+   
+    /**
+     * ====================== BUSINESS METHODS ================================
      * si nouveau ticket: enregistre le ticket et la transaction
      * si ticket existant: 
      * recherche le ticket et on modifie le total et le statut
@@ -57,19 +64,14 @@ class VenteComptoirController extends Controller
             $id_depot = DataService::getComptoirDepotId($employee_id);
             $qtenegatives = DataService::countQteNegative($request->ticket['marchandises']);
             $flag = DataService::checkEmployeeCanReturnMarch($employee_id);
-            
             if($qtenegatives == 0){
-                $res = $this->newVenteTicket($employee_id, $id_depot, $request);
-                if($res){ 
-                    return response()->json(["res" => "warning: error on print"]);   
-                }
-                return response()->json(["res" => "successful: saved and printed"]);
+                $ref_transaction = $this->newVenteTicket($employee_id, $id_depot, $request);
+                $to_print = array("ref"=>$ref_transaction, "marchs"=>$request->ticket['marchandises']);
+                return response()->json($to_print, 200);
             }else if($qtenegatives > 0 && $flag == true){
-                $res = $this->newVenteTicket($employee_id, $id_depot, $request);
-                if($res){ 
-                    return response()->json(["res" => "warning: error on print"]);   
-                }
-                return response()->json(["res" => "successful: saved and printed"]);
+                $ref_transaction = $this->newVenteTicket($employee_id, $id_depot, $request);
+                $to_print = array("ref"=>$ref_transaction, "marchs"=>$request->ticket['marchandises']);
+                return response()->json($to_print, 200);
             }else{
                 return response()->json(["res" => "vous n'etes pas authorisé a faire des facture negatives"]);
             }
@@ -113,10 +115,11 @@ class VenteComptoirController extends Controller
             StockService::updatStockMarchandise($stock, $march["quantite"], "Sortie", $today);
         }
     }
+
+
     public function newVenteTicket($employee_id, $id_depot, $request){
         $today = new DateTime();
         $last_ticket = VentecomptoirService::findWaitingTicket($request->ticket['codeticket']);
-       
         if(is_null($last_ticket)){
             $ticket = VentecomptoirService::newTicket($request->ticket['codeticket'], $request->ticket['client'], 'en cours', $request->ticket['total'], $employee_id, $today);
             $ref_transaction = $ticket->code_ticket;
@@ -126,8 +129,56 @@ class VenteComptoirController extends Controller
             VentecomptoirService::validateWaitingTicket($last_ticket, $request->ticket['total']);
             DataService::updateTransactionAddLines($last_ticket->code_ticket, $request->ticket['marchandises'], $today);
         }
-
         $this->updateStockforTicketEnCour($request->ticket['marchandises'], $id_depot, $today);
-        return PrintService::Sendprint($ref_transaction, $request->ticket['marchandises']);
+        return $ref_transaction;
     }
+
+    public function launchprintScreen(){
+        echo "<script>window.open('/print-ticket', '_blank')</script>";
+    }
+
+    
 }
+// dd($details);
+// $ticket = Ticket::
+// dd("enter");
+// ==============
+// $ticket_tmp = Cookie::get('ticketToPrint');
+// dd($ticket_tmp);
+// ==============
+// $ticket_tmp = json_decode($ticket_tmp, true);
+// dd($ticket);
+// $ticket = array($ticket_tmp["ref"], $ticket_tmp["marchs"]);
+// return response()->json($ticket, 200);
+// ===========================================================================
+// $to_print = array("ref"=>$ref_transaction, "marchs"=>$request->ticket['marchandises']);
+// Cookie::queue('ticketToPrint', json_encode($to_print), 2);
+// return redirect('/print');
+// return PrintService::Sendprint($ref_transaction, $request->ticket['marchandises']);
+// =========================================================================================
+// $this->printTicket($to_print);
+// dd($to_print);
+// Cookie::queue('ticketToPrint', json_encode($to_print), 2);
+// if($ref_transaction){ 
+//     return response()->json(["res" => "warning: error on print"]);   
+// }
+// return redirect('/print');
+// return response()->json(["res" => "successful: saved and printed"]);
+// ================================================================================
+// dd($to_print);
+// Cookie::queue('ticketToPrint', json_encode($to_print), 2);
+// if($ref_transaction){ 
+//     return response()->json(["res" => "warning: error on print"]);   
+// }
+// return redirect('/print');
+// return response()->json(["res" => "successful: saved and printed"]);
+// ===========================================================================
+// if($statut_caisse == true){
+//     return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
+// }else{
+//     $caisse = Caisse::find($comptoir->caisse->id);
+//     $caisse->statut == "ouvert";
+//     $caisse->save();
+//     return view('comptoir.ventesComptoir')->with(compact('client_comptoir'))->with(compact('nouveau_code'));
+// }
+       

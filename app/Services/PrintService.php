@@ -30,22 +30,22 @@ class PrintService{
       }
 
       public static function Sendprint($ref_transaction, $marchs){
-            $printer = PrintService::initPrint();
-            if($printer){
-                  $printer->setTransactionID($ref_transaction);
-                  foreach ($marchs as $item) {
-                        $printer->addItem(
-                        $item['name'],
-                        $item['quantite'],
-                        $item['prix']
-                        );
-                  }
-                  $printer->calculateSubTotal();
-                  $printer->calculateGrandTotal();
-                  $printer->printReceipt();
-                  return 1;
-            }else{
-                  return 0;
-            }
+            // $printer = PrintService::initPrint();
+            // if($printer){
+            //       $printer->setTransactionID($ref_transaction);
+            //       foreach ($marchs as $item) {
+            //             $printer->addItem(
+            //             $item['name'],
+            //             $item['quantite'],
+            //             $item['prix']
+            //             );
+            //       }
+            //       $printer->calculateSubTotal();
+            //       $printer->calculateGrandTotal();
+            //       $printer->printReceipt();
+            //       return 1;
+            // }else{
+            //       return 0;
+            // }
       }
 }
