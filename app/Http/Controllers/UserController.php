@@ -26,8 +26,8 @@ class UserController extends Controller
         }
 
         $employe = Personnel::where('nom_complet',$request->nom)->where('matricule',$request->matricule)->first();
-        $user_exist = User::where('name', $employe->nom_complet)->first();
-        if($user_exist == null){
+        // $user_exist = User::where('name', $employe->nom_complet)->first();
+        if($employe == null){
             $connexion_error = "Utilisateur non reconnu, verifier les identifiants";
             return back()->with('error_login',$connexion_error);
         }else{

@@ -5,6 +5,16 @@
 		<meta charset="utf-8">
 		<title>Facturer-App</title>
             @include('includes/css_assets')
+            <style>
+                  .err-login{
+                        font-size: 12px;
+                        color: #ED2839;
+                        font-weight: 300;
+                        text-align: center;
+                        margin-top: 10px;
+                        margin-bottom:0px;
+                  }
+            </style>
       </head>
       <body class="login-page">
             <div class="login-header box-shadow">
@@ -27,6 +37,9 @@
                                     <div class="login-box bg-white box-shadow border-radius-10">
                                           <div class="login-title">
                                                 <h2 class="text-center text-primary">Connexion aux Boutiques Valto</h2>
+                                                @if(Session::has('error_login'))
+                                                      <p class="err-login">Une erreur est survenue lors de la connexion. <br> verifiez vos identiifants </p>
+                                                @endif
                                           </div>
                                           <form action="{{url('connect')}}" method="POST">
                                                 @csrf
